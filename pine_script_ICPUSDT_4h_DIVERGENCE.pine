@@ -1,0 +1,117 @@
+//@version=6
+strategy("ICPUSDT 4h DIVERGENCE LONG-ONLY (TP=3% SL=1% MH=6)", overlay=true,
+     initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     slippage=2)
+
+// === STRATEGY PARAMETERS ===
+tpPct = 3.0
+slPct = 1.0
+maxHoldCandles = 6
+pivotPeriod = 3
+minScore = 3
+emaLen = 50
+
+// === INDICATORS ===
+rsiVal = ta.rsi(close, 14)
+[macdLine, signalLine, macdHist] = ta.macd(close, 12, 26, 9)
+stochVal = ta.sma(ta.stoch(close, high, low, 14), 3)
+mfiVal = ta.mfi(close, 14)
+emaTrend = ta.ema(close, emaLen)
+
+// === PIVOT DETECTION ===
+ph = ta.pivothigh(high, pivotPeriod, pivotPeriod)
+pl = ta.pivotlow(low, pivotPeriod, pivotPeriod)
+
+var int[] plPos = array.new_int()
+var float[] plPrcClose = array.new_float()
+var float[] plRsi = array.new_float()
+var float[] plMacd = array.new_float()
+var float[] plHist = array.new_float()
+var float[] plStoch = array.new_float()
+var float[] plMfi = array.new_float()
+
+if pl
+    array.unshift(plPos, bar_index - pivotPeriod)
+    array.unshift(plPrcClose, low[bar_index - array.get(plPos, 0)])
+    array.unshift(plRsi, rsiVal[bar_index - array.get(plPos, 0)])
+    array.unshift(plMacd, macdLine[bar_index - array.get(plPos, 0)])
+    array.unshift(plHist, macdHist[bar_index - array.get(plPos, 0)])
+    array.unshift(plStoch, stochVal[bar_index - array.get(plPos, 0)])
+    array.unshift(plMfi, mfiVal[bar_index - array.get(plPos, 0)])
+    if array.size(plPos) > 8
+        array.pop(plPos), array.pop(plPrcClose), array.pop(plRsi)
+        array.pop(plMacd), array.pop(plHist), array.pop(plStoch), array.pop(plMfi)
+
+// === BULLISH DIVERGENCE DETECTION ===
+// At each confirmed pivot low (current bar = confirmation), check vs prior pivots
+bullScore = 0
+if pl
+    curPrc = low[bar_index - array.get(plPos, 0)]
+    curRsi = rsiVal[bar_index - array.get(plPos, 0)]
+    curMacd = macdLine[bar_index - array.get(plPos, 0)]
+    curHist = macdHist[bar_index - array.get(plPos, 0)]
+    curStoch = stochVal[bar_index - array.get(plPos, 0)]
+    curMfi = mfiVal[bar_index - array.get(plPos, 0)]
+    for x = 1 to array.size(plPos) - 1
+        if (bar_index - array.get(plPos, x)) > 100
+            break
+        oldPrc = array.get(plPrcClose, x)
+        // Bullish: price lower low, indicator higher low
+        if curPrc < oldPrc and curRsi > array.get(plRsi, x)
+            bullScore := bullScore + 1
+            break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            oldPrc = array.get(plPrcClose, x)
+            if curPrc < oldPrc and curMacd > array.get(plMacd, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            oldPrc = array.get(plPrcClose, x)
+            if curPrc < oldPrc and curHist > array.get(plHist, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            oldPrc = array.get(plPrcClose, x)
+            if curPrc < oldPrc and curStoch > array.get(plStoch, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            oldPrc = array.get(plPrcClose, x)
+            if curPrc < oldPrc and curMfi > array.get(plMfi, x)
+                bullScore := bullScore + 1
+                break
+
+// === SIGNAL: Bullish divergence with score >= minScore, AND price above EMA50 (uptrend) ===
+longCondition = bullScore >= minScore and close > emaTrend
+
+// === ENTRY (next bar open) ===
+if longCondition and strategy.position_size == 0
+    strategy.entry("Long", strategy.long)
+
+// === EXIT (TP / SL / Time) ===
+if strategy.position_size > 0
+    tpPrice = strategy.position_avg_price * (1 + tpPct / 100)
+    slPrice = strategy.position_avg_price * (1 - slPct / 100)
+    barsSinceEntry = bar_index - strategy.opentrades.entry_bar_index(0)
+    strategy.exit("TP/SL", "Long", limit=tpPrice, stop=slPrice)
+    if barsSinceEntry >= maxHoldCandles
+        strategy.close("Long", comment="Time Exit")
+
+// === PLOTS ===
+plot(emaTrend, "EMA 50", color.orange, 1)
+plotshape(longCondition and strategy.position_size == 0, "Long Signal", shape.triangleup,
+          location.belowbar, color.green, size=size.small)
+plot(pl, "Pivot Low", color.new(color.green, 70), 4, plot.style_circles)

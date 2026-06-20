@@ -1,0 +1,136 @@
+//@version=6
+strategy("ICPUSDT 4h DIVERGENCE + Chandelier Exit (LONG-ONLY)", overlay=true,
+     initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     slippage=2)
+
+// === STRATEGY PARAMETERS ===
+pivotPeriod = 3
+minScore = 2
+emaTrendLen = 50
+atrLen = 14
+chandelierMult = 3.5
+initialSlMult = 1.5
+maxHoldCandles = 24
+
+// === INDICATORS ===
+rsiVal = ta.rsi(close, 14)
+[macdLine, signalLine, macdHist] = ta.macd(close, 12, 26, 9)
+stochVal = ta.sma(ta.stoch(close, high, low, 14), 3)
+mfiVal = ta.mfi(close, 14)
+emaTrend = ta.ema(close, emaTrendLen)
+atrVal = ta.atr(atrLen)
+
+// === PIVOT DETECTION ===
+pl = ta.pivotlow(low, pivotPeriod, pivotPeriod)
+
+var int[] plPos = array.new_int()
+var float[] plPrc = array.new_float()
+var float[] plRsi = array.new_float()
+var float[] plMacd = array.new_float()
+var float[] plHist = array.new_float()
+var float[] plStoch = array.new_float()
+var float[] plMfi = array.new_float()
+
+if pl
+    array.unshift(plPos, bar_index - pivotPeriod)
+    array.unshift(plPrc, low[bar_index - array.get(plPos, 0)])
+    array.unshift(plRsi, rsiVal[bar_index - array.get(plPos, 0)])
+    array.unshift(plMacd, macdLine[bar_index - array.get(plPos, 0)])
+    array.unshift(plHist, macdHist[bar_index - array.get(plPos, 0)])
+    array.unshift(plStoch, stochVal[bar_index - array.get(plPos, 0)])
+    array.unshift(plMfi, mfiVal[bar_index - array.get(plPos, 0)])
+    if array.size(plPos) > 8
+        array.pop(plPos), array.pop(plPrc), array.pop(plRsi), array.pop(plMacd)
+        array.pop(plHist), array.pop(plStoch), array.pop(plMfi)
+
+// === DIVERGENCE SCORING ===
+bullScore = 0
+if pl
+    curPrc = low[bar_index - array.get(plPos, 0)]
+    curRsi = rsiVal[bar_index - array.get(plPos, 0)]
+    curMacd = macdLine[bar_index - array.get(plPos, 0)]
+    curHist = macdHist[bar_index - array.get(plPos, 0)]
+    curStoch = stochVal[bar_index - array.get(plPos, 0)]
+    curMfi = mfiVal[bar_index - array.get(plPos, 0)]
+    // Check each indicator for bullish divergence
+    for x = 1 to array.size(plPos) - 1
+        if (bar_index - array.get(plPos, x)) > 100
+            break
+        if curPrc < array.get(plPrc, x) and curRsi > array.get(plRsi, x)
+            bullScore := bullScore + 1
+            break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            if curPrc < array.get(plPrc, x) and curMacd > array.get(plMacd, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            if curPrc < array.get(plPrc, x) and curHist > array.get(plHist, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            if curPrc < array.get(plPrc, x) and curStoch > array.get(plStoch, x)
+                bullScore := bullScore + 1
+                break
+    if bullScore == 0
+        for x = 1 to array.size(plPos) - 1
+            if (bar_index - array.get(plPos, x)) > 100
+                break
+            if curPrc < array.get(plPrc, x) and curMfi > array.get(plMfi, x)
+                bullScore := bullScore + 1
+                break
+
+// === ENTRY: Bullish divergence score >= minScore AND price above EMA50 ===
+longCondition = bullScore >= minScore and close > emaTrend
+
+// === STATE TRACKING (Chandelier Exit) ===
+var float entryPrice = na
+var float currentSL = na
+var float highestSinceEntry = na
+var int barsInTrade = 0
+var bool trailActivated = false
+
+if longCondition and strategy.position_size == 0
+    entryPrice := open
+    currentSL := entryPrice - initialSlMult * atrVal
+    highestSinceEntry := high
+    barsInTrade := 0
+    trailActivated := false
+    strategy.entry("Long", strategy.long)
+
+if strategy.position_size > 0
+    barsInTrade := barsInTrade + 1
+    if high > highestSinceEntry
+        highestSinceEntry := high
+    if highestSinceEntry - entryPrice > 0.5 * atrVal
+        trailActivated := true
+    if trailActivated
+        newSL = highestSinceEntry - chandelierMult * atrVal
+        if newSL > currentSL
+            currentSL := newSL
+    strategy.exit("SL/Trail", "Long", stop=currentSL)
+    if barsInTrade >= maxHoldCandles
+        strategy.close("Long", comment="Time")
+
+if strategy.position_size == 0 and not na(entryPrice)
+    entryPrice := na
+    currentSL := na
+    highestSinceEntry := na
+    barsInTrade := 0
+    trailActivated := false
+
+// === PLOTS ===
+plot(emaTrend, "EMA 50", color.orange, 1)
+plot(strategy.position_size > 0 ? currentSL : na, "Trailing SL", color.red, 2, plot.style_linebr)
+plotshape(longCondition and strategy.position_size == 0, "Long Signal", shape.triangleup,
+          location.belowbar, color.green, size=size.small)
+plot(pl, "Pivot Low", color.new(color.green, 70), 4, plot.style_circles)

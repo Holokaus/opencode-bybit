@@ -1,0 +1,39 @@
+//@version=6
+strategy("XRPUSDT 4h BREAKOUT LONG-ONLY (TP=3.0% SL=2.0%)", overlay=true,
+     initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     slippage=2)
+
+// === STRATEGY PARAMETERS ===
+tpPct = 3.0
+slPct = 2.0
+maxHoldCandles = 24
+
+// === INDICATOR & SIGNAL ===
+upperBand = ta.highest(high, 30)[1]
+longCondition = ta.crossover(close, upperBand)
+
+// === ENTRY (next bar open) ===
+if longCondition and strategy.position_size == 0
+    strategy.entry("Long", strategy.long)
+
+// === EXIT (TP / SL / Time) ===
+if strategy.position_size > 0
+    tpPrice = strategy.position_avg_price * (1 + tpPct / 100)
+    slPrice = strategy.position_avg_price * (1 - slPct / 100)
+    barsSinceEntry = bar_index - strategy.opentrades.entry_bar_index(0)
+    strategy.exit("TP/SL", "Long", limit=tpPrice, stop=slPrice)
+    if barsSinceEntry >= maxHoldCandles
+        strategy.close("Long", comment="Time Exit")
+
+// === PLOTS ===
+plot(upperBand, "Upper 30", color.orange, 1)
+plotshape(longCondition and strategy.position_size == 0, "Long Signal", shape.triangleup,
+          location.belowbar, color.green, size=size.small)
+
+// === INFO LABEL ===
+var infoLabel = label.new(na, na, "", color=color.new(color.black, 70), textcolor=color.white,
+                          style=label.style_label_left, size=size.small)
+if barstate.islast
+    label.set_xy(infoLabel, bar_index, high)
+    label.set_text(infoLabel, "TP=" + str.tostring(tpPct, "#.#") + "% | SL=" + str.tostring(slPct, "#.#") + "%")

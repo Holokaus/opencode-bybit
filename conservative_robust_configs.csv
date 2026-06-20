@@ -1,0 +1,1 @@
+strat,params,tp,sl,mh,train_N,train_EV,train_PnL,train_PF,train_WR,test_N,test_EV,test_PnL,test_PF,test_WR,test_max_dd,test_sharpe,test_t_stat,full_N,full_EV,full_PnL,full_PF,full_WR,full_max_dd,full_final_equity,full_sharpe,full_t_stat,symbol,tf,combined_N,combined_PnL,combined_EV

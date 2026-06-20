@@ -1,0 +1,85 @@
+//@version=6
+strategy("ICPUSDT 4h EMA(12,30) + Chandelier Exit (LONG-ONLY)", overlay=true,
+     initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.1,
+     slippage=2)
+
+// === STRATEGY PARAMETERS ===
+emaFastLen = 12
+emaSlowLen = 30
+atrLen = 14
+chandelierMult = 3.5   // Chandelier Exit = highest_high - 3.5 × ATR
+initialSlMult = 1.5    // Initial SL = entry - 1.5 × ATR
+maxHoldCandles = 24    // 4 days max hold (4h timeframe)
+
+// === INDICATORS ===
+emaFast = ta.ema(close, emaFastLen)
+emaSlow = ta.ema(close, emaSlowLen)
+atrVal = ta.atr(atrLen)
+
+// === ENTRY: EMA crossover (long only) ===
+longCondition = ta.crossover(emaFast, emaSlow)
+
+// === STATE TRACKING ===
+var float entryPrice = na
+var float initialSL = na
+var float currentSL = na
+var float highestSinceEntry = na
+var int barsInTrade = 0
+var bool trailActivated = false
+
+// === ON ENTRY ===
+if longCondition and strategy.position_size == 0
+    entryPrice := open  // next bar open (TradingView default behavior)
+    initialSL := entryPrice - initialSlMult * atrVal
+    currentSL := initialSL
+    highestSinceEntry := high
+    barsInTrade := 0
+    trailActivated := false
+    strategy.entry("Long", strategy.long)
+
+// === UPDATE TRAILING STOP WHEN IN POSITION ===
+if strategy.position_size > 0
+    barsInTrade := barsInTrade + 1
+    if high > highestSinceEntry
+        highestSinceEntry := high
+    // Activate chandelier trail after price moves 0.5 ATR in our favor
+    if highestSinceEntry - entryPrice > 0.5 * atrVal
+        trailActivated := true
+    if trailActivated
+        newSL = highestSinceEntry - chandelierMult * atrVal
+        if newSL > currentSL
+            currentSL := newSL  // ratchet up only
+
+    // === EXIT LOGIC ===
+    // 1. SL / trailing stop
+    strategy.exit("SL/Trail", "Long", stop=currentSL)
+    // 2. Time-based exit
+    if barsInTrade >= maxHoldCandles
+        strategy.close("Long", comment="Time")
+
+// === RESET ON EXIT ===
+if strategy.position_size == 0 and not na(entryPrice)
+    entryPrice := na
+    initialSL := na
+    currentSL := na
+    highestSinceEntry := na
+    barsInTrade := 0
+    trailActivated := false
+
+// === PLOTS ===
+plot(emaFast, "EMA Fast", color.blue, 1)
+plot(emaSlow, "EMA Slow", color.orange, 1)
+plot(strategy.position_size > 0 ? currentSL : na, "Trailing SL", color.red, 2, plot.style_linebr)
+plot(strategy.position_size > 0 ? highestSinceEntry - chandelierMult * atrVal : na,
+     "Chandelier Level", color.gray, 1, plot.style_linebr)
+plotshape(longCondition and strategy.position_size == 0, "Long Signal", shape.triangleup,
+          location.belowbar, color.green, size=size.small)
+
+// === INFO LABEL ===
+var infoLabel = label.new(na, na, "", color=color.new(color.black, 70), textcolor=color.white,
+                          style=label.style_label_left, size=size.small)
+if barstate.islast
+    label.set_xy(infoLabel, bar_index, high)
+    label.set_text(infoLabel, "EMA(" + str.tostring(emaFastLen) + "/" + str.tostring(emaSlowLen) + ") + Chan(" +
+                   str.tostring(chandelierMult, "#.#") + "×ATR)\nMax hold: " + str.tostring(maxHoldCandles) + " bars")
