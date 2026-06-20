@@ -20,7 +20,7 @@ function Read-DerInteger { param([byte[]]$data, [ref]$offset)
     $trimmed = [byte[]]::new($val.Length - $start); [Array]::Copy($val, $start, $trimmed, 0, $trimmed.Length)
     $offset.Value += $len; return $trimmed
 }
-$Script:RsaKeyFile = if (Test-Path "bybit_private.pem") { (Resolve-Path "bybit_private.pem").Path } else { Join-Path (Split-Path $PSCommandPath -Parent) "..\bybit_private.pem" }
+$Script:RsaKeyFile = if ($env:BYBIT_PRIVATE_KEY_PATH) { $env:BYBIT_PRIVATE_KEY_PATH } else { "bybit_private.pem" }
 $pem = Get-Content -Raw $Script:RsaKeyFile; $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64); $off = 0
 if ($der[$off] -ne 0x30) { throw "Not SEQUENCE" }; $off++
@@ -40,9 +40,9 @@ $Script:Config = @{
     UseDemoApi       = $true              # true = place real orders on testnet
     DemoApiUrl       = "https://api-testnet.bybit.com"
     MainApiUrl       = "https://api.bybit.com"
-    ApiKey           = "gkPx5g3xgL2pthIg16"
-    DemoApiKey       = "xfs81fCzBeUSzW2TeG"
-    DemoApiSecret    = "Dp9eZQoC4PkALosAL1LLAoXvtZHYDZWMVR7x"
+    ApiKey           = $env:BYBIT_API_KEY
+    DemoApiKey       = $env:BYBIT_DEMO_API_KEY
+    DemoApiSecret    = $env:BYBIT_DEMO_API_SECRET
     Symbols = @(
         @{ Symbol="ICPUSDT"; Strategy="ADX"; TF="12h"; Interval="720"
            ADXThreshold=25; TP=0.5; SL=0.5; FeePercent=0.1

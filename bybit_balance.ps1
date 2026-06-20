@@ -23,7 +23,7 @@ function Read-DerInteger {
     return $trimmed
 }
 
-$pem = Get-Content -Raw "bybit_private.pem"
+$pem = Get-Content -Raw $env:BYBIT_PRIVATE_KEY_PATH
 $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64)
 
@@ -46,7 +46,7 @@ $params.InverseQ = Read-DerInteger -data $der -offset ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($params)
 
-$apiKey = "gkPx5g3xgL2pthIg16"
+$apiKey = $env:BYBIT_API_KEY
 $recvWindow = "5000"
 $baseUrl = "https://api.bybit.com"
 

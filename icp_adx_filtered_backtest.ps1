@@ -1,10 +1,10 @@
 # ============================================================
-#  ICP 12h ADX>25 — Direction-Filtered Backtest
+#  ICP 12h ADX>25 Ã¢â‚¬â€ Direction-Filtered Backtest
 #  Tests 3 LONG-only variants side-by-side
 # ============================================================
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  ICP 12h ADX>25 — Direction-Filtered" -ForegroundColor Cyan
+Write-Host "  ICP 12h ADX>25 Ã¢â‚¬â€ Direction-Filtered" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 # ===== API =====
@@ -24,7 +24,7 @@ function Read-DerInteger {
     $trimmed = [byte[]]::new($val.Length - $start); [Array]::Copy($val, $start, $trimmed, 0, $trimmed.Length)
     $offset.Value += $len; return $trimmed
 }
-$pem = Get-Content -Raw "bybit_private.pem"
+$pem = Get-Content -Raw $env:BYBIT_PRIVATE_KEY_PATH
 $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64)
 $off = 0
@@ -39,7 +39,7 @@ $p.Q = Read-DerInteger $der ([ref]$off); $p.DP = Read-DerInteger $der ([ref]$off
 $p.DQ = Read-DerInteger $der ([ref]$off); $p.InverseQ = Read-DerInteger $der ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($p)
-$ak = 'gkPx5g3xgL2pthIg16'; $rw = '5000'; $baseUrl = 'https://api.bybit.com'
+$ak = $env:BYBIT_API_KEY; $rw = '5000'; $baseUrl = 'https://api.bybit.com'
 function Call-API($ep, $q) {
     $ts = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     $b = [Text.Encoding]::UTF8.GetBytes($ts.ToString() + $ak + $rw + $q)

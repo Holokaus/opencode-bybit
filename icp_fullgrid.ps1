@@ -10,14 +10,14 @@ function Read-DerInteger {
     $s=if($v.Length-gt1-and$v[0]-eq0){1}else{0};$t=[byte[]]::new($v.Length-$s);[Array]::Copy($v,$s,$t,0,$t.Length)
     $offset.Value+=$l;return $t
 }
-$pem=[System.IO.File]::ReadAllText("bybit_private.pem");$b64=($pem-replace'-----.+-----',''-replace'\s','');$der=[System.Convert]::FromBase64String($b64);$off=0
+$pem=[System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH);$b64=($pem-replace'-----.+-----',''-replace'\s','');$der=[System.Convert]::FromBase64String($b64);$off=0
 if($der[$off]-ne0x30){throw};$off++|Out-Null;Read-DerLength -data $der -offset ([ref]$off)|Out-Null
 $p=New-Object System.Security.Cryptography.RSAParameters;$null=Read-DerInteger -data $der -offset ([ref]$off)
 $p.Modulus=Read-DerInteger -data $der -offset ([ref]$off);$p.Exponent=Read-DerInteger -data $der -offset ([ref]$off)
 $p.D=Read-DerInteger -data $der -offset ([ref]$off);$p.P=Read-DerInteger -data $der -offset ([ref]$off);$p.Q=Read-DerInteger -data $der -offset ([ref]$off)
 $p.DP=Read-DerInteger -data $der -offset ([ref]$off);$p.DQ=Read-DerInteger -data $der -offset ([ref]$off);$p.InverseQ=Read-DerInteger -data $der -offset ([ref]$off)
 $rsa=New-Object System.Security.Cryptography.RSACryptoServiceProvider;$rsa.ImportParameters($p)
-$apiKey="gkPx5g3xgL2pthIg16";$recvWindow="5000"
+$apiKey=$env:BYBIT_API_KEY;$recvWindow="5000"
 function Call-API{param($ep,$q)$ts=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();$body=[Text.Encoding]::UTF8.GetBytes("$ts$apiKey$recvWindow$q");$sha=[Security.Cryptography.SHA256]::Create();$sig=[Convert]::ToBase64String($rsa.SignData($body,$sha));$hd=@{"X-BAPI-API-KEY"=$apiKey;"X-BAPI-TIMESTAMP"="$ts";"X-BAPI-SIGN"=$sig;"X-BAPI-RECV-WINDOW"=$recvWindow;"X-BAPI-SIGN-TYPE"="2";"User-Agent"="bybit-skill/1.4.2"};try{$r=Invoke-WebRequest -Uri "https://api.bybit.com$ep`?$q" -Headers $hd -UseBasicParsing -TimeoutSec 60;return($r.Content|ConvertFrom-Json)}catch{return $null}}
 function Get-K{param($i,$l)$r=Call-API -ep "/v5/market/kline" -q "category=spot&symbol=ICPUSDT&interval=$i&limit=$l";if($r-and$r.result-and$r.result.list){$k=$r.result.list;[Array]::Reverse($k);return $k};return $null}
 function Calc-RSI{param($p,$per)$g=[double[]]::new($p.Count);$lo=[double[]]::new($p.Count);for($i=1;$i-lt$p.Count;$i++){$d=$p[$i]-$p[$i-1];if($d-ge0){$g[$i]=$d}else{$lo[$i]=-$d}};$ag=($g[1..$per]|Measure-Object -Sum).Sum/$per;$al=($lo[1..$per]|Measure-Object -Sum).Sum/$per;$r=[double[]]::new($p.Count);for($i=$per;$i-lt$p.Count;$i++){if($i-gt$per){$ag=(($ag*($per-1))+$g[$i])/$per;$al=(($al*($per-1))+$lo[$i])/$per};$r[$i]=if($al-eq0){100}else{100-(100/(1+($ag/$al)))}};return $r}

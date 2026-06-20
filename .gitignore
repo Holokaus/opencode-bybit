@@ -1,0 +1,19 @@
+# Bybit Trading System — Secrets & Local Files
+
+# Credentials
+.env
+*.pem
+*.key
+*.secret
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Output files
+*.csv
+*.log
+state.json
+
+# Local test data
+opencode-bybit/

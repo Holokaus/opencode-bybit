@@ -12,7 +12,7 @@ function Read-DerInteger { param([byte[]]$d, [ref]$o)
     $t = [byte[]]::new($v.Length - $s); [Array]::Copy($v, $s, $t, 0, $t.Length)
     $o.Value += $l; return $t
 }
-$pem = [System.IO.File]::ReadAllText("bybit_private.pem")
+$pem = [System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH)
 $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64); $off = 0
 if ($der[$off] -ne 0x30) { throw "Not SEQUENCE" }; $off++
@@ -24,7 +24,7 @@ $params.P = Read-DerInteger $der ([ref]$off); $params.Q = Read-DerInteger $der (
 $params.DP = Read-DerInteger $der ([ref]$off); $params.DQ = Read-DerInteger $der ([ref]$off)
 $params.InverseQ = Read-DerInteger $der ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider; $rsa.ImportParameters($params)
-$apiKey = "gkPx5g3xgL2pthIg16"; $recvWindow = "5000"
+$apiKey = $env:BYBIT_API_KEY; $recvWindow = "5000"
 function Call-API { param($endpoint, $query)
     $ts = [System.DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     $paramStr = "${ts}${apiKey}${recvWindow}${query}"
@@ -120,7 +120,7 @@ function Get-PivotSigs { param($lows, $highs, $prd)
     $plSig = [int[]]::new($n)  # 1 if bar is a confirmed pivot low
     $phSig = [int[]]::new($n)  # 1 if bar is a confirmed pivot high
     for ($i = 2*$prd; $i -lt $n; $i++) {
-        # pivotlow: check if bar (i-prd) was a low relative to ±prd around it
+        # pivotlow: check if bar (i-prd) was a low relative to Ã‚Â±prd around it
         $testBar = $i - $prd
         $isPL = $true; $isPH = $true
         for ($j = 1; $j -le $prd; $j++) {

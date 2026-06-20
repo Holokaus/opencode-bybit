@@ -12,7 +12,7 @@ function Read-DerInteger($d, [ref]$o) {
     $t = [byte[]]::new($v.Length - $s); [Array]::Copy($v, $s, $t, 0, $t.Length)
     $o.Value += $l; return $t
 }
-$pem = [System.IO.File]::ReadAllText("bybit_private.pem")
+$pem = [System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH)
 $b64 = ($pem -replace '-----[A-Z ]+-----', '') -replace '\s', ''
 $der = [System.Convert]::FromBase64String($b64)
 $o = 0; if ($der[$o] -ne 0x30) { throw "bad" }; $o++; $seqLen = Read-DerLength $der ([ref]$o)
@@ -24,7 +24,7 @@ $rsaP.Q = Read-DerInteger $der ([ref]$o); $rsaP.DP = Read-DerInteger $der ([ref]
 $rsaP.DQ = Read-DerInteger $der ([ref]$o); $rsaP.InverseQ = Read-DerInteger $der ([ref]$o)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($rsaP)
-$apiKey = "gkPx5g3xgL2pthIg16"; $recvWindow = "5000"
+$apiKey = $env:BYBIT_API_KEY; $recvWindow = "5000"
 
 function Call-Bybit-GET {
     param($endpoint, $query)
@@ -236,7 +236,7 @@ if ($sortedTF.Count -gt 0) {
         
         Write-Host "`nRSI Distribution on $($winner.Key) [RSI($($wv.period))]:" -ForegroundColor Yellow
         foreach ($bk in $buckets) {
-            $bar = [string]::new('█', [Math]::Max(1, [Math]::Round($bk.pct / 2)))
+            $bar = [string]::new('Ã¢â€“Ë†', [Math]::Max(1, [Math]::Round($bk.pct / 2)))
             Write-Host "  $($bk.range): $bar $($bk.pct)%"
         }
         

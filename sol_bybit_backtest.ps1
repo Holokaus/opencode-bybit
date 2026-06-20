@@ -14,7 +14,7 @@ function Read-DerInteger {
     $t=[byte[]]::new($v.Length-$s);[Array]::Copy($v,$s,$t,0,$t.Length)
     $o.Value+=$l;return $t
 }
-$pem=[System.IO.File]::ReadAllText("bybit_private.pem")
+$pem=[System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH)
 $b64=($pem-replace'-----.+-----',''-replace'\s','')
 $der=[System.Convert]::FromBase64String($b64);$off=0
 if($der[$off]-ne0x30){throw};$off++
@@ -31,7 +31,7 @@ $p.DQ = Read-DerInteger $der ([ref]$off)
 $p.InverseQ = Read-DerInteger $der ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($p)
-$ak="gkPx5g3xgL2pthIg16";$rw="5000"
+$ak=$env:BYBIT_API_KEY;$rw="5000"
 function Call-API {
     param($ep,$q)
     $ts=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()

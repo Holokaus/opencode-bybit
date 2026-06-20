@@ -21,7 +21,7 @@ function Read-DerInteger {
     $offset.Value += $len
     return $trimmed
 }
-$pem = [System.IO.File]::ReadAllText("bybit_private.pem")
+$pem = [System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH)
 $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64)
 $off = 0
@@ -41,7 +41,7 @@ $p.InverseQ = Read-DerInteger -data $der -offset ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($p)
 
-$apiKey = "gkPx5g3xgL2pthIg16"
+$apiKey = $env:BYBIT_API_KEY
 $recvWindow = "5000"
 
 function Call-API {

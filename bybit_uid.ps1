@@ -13,7 +13,7 @@ function Read-DerInteger($d, [ref]$o) {
     $o.Value += $l; return $t
 }
 
-$pem = [System.IO.File]::ReadAllText("bybit_private.pem")
+$pem = [System.IO.File]::ReadAllText($env:BYBIT_PRIVATE_KEY_PATH)
 $b64 = ($pem -replace '-----[A-Z ]+-----', '') -replace '\s', ''
 $der = [System.Convert]::FromBase64String($b64)
 $o = 0
@@ -34,7 +34,7 @@ $rsaP.InverseQ = Read-DerInteger $der ([ref]$o)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($rsaP)
 
-$ak = "gkPx5g3xgL2pthIg16"
+$ak = $env:BYBIT_API_KEY
 $rw = "5000"
 $ts = [System.DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
 $ps = "${ts}${ak}${rw}accountType=UNIFIED"

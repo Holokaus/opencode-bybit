@@ -1,0 +1,23 @@
+# Paper Trader Configuration Example
+# Copy to paper_trading/run_paper_trader.ps1 and replace placeholders
+
+$Script:Config = @{
+    CheckIntervalSec = 60
+    MaxConcurrent    = 3
+    UseDemoApi       = $true              # $true = testnet, $false = mainnet
+    DemoApiUrl       = "https://api-testnet.bybit.com"
+    MainApiUrl       = "https://api.bybit.com"
+    # Read from environment:
+    ApiKey           = $env:BYBIT_API_KEY                 # mainnet RSA key
+    DemoApiKey       = $env:BYBIT_DEMO_API_KEY            # testnet HMAC key
+    DemoApiSecret    = $env:BYBIT_DEMO_API_SECRET         # testnet HMAC secret
+    Symbols = @(
+        @{ Symbol="ICPUSDT"; Strategy="ADX"; TF="12h"; Interval="720"
+           ADXThreshold=25; TP=0.5; SL=0.5; FeePercent=0.1
+           UseTrendFilter=$false; BaseCapital=50.0 }
+        @{ Symbol="SOLUSDT"; Strategy="DIVERGENCE"; TF="4h"; Interval="240"
+           TP=0.5; SL=1.5; FeePercent=0.1
+           PivotPeriod=3; MinScore=1; MaxBars=60; MaxPP=5
+           UseTrendFilter=$true; BaseCapital=50.0 }
+    )
+}

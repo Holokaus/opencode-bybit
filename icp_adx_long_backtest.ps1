@@ -1,5 +1,5 @@
 # ============================================================
-#  ICP 12h ADX>25 LONG-only — Focused Backtest
+#  ICP 12h ADX>25 LONG-only Ã¢â‚¬â€ Focused Backtest
 #  Phase 3: TP/SL optimization + Walk-forward validation
 # ============================================================
 
@@ -32,7 +32,7 @@ function Read-DerInteger {
     return $trimmed
 }
 
-$pem = Get-Content -Raw "bybit_private.pem"
+$pem = Get-Content -Raw $env:BYBIT_PRIVATE_KEY_PATH
 $b64 = ($pem -replace '-----.+-----', '' -replace '\s', '')
 $der = [System.Convert]::FromBase64String($b64)
 $off = 0
@@ -50,7 +50,7 @@ $params.DQ = Read-DerInteger -data $der -offset ([ref]$off)
 $params.InverseQ = Read-DerInteger -data $der -offset ([ref]$off)
 $rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
 $rsa.ImportParameters($params)
-$apiKey = "gkPx5g3xgL2pthIg16"
+$apiKey = $env:BYBIT_API_KEY
 $recvWindow = "5000"
 $baseUrl = "https://api.bybit.com"
 
