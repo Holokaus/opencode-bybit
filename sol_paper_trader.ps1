@@ -50,11 +50,11 @@ function Calc-RSI($p, $period) {
 function Calc-EMA($p, $per) { $e=[double[]]::new($p.Count); $e[0]=$p[0]; $m=2/($per+1); for($i=1;$i-lt$p.Count;$i++){$e[$i]=$p[$i]*$m+$e[$i-1]*(1-$m)}; return $e }
 function Calc-ATR($h,$l,$c,$per){$tr=[double[]]::new($c.Count);for($i=1;$i-lt$c.Count;$i++){$hl=$h[$i]-$l[$i];$hc=[Math]::Abs($h[$i]-$c[$i-1]);$lc=[Math]::Abs($l[$i]-$c[$i-1]);$tr[$i]=[Math]::Max($hl,[Math]::Max($hc,$lc))};$a=[double[]]::new($c.Count);if($c.Count-gt$per){$a[$per]=($tr[1..$per]|Measure-Object -Average).Average;for($i=$per+1;$i-lt$c.Count;$i++){$a[$i]=($a[$i-1]*($per-1)+$tr[$i])/$per}};return $a}
 
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host "  SOL COMBINATION FINDER + LIVE PAPER TRADER" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "================================================================"
+Write-Output "  SOL COMBINATION FINDER + LIVE PAPER TRADER"
+Write-Output "================================================================"
 
-Write-Host "Fetching 4h data (1000 candles)..." -ForegroundColor Yellow
+Write-Output "Fetching 4h data (1000 candles)..."
 $klines = Get-K "240" 1000
 $close = $klines | ForEach-Object { [double]$_[4] }; $high = $klines | ForEach-Object { [double]$_[2] }
 $low = $klines | ForEach-Object { [double]$_[3] }; $volume = $klines | ForEach-Object { [double]$_[5] }
@@ -70,15 +70,15 @@ $macdHist = [double[]]::new($close.Count); for($i=0;$i-lt$close.Count;$i++){$mac
 $ob=68; $os=42
 
 # Test RSI alone first
-Write-Host "`n--- RSI(41) Alone (baseline) ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) Alone (baseline) ---"
 $lw=0;$ll=0;$sw=0;$sl=0
 for($i=42;$i-lt$close.Count-5;$i++){
     if($rsi41[$i-1]-gt$os-and$rsi41[$i]-le$os-and$rsi41[$i]-ne0){$fH=($close[($i+1)..($i+3)]|Measure-Object -Maximum).Maximum;if($fH-gt$close[$i]*1.01){$lw++}else{$ll++}}
     if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}
 }
-$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Host "  RSI(41) only: $wr`% WR ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan
+$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Output "  RSI(41) only: $wr`% WR ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 
-Write-Host "`n--- RSI(41) + MA Trend Filter ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) + MA Trend Filter ---"
 foreach($maP in @(20,30,40,50,60,70,80,90,100,120,150,200)){
     $ma=Calc-EMA $close $maP;$lw=0;$ll=0;$sw=0;$sl=0
     for($i=100;$i-lt$close.Count-5;$i++){
@@ -86,69 +86,69 @@ foreach($maP in @(20,30,40,50,60,70,80,90,100,120,150,200)){
         if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){if($close[$i]-lt$ma[$i]){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}}
     }
     $tt=$lw+$ll+$sw+$sl
-    if($tt-ge3){$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Host "  MA($maP): $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan}
+    if($tt-ge3){$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Output "  MA($maP): $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 }
 
-Write-Host "`n--- RSI(41) + MACD Filter ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) + MACD Filter ---"
 $lw=0;$ll=0;$sw=0;$sl=0
 for($i=50;$i-lt$close.Count-5;$i++){
     if($rsi41[$i-1]-gt$os-and$rsi41[$i]-le$os-and$rsi41[$i]-ne0){if($macdHist[$i]-gt0){$fH=($close[($i+1)..($i+3)]|Measure-Object -Maximum).Maximum;if($fH-gt$close[$i]*1.01){$lw++}else{$ll++}}}
     if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){if($macdHist[$i]-lt0){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}}
 }
 $tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1)
-Write-Host "  RSI+MACD: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan
+Write-Output "  RSI+MACD: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 
-Write-Host "`n--- RSI(41) + MACD + MA(50) ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) + MACD + MA(50) ---"
 $ma50=Calc-EMA $close 50;$lw=0;$ll=0;$sw=0;$sl=0
 for($i=100;$i-lt$close.Count-5;$i++){
     if($rsi41[$i-1]-gt$os-and$rsi41[$i]-le$os-and$rsi41[$i]-ne0){if($close[$i]-gt$ma50[$i]-and$macdHist[$i]-gt0){$fH=($close[($i+1)..($i+3)]|Measure-Object -Maximum).Maximum;if($fH-gt$close[$i]*1.01){$lw++}else{$ll++}}}
     if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){if($close[$i]-lt$ma50[$i]-and$macdHist[$i]-lt0){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}}
 }
-$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Host "  RSI+MA50+MACD: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan
+$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Output "  RSI+MA50+MACD: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 
-Write-Host "`n--- RSI(41) + Volume Confirmation ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) + Volume Confirmation ---"
 $volMA=Calc-EMA $volume 20;$lw=0;$ll=0;$sw=0;$sl=0
 for($i=60;$i-lt$close.Count-5;$i++){
     if($rsi41[$i-1]-gt$os-and$rsi41[$i]-le$os-and$rsi41[$i]-ne0){if($volume[$i]-gt$volMA[$i]*0.8){$fH=($close[($i+1)..($i+3)]|Measure-Object -Maximum).Maximum;if($fH-gt$close[$i]*1.01){$lw++}else{$ll++}}}
     if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){if($volume[$i]-gt$volMA[$i]*0.8){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}}
 }
-$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Host "  RSI+Vol: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan
+$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Output "  RSI+Vol: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 
-Write-Host "`n--- RSI(41) + ATR Regime Filter (only trade when ATR > avg) ---" -ForegroundColor Yellow
+Write-Output "`n--- RSI(41) + ATR Regime Filter (only trade when ATR > avg) ---"
 $atrAvg = ($atr14[50..($atr14.Count-1)] | Measure-Object -Average).Average;$lw=0;$ll=0;$sw=0;$sl=0
 for($i=60;$i-lt$close.Count-5;$i++){
     if($rsi41[$i-1]-gt$os-and$rsi41[$i]-le$os-and$rsi41[$i]-ne0){if($atr14[$i]-gt$atrAvg){$fH=($close[($i+1)..($i+3)]|Measure-Object -Maximum).Maximum;if($fH-gt$close[$i]*1.01){$lw++}else{$ll++}}}
     if($rsi41[$i-1]-lt$ob-and$rsi41[$i]-ge$ob-and$rsi41[$i]-ne100){if($atr14[$i]-gt$atrAvg){$fL=($close[($i+1)..($i+3)]|Measure-Object -Minimum).Minimum;if($fL-lt$close[$i]*0.99){$sw++}else{$sl++}}}
 }
-$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Host "  RSI+ATRregime: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))" -ForegroundColor Cyan
+$tt=$lw+$ll+$sw+$sl;$wr=[Math]::Round(($lw+$sw)/$tt*100,1);Write-Output "  RSI+ATRregime: $wr`% ($tt trades, L:$lw/$($lw+$ll) S:$sw/$($sw+$sl))"
 
 # BEST COMBO summary
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  BEST COMBINATION SUMMARY" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host ""
-Write-Host "  RSI(41) alone: 21 signals in 166 days (~4/month)" -ForegroundColor White
-Write-Host "  Add MA(50) filter: Only trade WITH the trend" -ForegroundColor White
-Write-Host "  Add MACD hist > 0 for longs / < 0 for shorts" -ForegroundColor White
-Write-Host "  Add ATR regime: Only trade when volatility above average" -ForegroundColor White
-Write-Host "  After a LOSS: Skip next signal (WR drops to 30.8%)" -ForegroundColor White
-Write-Host ""
+Write-Output "`n================================================================"
+Write-Output "  BEST COMBINATION SUMMARY"
+Write-Output "================================================================"
+Write-Output ""
+Write-Output "  RSI(41) alone: 21 signals in 166 days (~4/month)"
+Write-Output "  Add MA(50) filter: Only trade WITH the trend"
+Write-Output "  Add MACD hist > 0 for longs / < 0 for shorts"
+Write-Output "  Add ATR regime: Only trade when volatility above average"
+Write-Output "  After a LOSS: Skip next signal (WR drops to 30.8%)"
+Write-Output ""
 
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host "  LIVE PAPER TRADE - SOL 4h" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "================================================================"
+Write-Output "  LIVE PAPER TRADE - SOL 4h"
+Write-Output "================================================================"
 
 $latestRSI = $rsi41[-1]; $prevRSI = $rsi41[-2]; $curPrice = $close[-1]
 $candleStart = [DateTimeOffset]::FromUnixTimeMilliseconds($ts[0])
 
-Write-Host "`n  Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC" -ForegroundColor Gray
-Write-Host "  4h candle: $($candleStart.ToString('MM-dd HH:mm')) UTC" -ForegroundColor Gray
-Write-Host "  Price: $([Math]::Round($curPrice,2))" -ForegroundColor White
-Write-Host "  RSI(41): $([Math]::Round($latestRSI,1)) (prev: $([Math]::Round($prevRSI,1)))" -ForegroundColor White
-Write-Host "  OS: $os | OB: $ob" -ForegroundColor Gray
-Write-Host "  Vol: $([Math]::Round($atr14[-1],2)) ($([Math]::Round($atr14[-1]/$curPrice*100,2))`%)" -ForegroundColor Gray
-Write-Host "  MA(50): $([Math]::Round($ma50[-1],2)) | Price vs MA(50): $(if($curPrice-gt$ma50[-1]){'ABOVE (uptrend)'}else{'BELOW (downtrend)'})" -ForegroundColor Gray
-Write-Host "  MACD hist: $([Math]::Round($macdHist[-1],4)) $(if($macdHist[-1]-gt0){'(bullish)'}else{'(bearish)'})" -ForegroundColor Gray
+Write-Output "`n  Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm') UTC" -ForegroundColor Gray
+Write-Output "  4h candle: $($candleStart.ToString('MM-dd HH:mm')) UTC" -ForegroundColor Gray
+Write-Output "  Price: $([Math]::Round($curPrice,2))"
+Write-Output "  RSI(41): $([Math]::Round($latestRSI,1)) (prev: $([Math]::Round($prevRSI,1)))"
+Write-Output "  OS: $os | OB: $ob"
+Write-Output "  Vol: $([Math]::Round($atr14[-1],2)) ($([Math]::Round($atr14[-1]/$curPrice*100,2))`%)"
+Write-Output "  MA(50): $([Math]::Round($ma50[-1],2)) | Price vs MA(50): $(if($curPrice-gt$ma50[-1]){'ABOVE (uptrend)'}else{'BELOW (downtrend)'})" -ForegroundColor Gray
+Write-Output "  MACD hist: $([Math]::Round($macdHist[-1],4)) $(if($macdHist[-1]-gt0){'(bullish)'}else{'(bearish)'})" -ForegroundColor Gray
 
 # Signal decision
 $signal = "NONE"; $reason = @(); $direction = ""
@@ -168,17 +168,17 @@ if ($signal -ne "NONE") {
     else { $reason += "+ATR(FAIL)" }
 
     if ($validFilters -eq $totalFilters) {
-        Write-Host "`n  +---------------------------------------+" -ForegroundColor Green
-        Write-Host "  |  $signal SIGNAL CONFIRMED (All filters PASS) |" -ForegroundColor Green
-        Write-Host "  +---------------------------------------+" -ForegroundColor Green
+        Write-Output "`n  +---------------------------------------+"
+        Write-Output "  |  $signal SIGNAL CONFIRMED (All filters PASS) |"
+        Write-Output "  +---------------------------------------+"
     } elseif ($validFilters -ge 2) {
-        Write-Host "`n  +---------------------------------------+" -ForegroundColor Yellow
-        Write-Host "  |  $signal SIGNAL - PARTIAL ($validFilters/$totalFilters filters) |" -ForegroundColor Yellow
-        Write-Host "  +---------------------------------------+" -ForegroundColor Yellow
+        Write-Output "`n  +---------------------------------------+"
+        Write-Output "  |  $signal SIGNAL - PARTIAL ($validFilters/$totalFilters filters) |"
+        Write-Output "  +---------------------------------------+"
     } else {
-        Write-Host "`n  +---------------------------------------+" -ForegroundColor Red
-        Write-Host "  |  $signal SIGNAL - FILTERS REJECT ($($reason -join ' ')) |" -ForegroundColor Red
-        Write-Host "  +---------------------------------------+" -ForegroundColor Red
+        Write-Output "`n  +---------------------------------------+"
+        Write-Output "  |  $signal SIGNAL - FILTERS REJECT ($($reason -join ' ')) |" -ForegroundColor Red
+        Write-Output "  +---------------------------------------+"
     }
     
     $tp1 = if ($direction -eq "BUY") { $curPrice*1.015 } else { $curPrice*0.985 }
@@ -186,25 +186,25 @@ if ($signal -ne "NONE") {
     $tp2 = if ($direction -eq "BUY") { $curPrice+$atr14[-1]*2 } else { $curPrice-$atr14[-1]*2 }
     $sl2 = if ($direction -eq "BUY") { $curPrice-$atr14[-1]*1.75 } else { $curPrice+$atr14[-1]*1.75 }
     
-    Write-Host "  Filters: $($reason -join ' ')" -ForegroundColor Gray
-    Write-Host "  Entry: $([Math]::Round($curPrice,2))" -ForegroundColor White
-    Write-Host ("  TP(A): $([Math]::Round($tp1,2)) (1.5%) | SL(A): $([Math]::Round($sl1,2)) (0.5%)") -ForegroundColor White
-    Write-Host "  TP(B): $([Math]::Round($tp2,2)) (2xATR) | SL(B): $([Math]::Round($sl2,2)) (1.75xATR)" -ForegroundColor White
+    Write-Output "  Filters: $($reason -join ' ')" -ForegroundColor Gray
+    Write-Output "  Entry: $([Math]::Round($curPrice,2))"
+    Write-Output ("  TP(A): $([Math]::Round($tp1,2)) (1.5%) | SL(A): $([Math]::Round($sl1,2)) (0.5%)") -ForegroundColor White
+    Write-Output "  TP(B): $([Math]::Round($tp2,2)) (2xATR) | SL(B): $([Math]::Round($sl2,2)) (1.75xATR)"
 } elseif ($latestRSI -le $os) {
-    Write-Host "`n  NO SIGNAL: RSI below OS ($os), already oversold" -ForegroundColor Yellow
-    Write-Host "  Wait for RSI to RISE above $os first, then cross back below" -ForegroundColor Gray
+    Write-Output "`n  NO SIGNAL: RSI below OS ($os), already oversold"
+    Write-Output "  Wait for RSI to RISE above $os first, then cross back below"
 } elseif ($latestRSI -ge $ob) {
-    Write-Host "`n  NO SIGNAL: RSI above OB ($ob), already overbought" -ForegroundColor Yellow
-    Write-Host "  Wait for RSI to FALL below $ob first, then cross back above" -ForegroundColor Gray
+    Write-Output "`n  NO SIGNAL: RSI above OB ($ob), already overbought"
+    Write-Output "  Wait for RSI to FALL below $ob first, then cross back above"
 } elseif ($latestRSI -lt $os + 5) {
-    Write-Host "`n  APPROACHING OS: RSI at $([Math]::Round($latestRSI,1)), $($os - $latestRSI) points from signal" -ForegroundColor Yellow
+    Write-Output "`n  APPROACHING OS: RSI at $([Math]::Round($latestRSI,1)), $($os - $latestRSI) points from signal"
 } elseif ($latestRSI -gt $ob - 5) {
-    Write-Host "`n  APPROACHING OB: RSI at $([Math]::Round($latestRSI,1)), $($latestRSI - $ob) points from signal" -ForegroundColor Yellow
+    Write-Output "`n  APPROACHING OB: RSI at $([Math]::Round($latestRSI,1)), $($latestRSI - $ob) points from signal"
 } else {
-    Write-Host "`n  NO SIGNAL - WAITING ($([Math]::Round($latestRSI,1)) is between $os-$ob)" -ForegroundColor DarkYellow
-    Write-Host "  RSI needs to cross below $os (LONG) or above $ob (SHORT)" -ForegroundColor Gray
+    Write-Output "`n  NO SIGNAL - WAITING ($([Math]::Round($latestRSI,1)) is between $os-$ob)"
+    Write-Output "  RSI needs to cross below $os (LONG) or above $ob (SHORT)"
 }
 
 $log = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm')] P=$([Math]::Round($curPrice,2)) R=$([Math]::Round($latestRSI,1)) A=$([Math]::Round($atr14[-1],2)) S=$signal M=$([Math]::Round($ma50[-1],2)) MACD=$([Math]::Round($macdHist[-1],4))"
 Add-Content -LiteralPath "paper_trading_log.txt" -Value $log -ErrorAction SilentlyContinue
-Write-Host "`n  Logged to paper_trading_log.txt" -ForegroundColor Gray
+Write-Output "`n  Logged to paper_trading_log.txt"

@@ -250,7 +250,7 @@ function Simulate-Trades { param($c, $h, $l, $bullSigs, $bearSigs, $ema, $ts, $m
             elseif ($hit -eq "SL") { $trades += @{ pnl = -$slPct; hit = 0 } }
         }
 
-        if ($bearSigs[$i] -ge $minScore -and (-not $useTrend -or $c[$i] -lt $ema[$i]) -and $canTrade) {
+        if ($bearSigs[$i] -ge $minScore -and (-not $useTrend -or $c[$i] -lt $ema[$i])) {
             $ep = $c[$i]; $tpP = $ep * (1 - $tpPct/100); $slP = $ep * (1 + $slPct/100); $hit = $null
             $maxJ = [Math]::Min($i + 48, $n)
             for ($j = $i + 1; $j -lt $maxJ; $j++) {
@@ -265,9 +265,9 @@ function Simulate-Trades { param($c, $h, $l, $bullSigs, $bearSigs, $ema, $ts, $m
 }
 
 # === MAIN ===
-Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  SOL DIVERGENCE GRID SEARCH v2" -ForegroundColor Cyan
-Write-Host "============================================" -ForegroundColor Cyan
+Write-Output "============================================"
+Write-Output "  SOL DIVERGENCE GRID SEARCH v2"
+Write-Output "============================================"
 
 $timeframes = @(@{name="2h"; int="120"}, @{name="4h"; int="240"})
 $pivotPeriods = @(3, 5, 7)
@@ -290,16 +290,16 @@ $slLevels = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0)
 $allResults = @()
 
 foreach ($tf in $timeframes) {
-    Write-Host "`n===== FETCHING $($tf.name) =====" -ForegroundColor Magenta
+    Write-Output "`n===== FETCHING $($tf.name) ====="
     $klines = Get-K $tf.int 600
-    if (-not $klines -or $klines.Count -lt 100) { Write-Host "No data"; continue }
+    if (-not $klines -or $klines.Count -lt 100) { Write-Output "No data"; continue }
 
     $c = $klines | % { [double]$_[4] }; $h = $klines | % { [double]$_[2] }
     $l = $klines | % { [double]$_[3] }; $v = $klines | % { [double]$_[5] }
     $ts = $klines | % { [long]$_[0] }; $n = $c.Count
-    Write-Host "  Candles: $n"
+    Write-Output "  Candles: $n"
 
-    Write-Host "  Computing indicators..."
+    Write-Output "  Computing indicators..."
     $rsi = Calc-RSI $c 14; $macd = Calc-MACD $c 12 26 9
     $stoch = Calc-Stoch $h $l $c 14 3; $cci = Calc-CCI $h $l $c 10
     $mom = Calc-MOM $c 10; $mfi = Calc-MFI $h $l $c $v 14
@@ -308,11 +308,11 @@ foreach ($tf in $timeframes) {
     $indNames = @("RSI","MACD","Hist","Stoch","CCI","Mom","OBV","CMF","MFI")
 
     foreach ($prd in $pivotPeriods) {
-        Write-Host "  GetPivotSigs prd=$prd..."
+        Write-Output "  GetPivotSigs prd=$prd..."
         $pivotSigs = Get-PivotSigs $l $h $prd
         $plCount = ($pivotSigs.pl | Where-Object { $_ -eq 1 }).Count
         $phCount = ($pivotSigs.ph | Where-Object { $_ -eq 1 }).Count
-        Write-Host "    PL sigs: $plCount, PH sigs: $phCount"
+        Write-Output "    PL sigs: $plCount, PH sigs: $phCount"
 
         foreach ($preset in $indPresets) {
             # Build aggregate bull/bear arrays across all active indicators
@@ -334,7 +334,7 @@ foreach ($tf in $timeframes) {
                         $totalBear = ($aggBear | Measure-Object -Sum).Sum
                         $nzB = ($aggBull | Where-Object { $_ -gt 0 }).Count
                         $nzBr = ($aggBear | Where-Object { $_ -gt 0 }).Count
-                        Write-Host "  $($tf.name) p$prd pp$mpp b$mb $($preset.name): bull=$totalBull ($nzB sigs) bear=$totalBear ($nzBr sigs)" -ForegroundColor Gray
+                        Write-Output "  $($tf.name) p$prd pp$mpp b$mb $($preset.name): bull=$totalBull ($nzB sigs) bear=$totalBear ($nzBr sigs)"
 
                         if ($totalBull -eq 0 -and $totalBear -eq 0) { continue }
 
@@ -349,7 +349,7 @@ foreach ($tf in $timeframes) {
                             $wr = [Math]::Round($tw / $tt * 100, 1)
                             $pnl = ($valid | % { $_.pnl } | Measure-Object -Sum).Sum
                             $score = [Math]::Round($wr * $tt / 100, 1)
-                            Write-Host "    s$ms => WR=$wr% T=$tt P=$([Math]::Round($pnl,1))" -ForegroundColor $(if ($wr -ge 60){'Green'}elseif($wr -ge 50){'Yellow'}else{'Gray'})
+                            Write-Output "    s$ms => WR=$wr% T=$tt P=$([Math]::Round($pnl,1))" ($wr -ge 60){'Green'}elseif($wr -ge 50){'Yellow'}else{'Gray'})
 
                             if ($wr -ge 55) {
                                 foreach ($tp in $tpLevels) {
@@ -373,26 +373,141 @@ foreach ($tf in $timeframes) {
     }
 }
 
-Write-Host "`n`n============================================" -ForegroundColor Cyan
-Write-Host "  RESULTS SUMMARY" -ForegroundColor Cyan
-Write-Host "============================================" -ForegroundColor Cyan
+Write-Output "`n`n============================================"
+Write-Output "  RESULTS SUMMARY"
+Write-Output "============================================"
 
-if ($allResults.Count -eq 0) { Write-Host "No results!"; exit }
+if ($allResults.Count -eq 0) { Write-Output "No results!"; exit }
 
 $topWR = $allResults | Where-Object { $_.Trades -ge 10 } | Sort-Object WR -Descending | Select-Object -First 15
 $topScore = $allResults | Sort-Object Score -Descending | Select-Object -First 15
 $topPnl = $allResults | Sort-Object PnL -Descending | Select-Object -First 15
 
-Write-Host "`n--- TOP 15 BY WIN RATE (min 10 trades) ---" -ForegroundColor Green
+Write-Output "`n--- TOP 15 BY WIN RATE (min 10 trades) ---"
 $topWR | Format-Table TF, Prd, MinS, Ind, TP, SL, WR, Trades, PnL, Score -AutoSize -Wrap
 
-Write-Host "`n--- TOP 15 BY SCORE ---" -ForegroundColor Yellow
+Write-Output "`n--- TOP 15 BY SCORE ---"
 $topScore | Format-Table TF, Prd, MinS, Ind, TP, SL, WR, Trades, PnL, Score -AutoSize -Wrap
 
-Write-Host "`n--- TOP 15 BY PnL ---" -ForegroundColor Magenta
+Write-Output "`n--- TOP 15 BY PnL ---"
 $topPnl | Format-Table TF, Prd, MinS, Ind, TP, SL, WR, Trades, PnL, Score -AutoSize -Wrap
 
 $csvPath = "sol_divergence_results.csv"
 $allResults | Export-Csv -Path $csvPath -NoTypeInformation
-Write-Host "`nFull results: $csvPath" -ForegroundColor Cyan
-Write-Host "Total configs: $($allResults.Count)" -ForegroundColor Cyan
+Write-Output "`nFull results: $csvPath"
+Write-Output "Total configs: $($allResults.Count)"
+
+# ===== WALK-FORWARD VALIDATION =====
+Write-Output "`n`n============================================"
+Write-Output "  WALK-FORWARD VALIDATION (top config)"
+Write-Output "============================================"
+
+$bestCfg = $allResults | Sort-Object Score -Descending | Select-Object -First 1
+if ($bestCfg) {
+    Write-Output "Config: TF=$($bestCfg.TF) Prd=$($bestCfg.Prd) Ind=$($bestCfg.Ind) TP=$($bestCfg.TP) SL=$($bestCfg.SL) MinS=$($bestCfg.MinS)"
+    $wfKlines = Get-K $bestCfg.TF 600
+    if ($wfKlines -and $wfKlines.Count -ge 200) {
+        $wfC = $wfKlines | % { [double]$_[4] }; $wfH = $wfKlines | % { [double]$_[2] }; $wfL = $wfKlines | % { [double]$_[3] }; $wfV = $wfKlines | % { [double]$_[5] }; $wfTs = $wfKlines | % { [long]$_[0] }; $wfN = $wfC.Count
+        $wfRsi = Calc-RSI $wfC 14; $wfMacd = Calc-MACD $wfC 12 26 9; $wfStoch = Calc-Stoch $wfH $wfL $wfC 14 3
+        $wfCci = Calc-CCI $wfH $wfL $wfC 10; $wfMom = Calc-MOM $wfC 10; $wfMfi = Calc-MFI $wfH $wfL $wfC $wfV 14
+        $wfCmf = Calc-CMF $wfH $wfL $wfC $wfV 21; $wfObv = Calc-OBV $wfC $wfV
+        $wfIndData = @($wfRsi, $wfMacd.macd, $wfMacd.hist, $wfStoch, $wfCci, $wfMom, $wfObv, $wfCmf, $wfMfi)
+        $wfPresetIdx = [Math]::Max(0, $indPresets.IndexOf(($indPresets | Where-Object { $_.name -eq $bestCfg.Ind })))
+        if ($wfPresetIdx -ge 0) {
+            $wfPreset = $indPresets[$wfPresetIdx]; $wfPivotSigs = Get-PivotSigs $wfL $wfH $bestCfg.Prd
+            $wfAggBull = [int[]]::new($wfN); $wfAggBear = [int[]]::new($wfN)
+            for ($ai = 0; $ai -lt $wfIndData.Count; $ai++) {
+                if (-not $wfPreset.m[$ai]) { continue }
+                $wfDiv = Test-Divergence $wfIndData[$ai] $wfC $wfPivotSigs.pl $wfPivotSigs.ph $bestCfg.Prd $bestCfg.MBar $bestCfg.MPP
+                for ($bi = 0; $bi -lt $wfN; $bi++) { $wfAggBull[$bi] += $wfDiv.bull[$bi]; $wfAggBear[$bi] += $wfDiv.bear[$bi] }
+            }
+            $wfEma = Calc-EMA $wfC 200
+            $split = $wfN * 0.7
+            # In-sample (70%)
+            $isTrades = Simulate-Trades $wfC[0..([int]$split)] $wfH[0..([int]$split)] $wfL[0..([int]$split)] $wfAggBull[0..([int]$split)] $wfAggBear[0..([int]$split)] $wfEma[0..([int]$split)] $wfTs[0..([int]$split)] $bestCfg.MinS $true $bestCfg.TP $bestCfg.SL $bestCfg.Prd ([int]$split+1)
+            $isV = $isTrades | Where-Object { $_.hit -ne $null }; $isW = ($isV | Where-Object { $_.hit -eq 1 }).Count; $isL = ($isV | Where-Object { $_.hit -eq 0 }).Count
+            $isWr = if ($isW+$isL -ge 3) { [Math]::Round($isW/($isW+$isL)*100,1) } else { 0 }
+            Write-Output "  In-sample (70%): WR=$isWr% T=$($isW+$isL)"
+            # Out-of-sample (30%)
+            $osStart = [int]$split + 1; $osLen = $wfN - $osStart
+            $osTrades = Simulate-Trades $wfC[$osStart..($wfN-1)] $wfH[$osStart..($wfN-1)] $wfL[$osStart..($wfN-1)] $wfAggBull[$osStart..($wfN-1)] $wfAggBear[$osStart..($wfN-1)] $wfEma[$osStart..($wfN-1)] $wfTs[$osStart..($wfN-1)] $bestCfg.MinS $true $bestCfg.TP $bestCfg.SL $bestCfg.Prd $osLen
+            $osV = $osTrades | Where-Object { $_.hit -ne $null }; $osW = ($osV | Where-Object { $_.hit -eq 1 }).Count; $osL = ($osV | Where-Object { $_.hit -eq 0 }).Count
+            $osWr = if ($osW+$osL -ge 3) { [Math]::Round($osW/($osW+$osL)*100,1) } else { 0 }
+            Write-Output "  Out-of-sample (30%): WR=$osWr% T=$($osW+$osL)" ($osWr -ge $isWr -or $isWr -eq 0) {'Green'}elseif($osWr -ge 50){'Yellow'}else{'Red'})
+            if ($osW -ge 2 -and $osWr -ge 40) {
+                $osPnl = ($osV | % { $_.pnl } | Measure-Object -Sum).Sum
+                Write-Output "  OOS PnL: $([Math]::Round($osPnl,1))"
+            }
+        }
+    }
+} else { Write-Output "No best config found" }
+
+# ===== MONTE CARLO SIMULATION =====
+Write-Output "`n`n============================================"
+Write-Output "  MONTE CARLO SIMULATION (best config)"
+Write-Output "============================================"
+if ($bestCfg) {
+    $mcKlines = Get-K $bestCfg.TF 600
+    if ($mcKlines -and $mcKlines.Count -ge 200) {
+        $mcC = $mcKlines | % { [double]$_[4] }; $mcH = $mcKlines | % { [double]$_[2] }; $mcL = $mcKlines | % { [double]$_[3] }; $mcV = $mcKlines | % { [double]$_[5] }; $mcTs = $mcKlines | % { [long]$_[0] }; $mcN = $mcC.Count
+        $mcRsi = Calc-RSI $mcC 14; $mcMacd = Calc-MACD $mcC 12 26 9; $mcStoch = Calc-Stoch $mcH $mcL $mcC 14 3
+        $mcCci = Calc-CCI $mcH $mcL $mcC 10; $mcMom = Calc-MOM $mcC 10; $mcMfi = Calc-MFI $mcH $mcL $mcC $mcV 14
+        $mcCmf = Calc-CMF $mcH $mcL $mcC $mcV 21; $mcObv = Calc-OBV $mcC $mcV
+        $mcIndData = @($mcRsi, $mcMacd.macd, $mcMacd.hist, $mcStoch, $mcCci, $mcMom, $mcObv, $mcCmf, $mcMfi)
+        $mcPresetIdx = [Math]::Max(0, $indPresets.IndexOf(($indPresets | Where-Object { $_.name -eq $bestCfg.Ind })))
+        if ($mcPresetIdx -ge 0) {
+            $mcPreset = $indPresets[$mcPresetIdx]; $mcPivotSigs = Get-PivotSigs $mcL $mcH $bestCfg.Prd
+            $mcAggBull = [int[]]::new($mcN); $mcAggBear = [int[]]::new($mcN)
+            for ($ai = 0; $ai -lt $mcIndData.Count; $ai++) {
+                if (-not $mcPreset.m[$ai]) { continue }
+                $mcDiv = Test-Divergence $mcIndData[$ai] $mcC $mcPivotSigs.pl $mcPivotSigs.ph $bestCfg.Prd $bestCfg.MBar $bestCfg.MPP
+                for ($bi = 0; $bi -lt $mcN; $bi++) { $mcAggBull[$bi] += $mcDiv.bull[$bi]; $mcAggBear[$bi] += $mcDiv.bear[$bi] }
+            }
+            $mcEma = Calc-EMA $mcC 200
+            $mcTrades = Simulate-Trades $mcC $mcH $mcL $mcAggBull $mcAggBear $mcEma $mcTs $bestCfg.MinS $true $bestCfg.TP $bestCfg.SL $bestCfg.Prd $mcN
+            $mcValid = $mcTrades | Where-Object { $_.hit -ne $null }
+            if ($mcValid.Count -ge 10) {
+                $mcPnlList = $mcValid | ForEach-Object { [PSCustomObject]@{ PnL = $_.pnl } }
+                Write-Output "  Trades captured: $($mcPnlList.Count)"
+                Import-Module (Join-Path $PSScriptRoot "Modules\MonteCarlo.psm1") -Force -ErrorAction SilentlyContinue
+                if (Get-Command Invoke-MonteCarloSimulation -ErrorAction SilentlyContinue) {
+                    $mcResult = Invoke-MonteCarloSimulation -TradeHistory $mcPnlList -Iterations 10000 -InitialCapital 100 -OutputPath "sol_divergence_mc.csv"
+                    if ($mcResult -and $mcResult.Summary) {
+                        Write-Output "  Monte Carlo (10k iterations, 100 capital):"
+                        Write-Output "    Mean return: $($mcResult.Summary.MeanReturn)%" -gt 0){'Green'}else{'Red'})
+                        Write-Output "    Median return: $($mcResult.Summary.MedianReturn)%"
+                        Write-Output "    Mean max drawdown: $($mcResult.Summary.MeanMaxDrawdown)%"
+                        Write-Output "    CI95: [$($mcResult.Summary.Ci95Low), $($mcResult.Summary.Ci95High)]"
+                    }
+                } else {
+                    Write-Output "  MonteCarlo module not loaded — running inline simulation"
+                    $mcIterations = 10000; $mcCapital = 100.0
+                    $mcRng = [System.Random]::new(); $mcResults2 = @()
+                    for ($iter = 0; $iter -lt $mcIterations; $iter++) {
+                        $cap = $mcCapital; $peak = $mcCapital; $mdd = 0.0
+                        for ($ti = 0; $ti -lt $mcValid.Count; $ti++) {
+                            $p = $mcValid[$mcRng.Next(0, $mcValid.Count)].pnl
+                            $cap += $p; if ($cap -gt $peak) { $peak = $cap }; $dd2 = ($peak - $cap) / $peak * 100; if ($dd2 -gt $mdd) { $mdd = $dd2 }
+                        }
+                        $ret = ($cap - $mcCapital) / $mcCapital * 100
+                        $mcResults2 += [PSCustomObject]@{ Iteration = $iter+1; FinalCapital = $cap; TotalReturn = $ret; MaxDrawdown = $mdd }
+                    }
+                    $mcRets2 = $mcResults2 | % { [double]$_.TotalReturn }; $mcSorted2 = $mcRets2 | Sort-Object
+                    $mcMean2 = ($mcRets2 | Measure-Object -Average).Average
+                    $mcMed2 = $mcSorted2[[Math]::Floor($mcSorted2.Count/2)]
+                    $mcDD2 = ($mcResults2 | % { [double]$_.MaxDrawdown } | Measure-Object -Average).Average
+                    Write-Output "  Monte Carlo (10k iterations, 100 capital):"
+                    Write-Output "    Mean return: $([Math]::Round($mcMean2,2))%" -gt 0){'Green'}else{'Red'})
+                    Write-Output "    Median return: $([Math]::Round($mcMed2,2))%"
+                    Write-Output "    Mean max drawdown: $([Math]::Round($mcDD2,2))%"
+                    $mcCaps2 = $mcResults2 | % { [double]$_.FinalCapital } | Sort-Object
+                    $mcCiLow2 = $mcCaps2[[Math]::Floor($mcCaps2.Count*0.025)]
+                    $mcCiHigh2 = $mcCaps2[[Math]::Floor($mcCaps2.Count*0.975)]
+                    Write-Output "    CI95: [$([Math]::Round($mcCiLow2,2)), $([Math]::Round($mcCiHigh2,2))]"
+                }
+            } else {
+                Write-Output "  Not enough trades for Monte Carlo (need 10, got $($mcValid.Count))"
+            }
+        }
+    }
+} else { Write-Output "No best config found" }

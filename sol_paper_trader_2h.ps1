@@ -11,9 +11,9 @@ function Get-K { param($int,$lim) $r=Call-API -ep "/v5/market/kline" -q "categor
 function Calc-RSI { param($p,$per) $g=[double[]]::new($p.Count);$l=[double[]]::new($p.Count);for($i=1;$i-lt$p.Count;$i++){$d=$p[$i]-$p[$i-1];if($d-ge0){$g[$i]=$d}else{$l[$i]=-$d}};$ag=($g[1..$per]|Measure-Object -Sum).Sum/$per;$al=($l[1..$per]|Measure-Object -Sum).Sum/$per;$r=[double[]]::new($p.Count);for($i=$per;$i-lt$p.Count;$i++){if($i-gt$per){$ag=(($ag*($per-1))+$g[$i])/$per;$al=(($al*($per-1))+$l[$i])/$per};if($al-eq0){$r[$i]=100}else{$r[$i]=100-(100/(1+($ag/$al)))}};return $r }
 function Calc-EMA { param($p,$per) $e=[double[]]::new($p.Count);$e[0]=$p[0];$m=2/($per+1);for($i=1;$i-lt$p.Count;$i++){$e[$i]=$p[$i]*$m+$e[$i-1]*(1-$m)};return $e }
 
-Write-Host "SOL PAPER TRADER - 2h RSI(38)+Volume" -ForegroundColor Cyan
+Write-Output "SOL PAPER TRADER - 2h RSI(38)+Volume"
 $per=38;$ob=60;$os=36;$int="120";$nowDt=Get-Date
-$klines=Get-K $int 500;if(-not$klines){Write-Host "FAILED" -ForegroundColor Red;exit 1}
+$klines=Get-K $int 500;if(-not$klines){Write-Output "FAILED" 1}
 $close=$klines|%{[double]$_[4]};$vol=$klines|%{[double]$_[5]};$ts=$klines|%{[long]$_[0]}
 $rsi=Calc-RSI $close $per;$vma=Calc-EMA $vol 20
 $lr=$rsi[-1];$pr=$rsi[-2];$cp=$close[-1];$lt=[DateTimeOffset]::FromUnixTimeMilliseconds($ts[-1])
@@ -26,7 +26,7 @@ Write-Output "  OB=$ob OS=$os | Vol: $lastV vs MA20: $lastM"
 $sig=$null;$dir=$null
 if($isL-and$vOk){$sig="LONG";$dir="BUY"}elseif($isS-and$vOk){$sig="SHORT";$dir="SELL"}
 if($sig){
-    Write-Host "  [>>] $dir $sig SIGNAL" -ForegroundColor Green
+    Write-Output "  [>>] $dir $sig SIGNAL"
     $tpP=if($dir-eq"BUY"){$cp*1.005}else{$cp*0.995};$slP=if($dir-eq"BUY"){$cp*0.995}else{$cp*1.005}
     Write-Output "  Entry: $([Math]::Round($cp,4)) TP: $([Math]::Round($tpP,4)) SL: $([Math]::Round($slP,4))"
     $tsStr=Get-Date -Format "yyyy-MM-dd HH:mm";$rStr=[Math]::Round($lr,1);$vStr=[Math]::Round($vol[-1],0)

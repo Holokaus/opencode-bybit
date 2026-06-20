@@ -58,12 +58,12 @@ function Calculate-RSI($prices, $period) {
     return $rsi
 }
 
-Write-Host "=== CONTINUING: 6h, 12h, 1d, 2d ===" -ForegroundColor Cyan
+Write-Output "=== CONTINUING: 6h, 12h, 1d, 2d ==="
 $tfs = @(@{n="6h"; i="360"}, @{n="12h"; i="720"}, @{n="1d"; i="D"}, @{n="2d"; i="2"})
 foreach ($tf in $tfs) {
-    Write-Host "`nScanning $($tf.n)..." -ForegroundColor Yellow
+    Write-Output "`nScanning $($tf.n)..."
     $klines = Get-Klines -int $tf.i -lim 300
-    if (-not $klines -or $klines.Count -lt 50) { Write-Host "  No data"; continue }
+    if (-not $klines -or $klines.Count -lt 50) { Write-Output "  No data"; continue }
     $close = $klines | ForEach-Object { [double]$_[4] }
     $best = $null; $bestScore = 0
     foreach ($per in (2..50)) {
@@ -87,5 +87,5 @@ foreach ($tf in $tfs) {
             }
         }
     }
-    if ($best) { Write-Host "  RSI($($best.period)) OB=$($best.ob) OS=$($best.os) | last RSI=$($best.lastRsi) | avg=$($best.avg) | $($best.total) signal zones | OB hits=$($best.obHits) OS hits=$($best.osHits)" -ForegroundColor Green }
+    if ($best) { Write-Output "  RSI($($best.period)) OB=$($best.ob) OS=$($best.os) | last RSI=$($best.lastRsi) | avg=$($best.avg) | $($best.total) signal zones | OB hits=$($best.obHits) OS hits=$($best.osHits)" }
 }

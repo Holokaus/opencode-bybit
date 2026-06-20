@@ -115,12 +115,12 @@ function Calc-StochRSI {
 
 function Write-Bar { param($len) Write-Output ("-" * $len) }
 
-Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "  ICP DEEP DIVE - THOROUGH ANALYSIS" -ForegroundColor Cyan
-Write-Host "================================================================" -ForegroundColor Cyan
+Write-Output "================================================================"
+Write-Output "  ICP DEEP DIVE - THOROUGH ANALYSIS"
+Write-Output "================================================================"
 
 # Cache all kline data first
-Write-Host "`n[0/6] CACHING ALL KLINES..." -ForegroundColor Yellow
+Write-Output "`n[0/6] CACHING ALL KLINES..."
 $tfDefs = @( @{n="15m";i="15"}, @{n="30m";i="30"}, @{n="1h";i="60"}, @{n="2h";i="120"}, @{n="4h";i="240"}, @{n="6h";i="360"}, @{n="12h";i="720"} )
 $klineCache = @{}
 foreach ($tf in $tfDefs) {
@@ -131,7 +131,7 @@ foreach ($tf in $tfDefs) {
 Write-Output "  Cached $($klineCache.Count) timeframes"
 
 # Phase 1: RSI bruteforce (fixed sort)
-Write-Host "`n--- PHASE 1: RSI BRUTEFORCE ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 1: RSI BRUTEFORCE ---"
 $obs = @(60,64,68,72,76,80,84); $oss = @(20,24,28,32,36,40,44)
 $allTf = @(); $tfNum = 0
 Write-Output "  Testing RSI periods 5-50 (step 3) x 7 OB levels x 7 OS levels per timeframe..."
@@ -169,7 +169,7 @@ foreach ($tf in $tfDefs) {
     }
     if ($bestPer) {
         $allTf += [PSCustomObject]@{ tf=$tf.n; per=$bestPer; ob=$bestOb; os=$bestOs; wr=$bestWr; total=$bestTt; lw=$bestLw; ll=$bestLl; sw=$bestSw; sl=$bestSl }
-        Write-Host "    => RSI($bestPer) OB=$bestOb OS=$bestOs | WR=$bestWr% ($bestTt sigs)" -ForegroundColor Green
+        Write-Output "    => RSI($bestPer) OB=$bestOb OS=$bestOs | WR=$bestWr% ($bestTt sigs)"
     }
 }
 
@@ -183,12 +183,12 @@ Write-Output "`n  Top 3 timeframes: $($top3[0].tf) ($($top3[0].wr)%), $($top3[1]
 Write-Bar 80
 
 # Phase 2: Full indicator combos for each top timeframe
-Write-Host "`n--- PHASE 2: INDICATOR COMBOS (TOP 3 TIMEFRAMES) ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 2: INDICATOR COMBOS (TOP 3 TIMEFRAMES) ---"
 
 $allResults = @() # store final config candidates
 
 foreach ($winner in $top3) {
-    Write-Host "`n>>> $($winner.tf): RSI($($winner.per)) OB=$($winner.ob) OS=$($winner.os) <<<" -ForegroundColor Cyan
+    Write-Output "`n>>> $($winner.tf): RSI($($winner.per)) OB=$($winner.ob) OS=$($winner.os) <<<"
     $k = $klineCache[$winner.tf]; if (-not $k) { continue }
     $c = $k | % { [double]$_[4] }; $h = $k | % { [double]$_[2] }; $l = $k | % { [double]$_[3] }
     $v = $k | % { [double]$_[5] }; $ts = $k | % { [long]$_[0] }
@@ -226,7 +226,7 @@ foreach ($winner in $top3) {
                 if (($fH-$c[$i])/$c[$i]*100 -gt 1.0) { $sw++ } else { $sl++ } }
         }
         $t = $lw+$ll+$sw+$sl; $wr = if ($t) { [Math]::Round(($lw+$sw)/$t*100,1) } else { 0 }
-        Write-Host ("    {0,-30} WR={1,-5}% | {2} sigs (L:{3}/{4} S:{5}/{6})" -f $cfgName, $wr, $t, $lw, ($lw+$ll), $sw, ($sw+$sl))
+        Write-Output ("    {0,-30} WR={1,-5}% | {2} sigs (L:{3}/{4} S:{5}/{6})" -f $cfgName, $wr, $t, $lw, ($lw+$ll), $sw, ($sw+$sl))
         return @{ tf=$tfName; cfg=$cfgName; wr=$wr; total=$t; lw=$lw; ll=$ll; sw=$sw; sl=$sl }
     }
 
@@ -261,8 +261,8 @@ foreach ($winner in $top3) {
     $bestCombo = $comboList | Sort-Object score -Descending | Select-Object -First 1
     $bestComboEq = $comboList | Where-Object { $_.total -ge 5 } | Sort-Object score -Descending | Select-Object -First 1
     Write-Output "    ---"
-    Write-Host ("    Best overall: {0} -- WR={1}% ({2} sigs) score={3}" -f $bestCombo.cfg, $bestCombo.wr, $bestCombo.total, $bestCombo.score) -ForegroundColor Green
-    if ($bestComboEq.cfg -ne $bestCombo.cfg) { Write-Host ("    Best (>=5 sigs): {0} -- WR={1}% ({2} sigs)" -f $bestComboEq.cfg, $bestComboEq.wr, $bestComboEq.total) -ForegroundColor Yellow }
+    Write-Output ("    Best overall: {0} -- WR={1}% ({2} sigs) score={3}" -f $bestCombo.cfg, $bestCombo.wr, $bestCombo.total, $bestCombo.score) -ForegroundColor Green
+    if ($bestComboEq.cfg -ne $bestCombo.cfg) { Write-Output ("    Best (>=5 sigs): {0} -- WR={1}% ({2} sigs)" -f $bestComboEq.cfg, $bestComboEq.wr, $bestComboEq.total) -ForegroundColor Yellow }
 
     # Determine the config to use for TP/SL and sim
     $useCfg = if ($bestCombo.total -ge 5) { $bestCombo } else { $bestComboEq }
@@ -288,12 +288,12 @@ foreach ($winner in $top3) {
 }
 
 # Phase 3: TP/SL for each top timeframe's best combo
-Write-Host "`n--- PHASE 3: TP/SL BRUTEFORCE ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 3: TP/SL BRUTEFORCE ---"
 $tps = @(0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0,8.0)
 $sls = @(0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,5.0)
 
 foreach ($res in $allResults) {
-    Write-Host "`n>>> $($res.tf) with $($res.useCfgName) <<<" -ForegroundColor Cyan
+    Write-Output "`n>>> $($res.tf) with $($res.useCfgName) <<<"
     $c=$res.c; $h=$res.h; $l=$res.l; $v=$res.v; $rsi=$res.rsi; $vma=$res.vma
     $ob=$res.ob; $os=$res.os
 
@@ -342,12 +342,12 @@ foreach ($res in $allResults) {
 }
 
 # Phase 4: 3-month simulation for each (LONG only)
-Write-Host "`n--- PHASE 4: 3-MONTH SIMULATIONS ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 4: 3-MONTH SIMULATIONS ---"
 $startDt = [DateTimeOffset]::new(2026, 3, 12, 0, 0, 0, [TimeSpan]::Zero)
 $startMs = $startDt.ToUnixTimeMilliseconds()
 
 foreach ($res in $allResults) {
-    Write-Host "`n>>> $($res.tf) with $($res.useCfgName) <<<" -ForegroundColor Cyan
+    Write-Output "`n>>> $($res.tf) with $($res.useCfgName) <<<"
     $c=$res.c; $h=$res.h; $l=$res.l; $v=$res.v; $ts=$res.ts; $rsi=$res.rsi; $vma=$res.vma
     $ob=$res.ob; $os=$res.os
     $useVol = $res.useCfgName -ne "RSI alone"
@@ -380,9 +380,9 @@ foreach ($res in $allResults) {
 }
 
 # Phase 5: Summary
-Write-Host "`n================================================================" -ForegroundColor Cyan
-Write-Host "  SUMMARY" -ForegroundColor Cyan
-Write-Host "================================================================" -ForegroundColor Cyan
+Write-Output "`n================================================================"
+Write-Output "  SUMMARY"
+Write-Output "================================================================"
 Write-Output ""
 Write-Output ("{0,-6} {1,-22} {2,-8} {3,-8} {4,-13} {5,-8} {6,-10} {7,-8} {8,-8}" -f "TF", "Best Combo", "ComboWR", "Sigs", "TP/SL WR", "Trades", "Sim WR", "Sim Trades", "Sim Ret%")
 Write-Output ("-" * 110)
@@ -397,19 +397,19 @@ Write-Output "`nFinal ranking (by WR sum):"
 $finalRank | % { Write-Output "  $($_.tf): combo=$($_.useCfgWr)% + TP/SL=$($_.tpWr)% + sim=$($_.simWr)% = $($_.combinedScore)" }
 
 $best = $finalRank[0]
-Write-Host "`n=== BEST CONFIG: $($best.tf) $($best.useCfgName) ===" -ForegroundColor Green
-Write-Host "  RSI: $($best.rsiCfg)" -ForegroundColor Green
-Write-Host "  TP=$($best.tp)% SL=$($best.sl)%" -ForegroundColor Green
+Write-Output "`n=== BEST CONFIG: $($best.tf) $($best.useCfgName) ==="
+Write-Output "  RSI: $($best.rsiCfg)"
+Write-Output "  TP=$($best.tp)% SL=$($best.sl)%"
 
 # Phase 6: Live signal for the best config
-Write-Host "`n--- LIVE SIGNAL ($($best.tf) $($best.useCfgName)) ---" -ForegroundColor Yellow
+Write-Output "`n--- LIVE SIGNAL ($($best.tf) $($best.useCfgName)) ---"
 $c=$best.c; $h=$best.h; $l=$best.l; $v=$best.v; $ts=$best.ts; $rsi=$best.rsi; $vma=$best.vma
 $ob=$best.ob; $os=$best.os; $lp=$c[-1]; $lr=$rsi[-1]; $pr=$rsi[-2]; $ldt=[DateTimeOffset]::FromUnixTimeMilliseconds($ts[-1])
 Write-Output "  $($best.tf) @ $($ldt.ToString('MM-dd HH:mm')) UTC"
 Write-Output "  Price: $([Math]::Round($lp,4)) | RSI($($best.rsiPer)): $([Math]::Round($lr,1)) (prev $([Math]::Round($pr,1)))"
 Write-Output "  OB=$ob OS=$os | Vol vs MA20: $([Math]::Round($v[-1]/$vma[-1]*100,0))%"
-if ($pr -gt $os -and $lr -le $os -and $lr -ne 0 -and $v[-1] -gt $vma[-1]*0.8) { Write-Host "  >>> LONG SIGNAL <<<" -ForegroundColor Green }
-elseif ($pr -lt $ob -and $lr -ge $ob -and $lr -ne 100 -and $v[-1] -gt $vma[-1]*0.8) { Write-Host "  >>> SHORT SIGNAL <<<" -ForegroundColor Red }
+if ($pr -gt $os -and $lr -le $os -and $lr -ne 0 -and $v[-1] -gt $vma[-1]*0.8) { Write-Output "  >>> LONG SIGNAL <<<" }
+elseif ($pr -lt $ob -and $lr -ge $ob -and $lr -ne 100 -and $v[-1] -gt $vma[-1]*0.8) { Write-Output "  >>> SHORT SIGNAL <<<" }
 else { Write-Output "  No signal (RSI=$([Math]::Round($lr,1)) between $os-$ob)" }
 
-Write-Host "`n=== ICP DEEP DIVE COMPLETE ===" -ForegroundColor Cyan
+Write-Output "`n=== ICP DEEP DIVE COMPLETE ==="

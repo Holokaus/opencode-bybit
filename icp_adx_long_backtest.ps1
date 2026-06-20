@@ -3,9 +3,9 @@
 #  Phase 3: TP/SL optimization + Walk-forward validation
 # ============================================================
 
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  ICP 12h ADX>25 LONG-only Backtest" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "========================================"
+Write-Output "  ICP 12h ADX>25 LONG-only Backtest"
+Write-Output "========================================"
 
 # ===== RSA API (from bybit_info.ps1) =====
 function Read-DerLength {
@@ -125,10 +125,10 @@ function Test-TP-SL {
 }
 
 # ===== Phase 1: Fetch =====
-Write-Host "`nFetching 800 candles ICPUSDT 12h..." -ForegroundColor Yellow
+Write-Output "`nFetching 800 candles ICPUSDT 12h..."
 $klines = Get-K 720 800
-if (-not $klines) { Write-Host "FETCH FAILED" -ForegroundColor Red; exit 1 }
-Write-Host "Got $($klines.Count) candles" -ForegroundColor Green
+if (-not $klines) { Write-Output "FETCH FAILED" exit 1 }
+Write-Output "Got $($klines.Count) candles"
 
 $c = $klines | % { [double]$_[4] }
 $h = $klines | % { [double]$_[2] }
@@ -137,16 +137,16 @@ $o = $klines | % { [double]$_[1] }
 $v = $klines | % { [double]$_[5] }
 $ts = $klines | % { [long]$_[0] }
 
-Write-Host "Computing ADX(14)..." -ForegroundColor Yellow
+Write-Output "Computing ADX(14)..."
 $adx = Calc-ADX $h $l $c 14
 
 # ===== Phase 2: Strategy Analysis =====
-Write-Host "`n--- Signal Stats ---" -ForegroundColor Yellow
+Write-Output "`n--- Signal Stats ---"
 $si = 50
 $totalCandles = $c.Count - $si
 $sigCount = 0
 for ($i = $si; $i -lt $c.Count; $i++) { if ($adx[$i] -gt 25) { $sigCount++ } }
-Write-Host "ADX>25 on $sigCount of $totalCandles candles ($([Math]::Round($sigCount/$totalCandles*100,1))%)" -ForegroundColor Gray
+Write-Output "ADX>25 on $sigCount of $totalCandles candles ($([Math]::Round($sigCount/$totalCandles*100,1))%)"
 
 # Check +DI/-DI direction on signal candles
 $diLong = 0; $diShort = 0
@@ -160,12 +160,12 @@ for ($i = $si; $i -lt $c.Count; $i++) {
         if ($up -gt $dn) { $diLong++ } else { $diShort++ }
     }
 }
-Write-Host "DI direction on ADX>25 candles: +DI > -DI = $diLong, -DI > +DI = $diShort" -ForegroundColor Gray
+Write-Output "DI direction on ADX>25 candles: +DI > -DI = $diLong, -DI > +DI = $diShort"
 
 # ===== Phase 3: TP/SL Optimization =====
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  Phase 3: TP/SL Optimization" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "`n========================================"
+Write-Output "  Phase 3: TP/SL Optimization"
+Write-Output "========================================"
 
 $tps = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0)
 $sls = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0)
@@ -195,22 +195,22 @@ foreach ($tp in $tps) {
 }
 $fullResults = $fullResults | Sort-Object S -Descending
 
-Write-Host "`nTop 15 by S-score (WR x Trades):" -ForegroundColor Yellow
-Write-Host ("{0,-6}{1,-6}{2,-8}{3,-8}{4,-10}{5,-10}{6,-8}" -f "TP%","SL%","WR%","Trades","TotalPnL","AvgPnL","S")
+Write-Output "`nTop 15 by S-score (WR x Trades):"
+Write-Output ("{0,-6}{1,-6}{2,-8}{3,-8}{4,-10}{5,-10}{6,-8}" -f "TP%","SL%","WR%","Trades","TotalPnL","AvgPnL","S")
 $fullResults | Select-Object -First 15 | % {
-    Write-Host ("{0,-6}{1,-6}{2,-8}{3,-8}{4,-10}{5,-10}{6,-8}" -f $_.TP,$_.SL,$_.WR,$_.T,$_.Pnl,$_.AvgPnl,$_.S)
+    Write-Output ("{0,-6}{1,-6}{2,-8}{3,-8}{4,-10}{5,-10}{6,-8}" -f $_.TP,$_.SL,$_.WR,$_.T,$_.Pnl,$_.AvgPnl,$_.S)
 }
 
 $rrFull = $fullResults | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
-Write-Host "`nBest 1:1 R:R (TP>=SL) by S-score:" -ForegroundColor Yellow
+Write-Output "`nBest 1:1 R:R (TP>=SL) by S-score:"
 $rrFull | Select-Object -First 5 | % {
-    Write-Host ("  TP={0}% SL={1}% | WR={2}% | T={3} | PnL={4} | S={5}" -f $_.TP,$_.SL,$_.WR,$_.T,$_.Pnl,$_.S)
+    Write-Output ("  TP={0}% SL={1}% | WR={2}% | T={3} | PnL={4} | S={5}" -f $_.TP,$_.SL,$_.WR,$_.T,$_.Pnl,$_.S)
 }
 
 # ===== Walk-Forward: 3-fold =====
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  Walk-Forward (3-fold cross-val)" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "`n========================================"
+Write-Output "  Walk-Forward (3-fold cross-val)"
+Write-Output "========================================"
 
 $folds = @(
     @{name="Fold1 (0-65%)"; trainEnd=[Math]::Floor(($c.Count-$si)*0.5)+$si; testEnd=[Math]::Floor(($c.Count-$si)*0.65)+$si},
@@ -240,7 +240,7 @@ foreach ($fold in $folds) {
         }
     }
     $bestF = $ft | Sort-Object S -Descending | Select-Object -First 1
-    if (-not $bestF) { Write-Host "$($fold.name): No training config found"; continue }
+    if (-not $bestF) { Write-Output "$($fold.name): No training config found"; continue }
 
     # Test
     $tw=0;$tl=0;$tpnl=0
@@ -251,18 +251,18 @@ foreach ($fold in $folds) {
     }
     $tt=$tw+$tl
     $twr=if($tt){[Math]::Round($tw/$tt*100,1)}else{0}
-    Write-Host ("{0,-20} Train: TP={1}% SL={2}% (S={3}, T={4}) | Test: {5}t WR={6}% PnL={7}" -f
+    Write-Output ("{0,-20} Train: TP={1}% SL={2}% (S={3}, T={4}) | Test: {5}t WR={6}% PnL={7}" -f
         $fold.name,$bestF.TP,$bestF.SL,$bestF.S,$bestF.T,$tt,$twr,[Math]::Round($tpnl,4))
     $allTestW+=$tw; $allTestL+=$tl; $allTestPnl+=$tpnl
 }
 $allTestT=$allTestW+$allTestL
 $allTestWR=if($allTestT){[Math]::Round($allTestW/$allTestT*100,1)}else{0}
-Write-Host ("TOTAL: {0}t WR={1}% PnL={2}" -f $allTestT,$allTestWR,[Math]::Round($allTestPnl,4)) -ForegroundColor Cyan
+Write-Output ("TOTAL: {0}t WR={1}% PnL={2}" -f $allTestT,$allTestWR,[Math]::Round($allTestPnl,4)) -ForegroundColor Cyan
 
 # ===== 3-Month Forward =====
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  3-Month Forward Simulation" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "`n========================================"
+Write-Output "  3-Month Forward Simulation"
+Write-Output "========================================"
 
 $fwdStart = [Math]::Max(0, $c.Count - 180)
 
@@ -285,9 +285,9 @@ foreach ($tp in $tps) {
     }
 }
 $bestFwd = $fwdTrain | Sort-Object S -Descending | Select-Object -First 1
-if (-not $bestFwd) { $bestFwd = $fullResults[0]; Write-Host "Not enough training, using full-sample best" -ForegroundColor Yellow }
+if (-not $bestFwd) { $bestFwd = $fullResults[0]; Write-Output "Not enough training, using full-sample best" }
 
-Write-Host "Training TP=$($bestFwd.TP)% SL=$($bestFwd.SL)% (trained on $($fwdStart-$si) candles)" -ForegroundColor Gray
+Write-Output "Training TP=$($bestFwd.TP)% SL=$($bestFwd.SL)% (trained on $($fwdStart-$si) candles)"
 
 $fwdCap=100.0; $fwdPeak=100.0; $fwdTrades=@(); $fwdSkip=$false
 for ($i=$fwdStart; $i -lt $c.Count-3; $i++) {
@@ -309,29 +309,29 @@ $fwdT = $fwdTrades.Count
 $fwdWR = if ($fwdT) { [Math]::Round($fwdW/$fwdT*100,1) } else { 0 }
 $fwdRet = [Math]::Round(($fwdCap/100-1)*100, 2)
 
-Write-Host "3-Month Forward: $fwdT trades, WR=$fwdWR%, Return=$fwdRet%" -ForegroundColor Green
+Write-Output "3-Month Forward: $fwdT trades, WR=$fwdWR%, Return=$fwdRet%"
 
 # ===== SUMMARY =====
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  SUMMARY" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Strategy: ICP 12h ADX>25 LONG-only (no direction filter)"
-Write-Host ""
+Write-Output "`n========================================"
+Write-Output "  SUMMARY"
+Write-Output "========================================"
+Write-Output "Strategy: ICP 12h ADX>25 LONG-only (no direction filter)"
+Write-Output ""
 
-Write-Host "Full-sample best TP/SL:" -ForegroundColor White
-$fullResults[0..3] | % { Write-Host "  TP=$($_.TP)% SL=$($_.SL)% | WR=$($_.WR)% | T=$($_.T) | PnL=$($_.Pnl) | S=$($_.S)" }
+Write-Output "Full-sample best TP/SL:"
+$fullResults[0..3] | % { Write-Output "  TP=$($_.TP)% SL=$($_.SL)% | WR=$($_.WR)% | T=$($_.T) | PnL=$($_.Pnl) | S=$($_.S)" }
 
-Write-Host "`nRecommended:" -ForegroundColor Green
-Write-Host "  TP=$($fullResults[0].TP)% SL=$($fullResults[0].SL)%" -ForegroundColor Green
-Write-Host "  (Highest S-score, full-sample)" -ForegroundColor Gray
+Write-Output "`nRecommended:"
+Write-Output "  TP=$($fullResults[0].TP)% SL=$($fullResults[0].SL)%"
+Write-Output "  (Highest S-score, full-sample)"
 
-Write-Host "`nWalk-forward validation:" -ForegroundColor White
-Write-Host "  $allTestT trades total, WR=$allTestWR%, PnL=$([Math]::Round($allTestPnl,4))" -ForegroundColor Gray
-Write-Host "  3-month forward: $fwdT trades, WR=$fwdWR%, Return=$fwdRet%" -ForegroundColor Gray
+Write-Output "`nWalk-forward validation:"
+Write-Output "  $allTestT trades total, WR=$allTestWR%, PnL=$([Math]::Round($allTestPnl,4))"
+Write-Output "  3-month forward: $fwdT trades, WR=$fwdWR%, Return=$fwdRet%"
 
 # Best TP>=SL recommended
 $bestRR = $rrFull[0]
 if ($bestRR) {
-    Write-Host "`nBest 1:1 R:R config:" -ForegroundColor Yellow
-    Write-Host "  TP=$($bestRR.TP)% SL=$($bestRR.SL)% | WR=$($bestRR.WR)% | T=$($bestRR.T) | S=$($bestRR.S)" -ForegroundColor Yellow
+    Write-Output "`nBest 1:1 R:R config:"
+    Write-Output "  TP=$($bestRR.TP)% SL=$($bestRR.SL)% | WR=$($bestRR.WR)% | T=$($bestRR.T) | S=$($bestRR.S)"
 }

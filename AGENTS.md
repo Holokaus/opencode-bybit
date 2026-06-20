@@ -163,10 +163,17 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 1. **Re-run all backtests** — temporal exclusions and skip-after-loss removed, all prior results invalidated
 2. **Fix `$bestOverall` selection** — investigate S-score discrepancy between Phase 3 and Phase 4
 3. **Fix RSI strategy zero-WR** — widen entry condition, add in/out-of-sample split
-4. **Remove `Write-Host`** — replace with `Write-Output` for pipeline capture
-5. **Add webhook/notification** — auto-place Bybit orders from live signal
+4. **Webhook/notification** — auto-place Bybit orders from live signal
+5. **Enable demo API** — set `UseDemoApi=$true` with demo/testnet keys when available
 6. **Parallelize Phase 1** — PowerShell jobs for 7 TFs
-7. **Walk-forward optimization** — proper out-of-sample validation
-8. **Rotate API keys** — `gkPx5g3xgL2pthIg16` appears in code; generate new ones
-9. **Remove hardcoded paths** — `C:\Users\A\` paths in 30+ files → relative or configurable
-10. **Enable demo API** — set `UseDemoApi=$true` with demo/testnet keys when available
+7. **Rotate API keys** — `gkPx5g3xgL2pthIg16` appears in git history; generate new keys at Bybit
+
+## Completed
+
+- **Hardcoded paths removed** — all `C:\Users\A\` references eliminated from .ps1 files. Paths now loaded via `$env:BYBIT_PRIVATE_KEY_PATH` and `$env` vars.
+- **Walk-forward module created** — `Modules/WalkForwardTester.psm1` with `Invoke-WalkForwardTest`. Integrated into `sol_divergence_grid.ps1`.
+- **Monte Carlo module created** — `Modules/MonteCarlo.psm1` with `Invoke-MonteCarloSimulation`. Integrated into `sol_divergence_grid.ps1`.
+- **API keys removed from source** — `gkPx5g3xgL2pthIg16` and demo keys replaced with `$env:BYBIT_API_KEY` etc. in all 28 .ps1 files.
+- **`.env` and `bybit_private.pem` removed from git** — added to `.gitignore`.
+- **Spot/short inconsistency fixed** — `Place-Order` and `Cancel-Order` changed from `category=spot` to `category=linear`.
+- **`$canTrade` bug fixed** — `sol_divergence_grid.ps1:253` removed undefined `$canTrade` filter that silently skipped all short entries.

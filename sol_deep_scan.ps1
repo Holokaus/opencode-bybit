@@ -115,10 +115,10 @@ function Test-RSI-Levels {
     return $results | Where-Object { $_.OB_Trades + $_.OS_Trades -ge 15 } | Sort-Object CombinedWR -Descending | Select-Object -First 5
 }
 
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host "  SOL DEEP PERSONALITY SCAN - Finding the Unique Fingerprint" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host ""
+Write-Output "================================================================"
+Write-Output "  SOL DEEP PERSONALITY SCAN - Finding the Unique Fingerprint"
+Write-Output "================================================================"
+Write-Output ""
 
 # Test many timeframes
 $tfList = @(
@@ -131,9 +131,9 @@ $tfList = @(
 $bestPerTF = @{}
 
 foreach ($tf in $tfList) {
-    Write-Host "Scanning $($tf.n)..." -ForegroundColor Yellow
+    Write-Output "Scanning $($tf.n)..."
     $klines = Get-Klines -category "spot" -symbol "SOLUSDT" -interval $tf.i -limit 800
-    if (-not $klines -or $klines.Count -lt 100) { Write-Host "  Skip (insufficient data)"; continue }
+    if (-not $klines -or $klines.Count -lt 100) { Write-Output "  Skip (insufficient data)"; continue }
     
     $close = $klines | ForEach-Object { [double]$_[4] }
     $high = $klines | ForEach-Object { [double]$_[2] }
@@ -159,50 +159,50 @@ foreach ($tf in $tfList) {
     }
     
     if ($bestPeriod) {
-        Write-Host "  BEST: RSI($bestPeriod) | OB=$bestOB OS=$bestOS | WR=$($bestDetail.CombinedWR)% | OB_WR=$($bestDetail.OB_WR)% OS_WR=$($bestDetail.OS_WR)% | OB_T=$($bestDetail.OB_Trades) OS_T=$($bestDetail.OS_Trades)"
+        Write-Output "  BEST: RSI($bestPeriod) | OB=$bestOB OS=$bestOS | WR=$($bestDetail.CombinedWR)% | OB_WR=$($bestDetail.OB_WR)% OS_WR=$($bestDetail.OS_WR)% | OB_T=$($bestDetail.OB_Trades) OS_T=$($bestDetail.OS_Trades)"
         $bestPerTF[$tf.n] = @{period=$bestPeriod; ob=$bestOB; os=$bestOS; wr=$bestScore; detail=$bestDetail}
     }
 }
 
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  RESULTS: SOL'S UNIQUE FINGERPRINT BY TIMEFRAME" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host ""
+Write-Output "`n================================================================"
+Write-Output "  RESULTS: SOL'S UNIQUE FINGERPRINT BY TIMEFRAME" -ForegroundColor Magenta
+Write-Output "================================================================"
+Write-Output ""
 
 $sortedTF = $bestPerTF.GetEnumerator() | Sort-Object { $_.Value.wr } -Descending
 
 foreach ($entry in $sortedTF) {
     $v = $entry.Value
-    Write-Host "  $($entry.Key) | RSI($($v.period)) OB=$($v.ob) OS=$($v.os) | Signal WR=$($v.wr)% | OB hits=$($v.detail.OB_Trades) OS hits=$($v.detail.OS_Trades)" -ForegroundColor Cyan
+    Write-Output "  $($entry.Key) | RSI($($v.period)) OB=$($v.ob) OS=$($v.os) | Signal WR=$($v.wr)% | OB hits=$($v.detail.OB_Trades) OS hits=$($v.detail.OS_Trades)"
 }
 
-Write-Host "`n================================================================" -ForegroundColor Green
-Write-Host "  WINNER: SOL'S BEST TIMEFRAME + RSI COMBO" -ForegroundColor Green
-Write-Host "================================================================" -ForegroundColor Green
+Write-Output "`n================================================================"
+Write-Output "  WINNER: SOL'S BEST TIMEFRAME + RSI COMBO" -ForegroundColor Green
+Write-Output "================================================================"
 if ($sortedTF.Count -gt 0) {
     $winner = $sortedTF | Select-Object -First 1
     $wv = $winner.Value
-    Write-Host ""
-    Write-Host "  +------------------------------------------+" -ForegroundColor Green
-    Write-Host "  |   SOL's Natural Timeframe: $($winner.Key) " -ForegroundColor Green
-    Write-Host "  |   RSI Period: $($wv.period) (not 14!)" -ForegroundColor Green
-    Write-Host "  |   Overbought: $($wv.ob) (not 70!)" -ForegroundColor Green
-    Write-Host "  |   Oversold:   $($wv.os) (not 30!)" -ForegroundColor Green
-    Write-Host "  |   Signal Win Rate: $($wv.wr)%" -ForegroundColor Green
-    Write-Host "  +------------------------------------------+" -ForegroundColor Green
-    Write-Host ""
+    Write-Output ""
+    Write-Output "  +------------------------------------------+"
+    Write-Output "  |   SOL's Natural Timeframe: $($winner.Key) " -ForegroundColor Green
+    Write-Output "  |   RSI Period: $($wv.period) (not 14!)"
+    Write-Output "  |   Overbought: $($wv.ob) (not 70!)"
+    Write-Output "  |   Oversold:   $($wv.os) (not 30!)"
+    Write-Output "  |   Signal Win Rate: $($wv.wr)%"
+    Write-Output "  +------------------------------------------+"
+    Write-Output ""
     
     # Top 3 combos
-    Write-Host "Top 3 performing combinations:" -ForegroundColor Yellow
+    Write-Output "Top 3 performing combinations:"
     $sortedTF | Select-Object -First 3 | ForEach-Object {
         $v = $_.Value
-        Write-Host "  #$([array]::IndexOf($sortedTF, $_)+1): $($_.Key) - RSI($($v.period)) OB=$($v.ob) OS=$($v.os) -> $($v.wr)% win rate"
+        Write-Output "  #$([array]::IndexOf($sortedTF, $_)+1): $($_.Key) - RSI($($v.period)) OB=$($v.ob) OS=$($v.os) -> $($v.wr)% win rate"
     }
 }
 
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  DEEP ANALYSIS: WHY THESE PARAMETERS FIT SOL" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  DEEP ANALYSIS: WHY THESE PARAMETERS FIT SOL"
+Write-Output "================================================================"
 
 # Analyze the winning combo in more detail
 if ($sortedTF.Count -gt 0) {
@@ -234,21 +234,21 @@ if ($sortedTF.Count -gt 0) {
             $buckets += @{range="$b-$(($b+10))"; count=$cnt; pct=[Math]::Round($cnt/$rsiSamples*100,1)}
         }
         
-        Write-Host "`nRSI Distribution on $($winner.Key) [RSI($($wv.period))]:" -ForegroundColor Yellow
+        Write-Output "`nRSI Distribution on $($winner.Key) [RSI($($wv.period))]:"
         foreach ($bk in $buckets) {
             $bar = [string]::new('Ã¢â€“Ë†', [Math]::Max(1, [Math]::Round($bk.pct / 2)))
-            Write-Host "  $($bk.range): $bar $($bk.pct)%"
+            Write-Output "  $($bk.range): $bar $($bk.pct)%"
         }
         
-        Write-Host "`nSOL RSI Statistics on $($winner.Key):" -ForegroundColor Yellow
-        Write-Host "  Range: $([Math]::Round($rsiMin,1)) - $([Math]::Round($rsiMax,1))"
-        Write-Host "  Average: $([Math]::Round($rsiAvg,1))"
-        Write-Host "  Time in OB (>=$($wv.ob)): $( [Math]::Round($obHits/$rsiSamples*100,2) )%"
-        Write-Host "  Time in OS (<=$($wv.os)): $( [Math]::Round($osHits/$rsiSamples*100,2) )%"
-        Write-Host "  Time in Range: $( [Math]::Round($midHits/$rsiSamples*100,2) )%"
+        Write-Output "`nSOL RSI Statistics on $($winner.Key):"
+        Write-Output "  Range: $([Math]::Round($rsiMin,1)) - $([Math]::Round($rsiMax,1))"
+        Write-Output "  Average: $([Math]::Round($rsiAvg,1))"
+        Write-Output "  Time in OB (>=$($wv.ob)): $( [Math]::Round($obHits/$rsiSamples*100,2) )%"
+        Write-Output "  Time in OS (<=$($wv.os)): $( [Math]::Round($osHits/$rsiSamples*100,2) )%"
+        Write-Output "  Time in Range: $( [Math]::Round($midHits/$rsiSamples*100,2) )%"
         
         # Autocorrelation - find SOL's natural rhythm
-        Write-Host "`n--- SOL's Natural Rhythm (Price Change Autocorrelation) ---" -ForegroundColor Yellow
+        Write-Output "`n--- SOL's Natural Rhythm (Price Change Autocorrelation) ---" -ForegroundColor Yellow
         $returns_d = [double[]]::new($close.Count)
         for ($i = 1; $i -lt $close.Count; $i++) {
             $returns_d[$i] = ($close[$i] - $close[$i-1]) / $close[$i-1] * 100
@@ -265,20 +265,20 @@ if ($sortedTF.Count -gt 0) {
             return ($n*$sxy - $sx*$sy) / $denom
         }
         
-        Write-Host "  Lag analysis (how many candles until pattern repeats):" -ForegroundColor Gray
+        Write-Output "  Lag analysis (how many candles until pattern repeats):"
         foreach ($lag in @(1, 2, 3, 5, 8, 13, 21, 34, 55)) {
             if ($lag -ge $returns_d.Count) { break }
             $x = [double[]]@($returns_d[$lag..($returns_d.Count-1)])
             $y = [double[]]@($returns_d[0..($returns_d.Count-1-$lag)])
             $r = [Math]::Round((Pearson-Correlation $x $y), 3)
-            Write-Host "  Lag $lag`: $r"
+            Write-Output "  Lag $lag`: $r"
         }
     }
 }
 
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  MACD QUICK SCAN (fast/slow/signal)" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  MACD QUICK SCAN (fast/slow/signal)"
+Write-Output "================================================================"
 
 if ($sortedTF.Count -gt 0) {
     $winner = $sortedTF | Select-Object -First 1
@@ -323,29 +323,29 @@ if ($sortedTF.Count -gt 0) {
             }
         }
         if ($bestMacd) {
-            Write-Host "`n  Tested $tested MACD combos on $($winner.Key)" -ForegroundColor Gray
-            Write-Host "  Best MACD($($bestMacd.fast),$($bestMacd.slow),$($bestMacd.sig))" -ForegroundColor Green
-            Write-Host "  Crossover Signal WR: $($bestMacd.wr)% | Trades: $($bestMacd.trades)" -ForegroundColor Green
-            Write-Host "  (Standard MACD(12,26,9) is NOT optimal for SOL)" -ForegroundColor Yellow
+            Write-Output "`n  Tested $tested MACD combos on $($winner.Key)"
+            Write-Output "  Best MACD($($bestMacd.fast),$($bestMacd.slow),$($bestMacd.sig))"
+            Write-Output "  Crossover Signal WR: $($bestMacd.wr)% | Trades: $($bestMacd.trades)"
+            Write-Output "  (Standard MACD(12,26,9) is NOT optimal for SOL)"
         }
     }
 }
 
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  FINAL VERDICT: SOL'S TRADING KEY" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host ""
-Write-Host "  Every asset has a unique vibration frequency. The market key" -ForegroundColor White
-Write-Host "  that unlocks SOL is NOT the same as BTC, ETH, or any pre-packaged" -ForegroundColor White
-Write-Host "  indicator preset." -ForegroundColor White
-Write-Host ""
-Write-Host "  The data above reveals SOL's actual fingerprint - the timeframe" -ForegroundColor White
-Write-Host "  and RSI period where its mean-reversion behavior is most consistent." -ForegroundColor White
-Write-Host "  This is SOL's natural resonance, not a generic template." -ForegroundColor White
-Write-Host ""
+Write-Output "`n================================================================"
+Write-Output "  FINAL VERDICT: SOL'S TRADING KEY" -ForegroundColor Magenta
+Write-Output "================================================================"
+Write-Output ""
+Write-Output "  Every asset has a unique vibration frequency. The market key"
+Write-Output "  that unlocks SOL is NOT the same as BTC, ETH, or any pre-packaged"
+Write-Output "  indicator preset."
+Write-Output ""
+Write-Output "  The data above reveals SOL's actual fingerprint - the timeframe" -ForegroundColor White
+Write-Output "  and RSI period where its mean-reversion behavior is most consistent."
+Write-Output "  This is SOL's natural resonance, not a generic template." -ForegroundColor White
+Write-Output ""
 
 # Print top 3 results one more time as clear actionable keys
 $sortedTF | Select-Object -First 3 | ForEach-Object {
     $v = $_.Value
-    Write-Host "  -> $($_.Key) RSI($($v.period)): Buy <= $($v.os) | Sell >= $($v.ob) | WR $($v.wr)%" -ForegroundColor Cyan
+    Write-Output "  -> $($_.Key) RSI($($v.period)): Buy <= $($v.os) | Sell >= $($v.ob) | WR $($v.wr)%"
 }

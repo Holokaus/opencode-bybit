@@ -76,14 +76,14 @@ function Calculate-ATR($highs, $lows, $closes, $period) {
     return $atr
 }
 
-Write-Host "=====================================================================" -ForegroundColor Magenta
-Write-Host "  SOL TP/SL BRUTEFORCE - Finding Optimal Exit Parameters" -ForegroundColor Magenta
-Write-Host "=====================================================================" -ForegroundColor Magenta
+Write-Output "====================================================================="
+Write-Output "  SOL TP/SL BRUTEFORCE - Finding Optimal Exit Parameters"
+Write-Output "====================================================================="
 
 # Fetch 4h data (winning timeframe)
-Write-Host "`nFetching 4h data..." -ForegroundColor Yellow
+Write-Output "`nFetching 4h data..."
 $klines = Get-Klines -int "240" -lim 500
-if (-not $klines) { Write-Host "No data"; exit }
+if (-not $klines) { Write-Output "No data"; exit }
 
 $close = $klines | ForEach-Object { [double]$_[4] }
 $high = $klines | ForEach-Object { [double]$_[2] }
@@ -98,8 +98,8 @@ $atr14 = Calculate-ATR -highs $high -lows $low -closes $close -period 14
 $currentAtr = $atr14[-1]
 $currentPrice = $close[-1]
 $atrPct = [Math]::Round($currentAtr / $currentPrice * 100, 2)
-Write-Host "  Current price: $currentPrice" -ForegroundColor Cyan
-Write-Host "  Current ATR(14): $currentAtr ($atrPct%)" -ForegroundColor Cyan
+Write-Output "  Current price: $currentPrice"
+Write-Output "  Current ATR(14): $currentAtr ($atrPct%)"
 
 # Find entry signals
 $longEntries = @(); $shortEntries = @()
@@ -114,10 +114,10 @@ for ($i = $rsiPeriod + 2; $i -lt $rsi.Count - 5; $i++) {
     }
 }
 
-Write-Host "`nEntry signals found: $($longEntries.Count) long, $($shortEntries.Count) short" -ForegroundColor Yellow
+Write-Output "`nEntry signals found: $($longEntries.Count) long, $($shortEntries.Count) short"
 
 # Test different TP/SL percentage combinations
-Write-Host "`n--- Phase 1: Fixed Percentage TP/SL Bruteforce ---" -ForegroundColor Yellow
+Write-Output "`n--- Phase 1: Fixed Percentage TP/SL Bruteforce ---"
 $tpLevels = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 8.0, 10.0)
 $slLevels = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 8.0)
 
@@ -179,13 +179,13 @@ foreach ($tp in $tpLevels) {
 # Sort by composite score
 $sorted = $bestResults | Sort-Object Score -Descending
 
-Write-Host "`nTop 10 TP/SL combinations by composite score:" -ForegroundColor Cyan
-Write-Host ("  {0,-6} {1,-6} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10} {7,-8} {8,-8}" -f "TP(%)","SL(%)","R:R","WR(%)","Trades","AvgProfit","Total%","LngWR","ShtWR") -ForegroundColor Yellow
+Write-Output "`nTop 10 TP/SL combinations by composite score:"
+Write-Output ("  {0,-6} {1,-6} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10} {7,-8} {8,-8}" -f "TP(%)","SL(%)","R:R","WR(%)","Trades","AvgProfit","Total%","LngWR","ShtWR") -ForegroundColor Yellow
 $sorted | Select-Object -First 10 | ForEach-Object {
-    Write-Host ("  {0,-6} {1,-6} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10} {7,-8} {8,-8}" -f $_.TP, $_.SL, $_.R_R, $_.WR, $_.Trades, $_.AvgProfit, $_.TotalProfit, $_.LongWR, $_.ShortWR)
+    Write-Output ("  {0,-6} {1,-6} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10} {7,-8} {8,-8}" -f $_.TP, $_.SL, $_.R_R, $_.WR, $_.Trades, $_.AvgProfit, $_.TotalProfit, $_.LongWR, $_.ShortWR)
 }
 
-Write-Host "`n--- Phase 2: ATR-Based TP/SL ---" -ForegroundColor Yellow
+Write-Output "`n--- Phase 2: ATR-Based TP/SL ---"
 $atrMultipliers = @(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0)
 $atrResults = @()
 foreach ($tpMult in $atrMultipliers) {
@@ -220,13 +220,13 @@ foreach ($tpMult in $atrMultipliers) {
 }
 
 $sortedAtr = $atrResults | Sort-Object Score -Descending
-Write-Host "`nTop 10 ATR-based TP/SL combinations:" -ForegroundColor Cyan
-Write-Host ("  {0,-8} {1,-8} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10}" -f "TP(xATR)","SL(xATR)","R:R","WR(%)","Trades","Avg%","Score") -ForegroundColor Yellow
+Write-Output "`nTop 10 ATR-based TP/SL combinations:"
+Write-Output ("  {0,-8} {1,-8} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10}" -f "TP(xATR)","SL(xATR)","R:R","WR(%)","Trades","Avg%","Score") -ForegroundColor Yellow
 $sortedAtr | Select-Object -First 10 | ForEach-Object {
-    Write-Host ("  {0,-8} {1,-8} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10}" -f $_.TP_ATR, $_.SL_ATR, $_.R_R, $_.WR, $_.Trades, $_.AvgProfit, $_.Score)
+    Write-Output ("  {0,-8} {1,-8} {2,-6} {3,-8} {4,-8} {5,-10} {6,-10}" -f $_.TP_ATR, $_.SL_ATR, $_.R_R, $_.WR, $_.Trades, $_.AvgProfit, $_.Score)
 }
 
-Write-Host "`n--- Phase 3: Best Risk-Reward Ratio Analysis ---" -ForegroundColor Yellow
+Write-Output "`n--- Phase 3: Best Risk-Reward Ratio Analysis ---"
 $rrGroups = $bestResults | Group-Object R_R | ForEach-Object {
     $g = $_.Group
     $avgWR = [Math]::Round(($g | Measure-Object WR -Average).Average, 1)
@@ -236,12 +236,12 @@ $rrGroups = $bestResults | Group-Object R_R | ForEach-Object {
     [PSCustomObject]@{RR=$_.Name; Count=$_.Count; AvgWR=$avgWR; AvgTrades=$avgTrades; AvgTotalProfit=$avgProfit; BestTP=$bestInGroup.TP; BestSL=$bestInGroup.SL}
 } | Sort-Object AvgTotalProfit -Descending
 
-Write-Host ("  {0,-6} {1,-8} {2,-8} {3,-10} {4,-10} {5,-8}" -f "R:R","Combos","AvgWR","AvgTrades","AvgProfit","BestTP/SL") -ForegroundColor Yellow
+Write-Output ("  {0,-6} {1,-8} {2,-8} {3,-10} {4,-10} {5,-8}" -f "R:R","Combos","AvgWR","AvgTrades","AvgProfit","BestTP/SL") -ForegroundColor Yellow
 $rrGroups | Select-Object -First 8 | ForEach-Object {
-    Write-Host ("  {0,-6} {1,-8} {2,-8} {3,-10} {4,-10} {5,-8}" -f $_.RR, $_.Count, $_.AvgWR, $_.AvgTrades, $_.AvgTotalProfit, "$($_.BestTP)/$($_.BestSL)")
+    Write-Output ("  {0,-6} {1,-8} {2,-8} {3,-10} {4,-10} {5,-8}" -f $_.RR, $_.Count, $_.AvgWR, $_.AvgTrades, $_.AvgTotalProfit, "$($_.BestTP)/$($_.BestSL)")
 }
 
-Write-Host "`n--- Phase 4: Dynamic TP/SL (Trailing Stop Simulation) ---" -ForegroundColor Yellow
+Write-Output "`n--- Phase 4: Dynamic TP/SL (Trailing Stop Simulation) ---"
 $trailPcts = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0)
 $trailResults = @()
 foreach ($trailPct in $trailPcts) {
@@ -268,23 +268,23 @@ foreach ($trailPct in $trailPcts) {
     }
 }
 $sortedTrail = $trailResults | Sort-Object TotalProfit -Descending
-Write-Host "Top 8 trailing stop results (longs only):" -ForegroundColor Cyan
-Write-Host ("  {0,-10} {1,-8} {2,-8} {3,-8} {4,-10} {5,-10}" -f "Trail%","Target%","WR(%)","Trades","Avg%","Total%") -ForegroundColor Yellow
+Write-Output "Top 8 trailing stop results (longs only):"
+Write-Output ("  {0,-10} {1,-8} {2,-8} {3,-8} {4,-10} {5,-10}" -f "Trail%","Target%","WR(%)","Trades","Avg%","Total%") -ForegroundColor Yellow
 $sortedTrail | Select-Object -First 8 | ForEach-Object {
-    Write-Host ("  {0,-10} {1,-8} {2,-8} {3,-8} {4,-10} {5,-10}" -f $_.TrailPct, $_.Target, $_.WR, $_.Trades, $_.AvgProfit, $_.TotalProfit)
+    Write-Output ("  {0,-10} {1,-8} {2,-8} {3,-8} {4,-10} {5,-10}" -f $_.TrailPct, $_.Target, $_.WR, $_.Trades, $_.AvgProfit, $_.TotalProfit)
 }
 
-Write-Host "`n================================" -ForegroundColor Magenta
-Write-Host "  FINAL VERDICT: SOL TP/SL KEY" -ForegroundColor Magenta
-Write-Host "================================" -ForegroundColor Magenta
+Write-Output "`n================================"
+Write-Output "  FINAL VERDICT: SOL TP/SL KEY"
+Write-Output "================================"
 
 $topFixed = $sorted | Select-Object -First 3
 $topAtr = $sortedAtr | Select-Object -First 3
-Write-Host ""
-Write-Host "Best Fixed TP/SL:" -ForegroundColor Green
-$topFixed | ForEach-Object { Write-Host "  TP=$($_.TP)% SL=$($_.SL)% (R:R $($_.R_R)) | WR=$($_.WR)% | $($_.Trades) trades | Avg +$($_.AvgProfit)% | Score $($_.Score)" -ForegroundColor Cyan }
-Write-Host ""
-Write-Host "Best ATR-based TP/SL:" -ForegroundColor Green
-$topAtr | ForEach-Object { Write-Host "  TP=$($_.TP_ATR)xATR SL=$($_.SL_ATR)xATR (R:R $($_.R_R)) | WR=$($_.WR)% | $($_.Trades) trades | Avg +$($_.AvgProfit)% | Score $($_.Score)" -ForegroundColor Cyan }
-Write-Host ""
-Write-Host "Current ATR(14): $currentAtr ($atrPct% of price)" -ForegroundColor Gray
+Write-Output ""
+Write-Output "Best Fixed TP/SL:"
+$topFixed | ForEach-Object { Write-Output "  TP=$($_.TP)% SL=$($_.SL)% (R:R $($_.R_R)) | WR=$($_.WR)% | $($_.Trades) trades | Avg +$($_.AvgProfit)% | Score $($_.Score)" }
+Write-Output ""
+Write-Output "Best ATR-based TP/SL:"
+$topAtr | ForEach-Object { Write-Output "  TP=$($_.TP_ATR)xATR SL=$($_.SL_ATR)xATR (R:R $($_.R_R)) | WR=$($_.WR)% | $($_.Trades) trades | Avg +$($_.AvgProfit)% | Score $($_.Score)" }
+Write-Output ""
+Write-Output "Current ATR(14): $currentAtr ($atrPct% of price)"

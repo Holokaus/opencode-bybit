@@ -182,12 +182,12 @@ function Show-Combo {
     Write-Output ("  {0,-28} WR={1,-5}% | {2} sigs (L:{3}/{4} S:{5}/{6})" -f $name, $wr, $total, $lw, ($lw + $ll), $sw, ($sw + $sl))
 }
 
-Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "  XRP COMPLETE ANALYSIS" -ForegroundColor Cyan
-Write-Host "========================================================" -ForegroundColor Cyan
+Write-Output "========================================================"
+Write-Output "  XRP COMPLETE ANALYSIS"
+Write-Output "========================================================"
 
 # PHASE 1: RSI bruteforce
-Write-Host "`n--- PHASE 1: RSI Bruteforce ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 1: RSI Bruteforce ---"
 $timeframes = @(
     @{n = "15m"; i = "15" },
     @{n = "30m"; i = "30" },
@@ -253,7 +253,7 @@ foreach ($tf in $timeframes) {
             tf = $tf.n; per = $bestPer; ob = $bestOb; os = $bestOs; wr = $bestWr
             total = $bestTt; lw = $bestLw; ll = $bestLl; sw = $bestSw; sl = $bestSl
         }
-        Write-Host "    RSI($bestPer) OB=$bestOb OS=$bestOs WR=$bestWr% ($bestTt sigs)" -ForegroundColor Green
+        Write-Output "    RSI($bestPer) OB=$bestOb OS=$bestOs WR=$bestWr% ($bestTt sigs)"
     }
 }
 
@@ -261,10 +261,10 @@ $sorted = $allTf | Sort-Object wr -Descending
 Write-Output "`nRankings:"
 $sorted | ForEach-Object { Write-Output ("  {0,-4} RSI({1,-2}) OB={2,-2} OS={3,-2} WR={4,-4}% {5,2}sigs" -f $_.tf, $_.per, $_.ob, $_.os, $_.wr, $_.total) }
 $win = $sorted[0]
-Write-Host "`n=== WINNER: $($win.tf) RSI($($win.per)) OB=$($win.ob) OS=$($win.os) WR=$($win.wr)% ===" -ForegroundColor Green
+Write-Output "`n=== WINNER: $($win.tf) RSI($($win.per)) OB=$($win.ob) OS=$($win.os) WR=$($win.wr)% ==="
 
 # PHASE 2: Expanded indicator combos
-Write-Host "`n--- PHASE 2: Expanded Indicator Combos ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 2: Expanded Indicator Combos ---"
 $tfSel = $timeframes | Where-Object { $_.n -eq $win.tf } | Select-Object -First 1
 $k = Get-K -interval $tfSel.i -limit 800
 if (-not $k) { exit 1 }
@@ -342,7 +342,7 @@ Test-Cfg -name "RSI+Vol+MA50+ATR" -useVol $true -volThr 0.8 -useMA $true -maArr 
 Test-Cfg -name "RSI+Vol+MA50+ADX+Stoch" -useVol $true -volThr 0.8 -useMA $true -maArr $ma50 -useADX $true -adxThr 25 -useStoch $true -stThr 30
 
 # PHASE 3: TP/SL bruteforce
-Write-Host "`n--- PHASE 3: TP/SL Bruteforce (with volume filter) ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 3: TP/SL Bruteforce (with volume filter) ---"
 $tps = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0)
 $sls = @(0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0)
 $longEntries = @(); $shortEntries = @()
@@ -410,7 +410,7 @@ if ($bestRR) {
 }
 
 # PHASE 4: Time cycles (day-of-week)
-Write-Host "`n--- PHASE 4: Time Cycles (Day of Week) ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 4: Time Cycles (Day of Week) ---"
 $dow = @{}
 for ($i = $win.per + 20; $i -lt $closes.Count - 3; $i++) {
     $isLong = $rsi[$i - 1] -gt $win.os -and $rsi[$i] -le $win.os -and $rsi[$i] -ne 0
@@ -437,7 +437,7 @@ $dayNames = @("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 }
 
 # PHASE 5: 3-month simulation (LONG only, TP=0.5% SL=0.5%)
-Write-Host "`n--- PHASE 5: 3-Month Simulation (LONG only) ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 5: 3-Month Simulation (LONG only) ---"
 $startDt = [DateTimeOffset]::new(2026, 3, 12, 0, 0, 0, [TimeSpan]::Zero)
 $startMs = $startDt.ToUnixTimeMilliseconds()
 $startIdx = 0
@@ -482,16 +482,16 @@ Write-Output "  Start: 100 | Final: $([Math]::Round($capital, 2)) | Return: $([M
 $tradeLog | Format-Table -AutoSize
 
 # PHASE 6: Live signal
-Write-Host "--- PHASE 6: Live Signal ---" -ForegroundColor Yellow
+Write-Output "--- PHASE 6: Live Signal ---"
 $lastRsi = $rsi[-1]; $prevRsi = $rsi[-2]; $lastPrice = $closes[-1]; $lastDt = [DateTimeOffset]::FromUnixTimeMilliseconds($times[-1])
 Write-Output "  $($win.tf) @ $($lastDt.ToString('MM-dd HH:mm')) UTC"
 Write-Output "  Price: $([Math]::Round($lastPrice, 4)) | RSI($($win.per)): $([Math]::Round($lastRsi, 1)) (prev $([Math]::Round($prevRsi, 1)))"
 Write-Output "  OB=$($win.ob) OS=$($win.os) | Vol vs MA20: $([Math]::Round($vols[-1] / $vma[-1] * 100, 0))%"
 if ($prevRsi -gt $win.os -and $lastRsi -le $win.os -and $lastRsi -ne 0 -and $vols[-1] -gt $vma[-1] * 0.8) {
-    Write-Host "  >>> LONG SIGNAL <<<" -ForegroundColor Green
+    Write-Output "  >>> LONG SIGNAL <<<"
 } elseif ($prevRsi -lt $win.ob -and $lastRsi -ge $win.ob -and $lastRsi -ne 100 -and $vols[-1] -gt $vma[-1] * 0.8) {
-    Write-Host "  >>> SHORT SIGNAL <<<" -ForegroundColor Red
+    Write-Output "  >>> SHORT SIGNAL <<<"
 } else {
     Write-Output "  No signal (RSI=$([Math]::Round($lastRsi, 1)) between $($win.os)-$($win.ob))"
 }
-Write-Host "`n=== XRP COMPLETE ===" -ForegroundColor Cyan
+Write-Output "`n=== XRP COMPLETE ==="

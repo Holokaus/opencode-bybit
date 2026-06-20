@@ -110,11 +110,11 @@ function Calc-StochRSI($rsi, $kPeriod, $dPeriod) {
 # ============================================================
 # PHASE 1: Trade Frequency + Data Coverage
 # ============================================================
-Write-Host "================================================================" -ForegroundColor Magenta
-Write-Host "  PHASE 1: TRADE FREQUENCY & DATA COVERAGE" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "================================================================"
+Write-Output "  PHASE 1: TRADE FREQUENCY & DATA COVERAGE"
+Write-Output "================================================================"
 
-Write-Host "Fetching 4h data (up to 2000 candles)..." -ForegroundColor Yellow
+Write-Output "Fetching 4h data (up to 2000 candles)..."
 $klines = Get-K "240" 2000
 $close = $klines | ForEach-Object { [double]$_[4] }
 $high = $klines | ForEach-Object { [double]$_[2] }
@@ -125,8 +125,8 @@ $timestamps = $klines | ForEach-Object { [long]$_[0] }
 $startDate = [DateTimeOffset]::FromUnixTimeMilliseconds($timestamps[-1]).DateTime
 $endDate = [DateTimeOffset]::FromUnixTimeMilliseconds($timestamps[0]).DateTime
 $totalDays = [Math]::Round(($endDate - $startDate).TotalDays, 1)
-Write-Host "  Data span: $($startDate.ToString('yyyy-MM-dd')) to $($endDate.ToString('yyyy-MM-dd')) ($totalDays days)"
-Write-Host "  Candles: $($close.Count)"
+Write-Output "  Data span: $($startDate.ToString('yyyy-MM-dd')) to $($endDate.ToString('yyyy-MM-dd')) ($totalDays days)"
+Write-Output "  Candles: $($close.Count)"
 
 $rsi = Calc-RSI $close 41
 $obLevel = 68; $osLevel = 42
@@ -142,19 +142,19 @@ $signalsPerDay = [Math]::Round($totalSignals / $totalDays, 3)
 $daysBetweenSignals = [Math]::Round($totalDays / $totalSignals, 1)
 $avgPerMonth = [Math]::Round($totalSignals / ($totalDays / 30.44), 1)
 
-Write-Host "`nTrade Frequency:" -ForegroundColor Cyan
-Write-Host "  Total signals: $totalSignals ($($longDates.Count) long, $($shortDates.Count) short)"
-Write-Host "  Signals per day: $signalsPerDay"
-Write-Host "  Days between signals: ~$daysBetweenSignals days"
-Write-Host "  Signals per month: ~$avgPerMonth"
-Write-Host "  Avg holding time target: 1-3 candles (4-12 hours per trade)" -ForegroundColor Gray
+Write-Output "`nTrade Frequency:"
+Write-Output "  Total signals: $totalSignals ($($longDates.Count) long, $($shortDates.Count) short)"
+Write-Output "  Signals per day: $signalsPerDay"
+Write-Output "  Days between signals: ~$daysBetweenSignals days"
+Write-Output "  Signals per month: ~$avgPerMonth"
+Write-Output "  Avg holding time target: 1-3 candles (4-12 hours per trade)"
 
 # ============================================================
 # PHASE 2: INDICATOR COMBINATION BRUTEFORCE
 # ============================================================
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  PHASE 2: INDICATOR COMBINATION" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  PHASE 2: INDICATOR COMBINATION"
+Write-Output "================================================================"
 
 $atr14 = Calc-ATR $high $low $close 14
 $macd = Calc-MACD $close 12 26 9
@@ -208,22 +208,22 @@ foreach ($maPeriod in @(20, 50, 100, 200)) {
     }
 }
 
-Write-Host "Indicator combinations tested (RSI(41) + filters):" -ForegroundColor Yellow
+Write-Output "Indicator combinations tested (RSI(41) + filters):"
 $sortedCombos = $combos | Sort-Object WR -Descending
-Write-Host ("  {0,-25} {1,-8} {2,-8} {3,-10} {4,-10}" -f "Combination", "WR(%)", "Trades", "LongWR", "ShortWR") -ForegroundColor Yellow
+Write-Output ("  {0,-25} {1,-8} {2,-8} {3,-10} {4,-10}" -f "Combination", "WR(%)", "Trades", "LongWR", "ShortWR") -ForegroundColor Yellow
 $sortedCombos | ForEach-Object {
-    Write-Host ("  {0,-25} {1,-8} {2,-8} {3,-10} {4,-10}" -f $_.Filters, $_.WR, $_.Trades, $_.LongWR, $_.ShortWR)
+    Write-Output ("  {0,-25} {1,-8} {2,-8} {3,-10} {4,-10}" -f $_.Filters, $_.WR, $_.Trades, $_.LongWR, $_.ShortWR)
 }
 
 # ============================================================
 # PHASE 3: TIME CYCLE ANALYSIS
 # ============================================================
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  PHASE 3: TIME CYCLE ANALYSIS" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  PHASE 3: TIME CYCLE ANALYSIS"
+Write-Output "================================================================"
 
 # Hour of day (UTC) - which 4h window performs best
-Write-Host "`n4h Window Performance (UTC):" -ForegroundColor Yellow
+Write-Output "`n4h Window Performance (UTC):"
 $windowData = @{}
 for ($i = 42; $i -lt $close.Count - 3; $i++) {
     $dt = [DateTimeOffset]::FromUnixTimeMilliseconds($timestamps[$i])
@@ -239,11 +239,11 @@ for ($i = 42; $i -lt $close.Count - 3; $i++) {
 }
 $windowData.GetEnumerator() | Sort-Object Name | ForEach-Object {
     $w = $_.Value; $wr = if ($w.total -gt 0) { [Math]::Round($w.wins/$w.total*100,1) } else { 0 }
-    Write-Host ("  UTC $($_.Name):00-$([int]$_.Name+4):00  |  WR $wr%  |  $($w.total) signals  |  $($w.wins)W/$($w.losses)L")
+    Write-Output ("  UTC $($_.Name):00-$([int]$_.Name+4):00  |  WR $wr%  |  $($w.total) signals  |  $($w.wins)W/$($w.losses)L")
 }
 
 # Month analysis
-Write-Host "`nMonthly Performance:" -ForegroundColor Yellow
+Write-Output "`nMonthly Performance:"
 $monthData = @{}
 for ($i = 42; $i -lt $close.Count - 3; $i++) {
     $dt = [DateTimeOffset]::FromUnixTimeMilliseconds($timestamps[$i])
@@ -262,15 +262,15 @@ $monthData.GetEnumerator() | Sort-Object Name | ForEach-Object {
     $w = $_.Value; $mn = $monthNames[$_.Name]
     $wr = if ($w.total -gt 0) { [Math]::Round($w.wins/$w.total*100,1) } else { 0 }
     $avgRet = if ($w.total -gt 0) { [Math]::Round($w.returns/$w.total,2) } else { 0 }
-    Write-Host ("  $mn  |  WR $wr%  |  $($w.total) signals  |  avg +$avgRet%  |  $($w.wins)W/$($w.losses)L")
+    Write-Output ("  $mn  |  WR $wr%  |  $($w.total) signals  |  avg +$avgRet%  |  $($w.wins)W/$($w.losses)L")
 }
 
 # ============================================================
 # PHASE 4: SOL MARKET REGIME BEHAVIOR
 # ============================================================
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  PHASE 4: SOL CHARACTER & MARKET REGIME" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  PHASE 4: SOL CHARACTER & MARKET REGIME"
+Write-Output "================================================================"
 
 # Volatility clustering analysis
 $returns = [double[]]::new($close.Count)
@@ -279,10 +279,10 @@ $avgAbsReturn = ($returns | Where-Object { $_ -ne 0 } | ForEach-Object { [Math]:
 $highVolThreshold = $avgAbsReturn * 1.5
 $lowVolThreshold = $avgAbsReturn * 0.5
 
-Write-Host "SOL Volatility Regime:" -ForegroundColor Yellow
-Write-Host "  Avg 4h candle move: $([Math]::Round($avgAbsReturn,2))%"
-Write-Host "  High vol threshold: >$([Math]::Round($highVolThreshold,2))%"
-Write-Host "  Low vol threshold: <$([Math]::Round($lowVolThreshold,2))%"
+Write-Output "SOL Volatility Regime:"
+Write-Output "  Avg 4h candle move: $([Math]::Round($avgAbsReturn,2))%"
+Write-Output "  High vol threshold: >$([Math]::Round($highVolThreshold,2))%"
+Write-Output "  Low vol threshold: <$([Math]::Round($lowVolThreshold,2))%"
 
 # Test signal quality in different volatility regimes
 $highVolWins=0; $highVolLosses=0; $lowVolWins=0; $lowVolLosses=0; $normVolWins=0; $normVolLosses=0
@@ -299,12 +299,12 @@ for ($i = 42; $i -lt $close.Count - 3; $i++) {
     else { if ($won) { $normVolWins++ } else { $normVolLosses++ } }
 }
 $hvTotal = $highVolWins+$highVolLosses; $lvTotal = $lowVolWins+$lowVolLosses; $nvTotal = $normVolWins+$normVolLosses
-Write-Host "  High vol signals: $hvTotal ($([Math]::Round($highVolWins/[Math]::Max(1,$hvTotal)*100,1))% WR)"
-Write-Host "  Normal vol signals: $nvTotal ($([Math]::Round($normVolWins/[Math]::Max(1,$nvTotal)*100,1))% WR)"
-Write-Host "  Low vol signals: $lvTotal ($([Math]::Round($lowVolWins/[Math]::Max(1,$lvTotal)*100,1))% WR)"
+Write-Output "  High vol signals: $hvTotal ($([Math]::Round($highVolWins/[Math]::Max(1,$hvTotal)*100,1))% WR)"
+Write-Output "  Normal vol signals: $nvTotal ($([Math]::Round($normVolWins/[Math]::Max(1,$nvTotal)*100,1))% WR)"
+Write-Output "  Low vol signals: $lvTotal ($([Math]::Round($lowVolWins/[Math]::Max(1,$lvTotal)*100,1))% WR)"
 
 # Consecutive signal behavior
-Write-Host "`nSignal Clustering - what happens after a winner vs loser:" -ForegroundColor Yellow
+Write-Output "`nSignal Clustering - what happens after a winner vs loser:"
 $prevWon = $null; $afterWinWins=0; $afterWinLosses=0; $afterLossWins=0; $afterLossLosses=0
 for ($i = 43; $i -lt $close.Count - 3; $i++) {
     $isSignal = ($rsi[$i-1] -gt $osLevel -and $rsi[$i] -le $osLevel) -or ($rsi[$i-1] -lt $obLevel -and $rsi[$i] -ge $obLevel)
@@ -324,11 +324,11 @@ for ($i = 43; $i -lt $close.Count - 3; $i++) {
     $prevWon = $won
 }
 $awTot=$afterWinWins+$afterWinLosses; $alTot=$afterLossWins+$afterLossLosses
-Write-Host "  After a WINNER:  $($afterWinWins)W/$($afterWinLosses)L = $(if($awTot-gt0){[Math]::Round($afterWinWins/$awTot*100,1)}else{0})% WR"
-Write-Host "  After a LOSER:   $($afterLossWins)W/$($afterLossLosses)L = $(if($alTot-gt0){[Math]::Round($afterLossWins/$alTot*100,1)}else{0})% WR"
+Write-Output "  After a WINNER:  $($afterWinWins)W/$($afterWinLosses)L = $(if($awTot-gt0){[Math]::Round($afterWinWins/$awTot*100,1)}else{0})% WR"
+Write-Output "  After a LOSER:   $($afterLossWins)W/$($afterLossLosses)L = $(if($alTot-gt0){[Math]::Round($afterLossWins/$alTot*100,1)}else{0})% WR"
 
 # Recovery time analysis
-Write-Host "`nAverage Recovery Time (price returning above MA50 after a dip):" -ForegroundColor Yellow
+Write-Output "`nAverage Recovery Time (price returning above MA50 after a dip):"
 $ma50 = Calc-EMA $close 50
 $dipCount=0; $dipCandles=0;$dipRecoveries=0
 for ($i = 60; $i -lt $close.Count; $i++) {
@@ -339,68 +339,68 @@ for ($i = 60; $i -lt $close.Count; $i++) {
         }
     }
 }
-Write-Host "  Dips below MA50: $dipCount"
-Write-Host "  Recoveries: $dipRecoveries ($([Math]::Round($dipRecoveries/[Math]::Max(1,$dipCount)*100,1))% recovery rate)"
-Write-Host "  Avg candles to recover: $([Math]::Round($dipCandles/[Math]::Max(1,$dipRecoveries),1)) (=$([Math]::Round($dipCandles/[Math]::Max(1,$dipRecoveries)*4,1)) hours)"
+Write-Output "  Dips below MA50: $dipCount"
+Write-Output "  Recoveries: $dipRecoveries ($([Math]::Round($dipRecoveries/[Math]::Max(1,$dipCount)*100,1))% recovery rate)"
+Write-Output "  Avg candles to recover: $([Math]::Round($dipCandles/[Math]::Max(1,$dipRecoveries),1)) (=$([Math]::Round($dipCandles/[Math]::Max(1,$dipRecoveries)*4,1)) hours)"
 
 # ============================================================
 # PHASE 5: LIVE PAPER TRADING SIGNAL
 # ============================================================
-Write-Host "`n================================================================" -ForegroundColor Magenta
-Write-Host "  PHASE 5: LIVE PAPER TRADING SIGNAL" -ForegroundColor Magenta
-Write-Host "================================================================" -ForegroundColor Magenta
+Write-Output "`n================================================================"
+Write-Output "  PHASE 5: LIVE PAPER TRADING SIGNAL"
+Write-Output "================================================================"
 
 $latestRSI = $rsi[-1]; $prevRSI = $rsi[-2]
 $currentPrice = $close[-1]
 $candleTime = [DateTimeOffset]::FromUnixTimeMilliseconds($timestamps[0])
 
-Write-Host "`n[MAINNET] LIVE 4H SOL SIGNAL - $(Get-Date -Format 'yyyy-MM-dd HH:mm UTC')" -ForegroundColor Cyan
-Write-Host "  Current 4h candle start: $($candleTime.ToString('MM-dd HH:mm')) UTC" -ForegroundColor Gray
-Write-Host "  Current price: $currentPrice" -ForegroundColor White
-Write-Host "  RSI(41): $([Math]::Round($latestRSI,1)) (prev: $([Math]::Round($prevRSI,1)))" -ForegroundColor White
-Write-Host "  ATR(14): $([Math]::Round($atr14[-1],2)) ($([Math]::Round($atr14[-1]/$close[-1]*100,2))%)" -ForegroundColor Gray
+Write-Output "`n[MAINNET] LIVE 4H SOL SIGNAL - $(Get-Date -Format 'yyyy-MM-dd HH:mm UTC')" -ForegroundColor Cyan
+Write-Output "  Current 4h candle start: $($candleTime.ToString('MM-dd HH:mm')) UTC" -ForegroundColor Gray
+Write-Output "  Current price: $currentPrice"
+Write-Output "  RSI(41): $([Math]::Round($latestRSI,1)) (prev: $([Math]::Round($prevRSI,1)))"
+Write-Output "  ATR(14): $([Math]::Round($atr14[-1],2)) ($([Math]::Round($atr14[-1]/$close[-1]*100,2))%)"
 
 if ($prevRSI -gt $osLevel -and $latestRSI -le $osLevel) {
-    Write-Host ("`n  +---- LONG SIGNAL ACTIVE -----+") -ForegroundColor Green
+    Write-Output ("`n  +---- LONG SIGNAL ACTIVE -----+") -ForegroundColor Green
     $tp1 = $currentPrice * 1.015; $sl1 = $currentPrice * 0.995
     $tp2 = $currentPrice + $atr14[-1]*2; $sl2 = $currentPrice - $atr14[-1]*1.75
-    Write-Host "  Entry: $([Math]::Round($currentPrice,2))"
-    Write-Host ("  TP Option A (1.5`%): $([Math]::Round($tp1,2))")
-    Write-Host ("  SL Option A (0.5`%): $([Math]::Round($sl1,2))")
-    Write-Host "  TP Option B (2x ATR): $([Math]::Round($tp2,2))"
-    Write-Host "  SL Option B (1.75x ATR): $([Math]::Round($sl2,2))"
+    Write-Output "  Entry: $([Math]::Round($currentPrice,2))"
+    Write-Output ("  TP Option A (1.5`%): $([Math]::Round($tp1,2))")
+    Write-Output ("  SL Option A (0.5`%): $([Math]::Round($sl1,2))")
+    Write-Output "  TP Option B (2x ATR): $([Math]::Round($tp2,2))"
+    Write-Output "  SL Option B (1.75x ATR): $([Math]::Round($sl2,2))"
 }
 elseif ($prevRSI -lt $obLevel -and $latestRSI -ge $obLevel) {
-    Write-Host ("  +---- SHORT SIGNAL ACTIVE -----+") -ForegroundColor Red
+    Write-Output ("  +---- SHORT SIGNAL ACTIVE -----+") -ForegroundColor Red
     $tp1 = $currentPrice * 0.985; $sl1 = $currentPrice * 1.005
     $tp2 = $currentPrice - $atr14[-1]*2; $sl2 = $currentPrice + $atr14[-1]*1.75
-    Write-Host "  Entry: $([Math]::Round($currentPrice,2))"
-    Write-Host ("  TP Option A (1.5`%): $([Math]::Round($tp1,2))")
-    Write-Host ("  SL Option A (0.5`%): $([Math]::Round($sl1,2))")
-    Write-Host "  TP Option B (2x ATR): $([Math]::Round($tp2,2))"
-    Write-Host "  SL Option B (1.75x ATR): $([Math]::Round($sl2,2))"
+    Write-Output "  Entry: $([Math]::Round($currentPrice,2))"
+    Write-Output ("  TP Option A (1.5`%): $([Math]::Round($tp1,2))")
+    Write-Output ("  SL Option A (0.5`%): $([Math]::Round($sl1,2))")
+    Write-Output "  TP Option B (2x ATR): $([Math]::Round($tp2,2))"
+    Write-Output "  SL Option B (1.75x ATR): $([Math]::Round($sl2,2))"
 }
 else {
-    Write-Host "`n  Status: NO SIGNAL - WAITING" -ForegroundColor Yellow
-    Write-Host "  RSI needs to cross below $osLevel for LONG or above $obLevel for SHORT"
-    Write-Host "  Distance to OS: $([Math]::Round($latestRSI - $osLevel,1)) | Distance to OB: $([Math]::Round($obLevel - $latestRSI,1))"
+    Write-Output "`n  Status: NO SIGNAL - WAITING"
+    Write-Output "  RSI needs to cross below $osLevel for LONG or above $obLevel for SHORT"
+    Write-Output "  Distance to OS: $([Math]::Round($latestRSI - $osLevel,1)) | Distance to OB: $([Math]::Round($obLevel - $latestRSI,1))"
 }
 
-Write-Host "`n================================" -ForegroundColor Magenta
-Write-Host "  COMPLETE SOL STRATEGY KEY" -ForegroundColor Magenta
-Write-Host "================================" -ForegroundColor Magenta
-Write-Host ""
-Write-Host "  Timeframe: 4h" -ForegroundColor Green
-Write-Host "  Core signal: RSI(41) crossing OB(68)/OS(42)" -ForegroundColor Green
-Write-Host "  Trade frequency: ~$avgPerMonth signals/month (~$daysBetweenSignals days apart)" -ForegroundColor Green
-Write-Host "  Best combo: RSI(41) + MA($(($sortedCombos | Select-Object -First 1).Filters))" -ForegroundColor Green
-Write-Host "  Best combo WR: $(($sortedCombos | Select-Object -First 1).WR)% on $(($sortedCombos | Select-Object -First 1).Trades) trades" -ForegroundColor Green
+Write-Output "`n================================"
+Write-Output "  COMPLETE SOL STRATEGY KEY"
+Write-Output "================================"
+Write-Output ""
+Write-Output "  Timeframe: 4h"
+Write-Output "  Core signal: RSI(41) crossing OB(68)/OS(42)"
+Write-Output "  Trade frequency: ~$avgPerMonth signals/month (~$daysBetweenSignals days apart)"
+Write-Output "  Best combo: RSI(41) + MA($(($sortedCombos | Select-Object -First 1).Filters))"
+Write-Output "  Best combo WR: $(($sortedCombos | Select-Object -First 1).WR)% on $(($sortedCombos | Select-Object -First 1).Trades) trades"
 if ($highVolWins/$hvTotal -gt $normVolWins/$nvTotal) {
-    Write-Host "  SOL performs BEST in: HIGH volatility (hit RSI extreme faster)" -ForegroundColor Cyan
+    Write-Output "  SOL performs BEST in: HIGH volatility (hit RSI extreme faster)"
 } else {
-    Write-Host "  SOL performs BEST in: NORMAL volatility (reversals more reliable)" -ForegroundColor Cyan
+    Write-Output "  SOL performs BEST in: NORMAL volatility (reversals more reliable)"
 }
-Write-Host "  Exit: TP=1.5%/SL=0.5% (fixed) or TP=2xATR/SL=1.75xATR (adaptive)" -ForegroundColor Green
+Write-Output "  Exit: TP=1.5%/SL=0.5% (fixed) or TP=2xATR/SL=1.75xATR (adaptive)"
 
 # Save paper trading log
 $logEntry = @"
@@ -408,4 +408,4 @@ $logEntry = @"
 "@
 $logPath = "paper_trading_log.txt"
 Add-Content -LiteralPath $logPath -Value $logEntry -ErrorAction SilentlyContinue
-Write-Host "`nPaper trading log updated: $logPath" -ForegroundColor Gray
+Write-Output "`nPaper trading log updated: $logPath"

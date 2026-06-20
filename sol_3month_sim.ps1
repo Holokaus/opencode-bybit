@@ -57,8 +57,8 @@ function Calc-EMA { param($p, $per)
     return $e
 }
 
-Write-Host "=== 3-MONTH SIMULATION: LONG ONLY ===" -ForegroundColor Cyan
-Write-Host "Start: 100 USD | 2h RSI(38) OS=36 | TP=0.5% SL=0.5% | No Sat/Jan/Loss-skip" -ForegroundColor Cyan
+Write-Output "=== 3-MONTH SIMULATION: LONG ONLY ==="
+Write-Output "Start: 100 USD | 2h RSI(38) OS=36 | TP=0.5% SL=0.5% | No Sat/Jan/Loss-skip"
 
 $per=38;$ob=60;$os=36;$int="120";$tp=0.5;$sl=0.5;$comm=0.1
 $klines=Get-K $int 1000

@@ -89,9 +89,9 @@ $candidates = @(
 function Analyze-TF {
     param($tfName, $int, $per, $ob, $os)
 
-    Write-Host "================================================================" -ForegroundColor Cyan
-    Write-Host "  DEEP DIVE: $tfName RSI($per) OB=$ob OS=$os" -ForegroundColor Cyan
-    Write-Host "================================================================" -ForegroundColor Cyan
+    Write-Output "================================================================"
+    Write-Output "  DEEP DIVE: $tfName RSI($per) OB=$ob OS=$os"
+    Write-Output "================================================================"
 
     $klines=Get-K $int 500
     if (-not $klines) { Write-Output "  No data (null)"; return }
@@ -221,8 +221,8 @@ function Analyze-TF {
     Write-Output "  Price:  $([Math]::Round($cp,2))"
     Write-Output "  RSI($per): $([Math]::Round($lr,1)) (prev $([Math]::Round($pr,1)))"
     Write-Output "  OB=$ob OS=$os"
-    if ($pr -gt $os -and $lr -le $os -and $lr -ne 0) { Write-Host "  >>> LONG SIGNAL <<<" -ForegroundColor Green }
-    elseif ($pr -lt $ob -and $lr -ge $ob -and $lr -ne 100) { Write-Host "  >>> SHORT SIGNAL <<<" -ForegroundColor Red }
+    if ($pr -gt $os -and $lr -le $os -and $lr -ne 0) { Write-Output "  >>> LONG SIGNAL <<<" }
+    elseif ($pr -lt $ob -and $lr -ge $ob -and $lr -ne 100) { Write-Output "  >>> SHORT SIGNAL <<<" }
     else { Write-Output "  No signal. RSI at $([Math]::Round($lr,1)) (OS=$os OB=$ob)" }
 
     Write-Output ""

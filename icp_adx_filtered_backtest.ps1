@@ -3,9 +3,9 @@
 #  Tests 3 LONG-only variants side-by-side
 # ============================================================
 
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  ICP 12h ADX>25 Ã¢â‚¬â€ Direction-Filtered" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "========================================"
+Write-Output "  ICP 12h ADX>25 Ã¢â‚¬â€ Direction-Filtered"
+Write-Output "========================================"
 
 # ===== API =====
 function Read-DerLength {
@@ -82,13 +82,13 @@ function Test-TP-SL($c, $h, $l, $ei, $tp, $sl, $fee) {
 }
 
 # ===== Fetch =====
-Write-Host 'Fetching 800 candles ICPUSDT 12h...' -ForegroundColor Yellow
+Write-Output 'Fetching 800 candles ICPUSDT 12h...'
 $k = Get-K 720 800
-if (-not $k) { Write-Host 'FAILED' -ForegroundColor Red; exit 1 }
-Write-Host ('Got ' + $k.Count + ' candles') -ForegroundColor Green
+if (-not $k) { Write-Output 'FAILED' exit 1 }
+Write-Output ('Got ' + $k.Count + ' candles') -ForegroundColor Green
 $c = $k | % { [double]$_[4] }; $h = $k | % { [double]$_[2] }; $l = $k | % { [double]$_[3] }
 
-Write-Host 'Computing indicators...' -ForegroundColor Yellow
+Write-Output 'Computing indicators...'
 $adx = Calc-ADX $h $l $c 14
 $ma20 = Calc-EMA $c 20; $ma50 = Calc-EMA $c 50
 
@@ -109,22 +109,22 @@ for ($i = $si; $i -lt $c.Count; $i++) {
     if ($adx[$i] -gt 25 -and $ma20[$i] -gt $ma50[$i]) { $maCrossSig++ }
 }
 $totalC = $c.Count - $si
-Write-Host ('Signal comparison (out of ' + $totalC + ' candles):') -ForegroundColor Yellow
+Write-Output ('Signal comparison (out of ' + $totalC + ' candles):') -ForegroundColor Yellow
 $pctA = [Math]::Round($adxSig/$totalC*100,1)
 $pctB = [Math]::Round($diUpSig/$totalC*100,1)
 $pctC = [Math]::Round($trendSig/$totalC*100,1)
 $pctD = [Math]::Round($maCrossSig/$totalC*100,1)
-Write-Host ('  A: ADX>25 (no filter):             ' + $adxSig + ' (' + $pctA + '%)') -ForegroundColor Gray
-Write-Host ('  B: ADX>25 + +DI>-DI:               ' + $diUpSig + ' (' + $pctB + '%)') -ForegroundColor Gray
-Write-Host ('  C: ADX>25 + Price>MA50:            ' + $trendSig + ' (' + $pctC + '%)') -ForegroundColor Gray
-Write-Host ('  D: ADX>25 + MA20>MA50:             ' + $maCrossSig + ' (' + $pctD + '%)') -ForegroundColor Gray
+Write-Output ('  A: ADX>25 (no filter):             ' + $adxSig + ' (' + $pctA + '%)') -ForegroundColor Gray
+Write-Output ('  B: ADX>25 + +DI>-DI:               ' + $diUpSig + ' (' + $pctB + '%)') -ForegroundColor Gray
+Write-Output ('  C: ADX>25 + Price>MA50:            ' + $trendSig + ' (' + $pctC + '%)') -ForegroundColor Gray
+Write-Output ('  D: ADX>25 + MA20>MA50:             ' + $maCrossSig + ' (' + $pctD + '%)') -ForegroundColor Gray
 
 # ===== Grid Search Helper =====
 function Run-Grid($name, [scriptblock]$condition) {
-    Write-Host ''
-    Write-Host ('========================================') -ForegroundColor Cyan
-    Write-Host ('  ' + $name) -ForegroundColor Cyan
-    Write-Host ('========================================') -ForegroundColor Cyan
+    Write-Output ''
+    Write-Output ('========================================') -ForegroundColor Cyan
+    Write-Output ('  ' + $name) -ForegroundColor Cyan
+    Write-Output ('========================================') -ForegroundColor Cyan
     $tps = @(0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0,8.0)
     $sls = @(0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,5.0)
     $res = @()
@@ -145,15 +145,15 @@ function Run-Grid($name, [scriptblock]$condition) {
         }
     }
     $res = $res | Sort-Object S -Descending
-    Write-Host ('TP%   SL%   WR%     Trades PnL         S')
+    Write-Output ('TP%   SL%   WR%     Trades PnL         S')
     $res[0..10] | % {
         $line = ('{0,-6}{1,-6}{2,-8}{3,-8}{4,-12}{5,-8}' -f $_.TP,$_.SL,$_.WR,$_.T,$_.Pnl,$_.S)
-        Write-Host $line
+        Write-Output $line
     }
     $rr = $res | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
     if ($rr) {
         $line2 = ('Best 1:1: TP={0}% SL={1}% WR={2}% T={3} PnL={4} S={5}' -f $rr[0].TP,$rr[0].SL,$rr[0].WR,$rr[0].T,$rr[0].Pnl,$rr[0].S)
-        Write-Host $line2 -ForegroundColor Green
+        Write-Output $line2 -ForegroundColor Green
     }
     return $res
 }
@@ -165,10 +165,10 @@ $resC = Run-Grid 'C: ADX>25 + Price>MA50' { param($i,$adx,$pdi,$c,$m20,$m50) $ad
 $resD = Run-Grid 'D: ADX>25 + MA20>MA50' { param($i,$adx,$pdi,$c,$m20,$m50) $adx[$i] -gt 25 -and $m20[$i] -gt $m50[$i] }
 
 # ===== Summary =====
-Write-Host ''
-Write-Host ('========================================') -ForegroundColor Cyan
-Write-Host ('  COMPARISON: Best 1:1 R:R by Variant') -ForegroundColor Cyan
-Write-Host ('========================================') -ForegroundColor Cyan
+Write-Output ''
+Write-Output ('========================================') -ForegroundColor Cyan
+Write-Output ('  COMPARISON: Best 1:1 R:R by Variant') -ForegroundColor Cyan
+Write-Output ('========================================') -ForegroundColor Cyan
 
 $allV = @(
     @{n='A: ADX>25 (no filter)';r=$resA},
@@ -180,15 +180,15 @@ foreach ($v in $allV) {
     $rr = $v.r | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
     if ($rr) {
         $line = ('{0,-30} TP={1}% SL={2}% WR={3}% T={4} PnL={5} S={6}' -f $v.n,$rr[0].TP,$rr[0].SL,$rr[0].WR,$rr[0].T,$rr[0].Pnl,$rr[0].S)
-        Write-Host $line
+        Write-Output $line
     }
 }
 
 # ===== Walk-Forward: Best Variant (B) =====
-Write-Host ''
-Write-Host ('========================================') -ForegroundColor Cyan
-Write-Host ('  Walk-Forward: Variant B (DI-filtered)') -ForegroundColor Cyan
-Write-Host ('========================================') -ForegroundColor Cyan
+Write-Output ''
+Write-Output ('========================================') -ForegroundColor Cyan
+Write-Output ('  Walk-Forward: Variant B (DI-filtered)') -ForegroundColor Cyan
+Write-Output ('========================================') -ForegroundColor Cyan
 
 $tps = @(0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0,8.0)
 $sls = @(0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,5.0)
@@ -219,17 +219,17 @@ foreach ($fold in $folds) {
         if ($z) { if ($z.r -eq 'TP') { $tw++ } else { $tl++ }; $tp2+=$z.p }
     }
     $tt=$tw+$tl; $twr=if($tt){[Math]::Round($tw/$tt*100,1)}else{0}
-    Write-Host ('Fold {0}/{3}: TP={1}% SL={2}% (T={4}) | Test: {5}t WR={6}% PnL={7}' -f ($folds.IndexOf($fold)+1),$bf.TP,$bf.SL,(0+$folds.Count),$bf.T,$tt,$twr,[Math]::Round($tp2,4))
+    Write-Output ('Fold {0}/{3}: TP={1}% SL={2}% (T={4}) | Test: {5}t WR={6}% PnL={7}' -f ($folds.IndexOf($fold)+1),$bf.TP,$bf.SL,(0+$folds.Count),$bf.T,$tt,$twr,[Math]::Round($tp2,4))
     $allW+=$tw; $allL+=$tl; $allP+=$tp2
 }
 $allT=$allW+$allL; $allWR=if($allT){[Math]::Round($allW/$allT*100,1)}else{0}
-Write-Host ('TOTAL: ' + $allT + 't WR=' + $allWR + '% PnL=' + [Math]::Round($allP,4)) -ForegroundColor Cyan
+Write-Output ('TOTAL: ' + $allT + 't WR=' + $allWR + '% PnL=' + [Math]::Round($allP,4)) -ForegroundColor Cyan
 
 # ===== 3-Month Forward (Variant B) =====
-Write-Host ''
-Write-Host ('========================================') -ForegroundColor Cyan
-Write-Host ('  3-Month Forward: Variant B') -ForegroundColor Cyan
-Write-Host ('========================================') -ForegroundColor Cyan
+Write-Output ''
+Write-Output ('========================================') -ForegroundColor Cyan
+Write-Output ('  3-Month Forward: Variant B') -ForegroundColor Cyan
+Write-Output ('========================================') -ForegroundColor Cyan
 
 $fwd=[Math]::Max(0,$c.Count-180)
 $ft2=@()
@@ -254,26 +254,26 @@ for ($i=$fwd; $i -lt $c.Count-3; $i++) {
     }
 }
 $fwWR=if($fwT){[Math]::Round($fwW/$fwT*100,1)}else{0}; $fwRet=[Math]::Round(($fwCap/100-1)*100,2)
-Write-Host ('TP=' + $bf2.TP + '% SL=' + $bf2.SL + '% | ' + $fwT + 't WR=' + $fwWR + '% Return=' + $fwRet + '%') -ForegroundColor Green
+Write-Output ('TP=' + $bf2.TP + '% SL=' + $bf2.SL + '% | ' + $fwT + 't WR=' + $fwWR + '% Return=' + $fwRet + '%') -ForegroundColor Green
 
 # ===== FINAL =====
-Write-Host ''
-Write-Host ('========================================') -ForegroundColor Cyan
-Write-Host ('  FINAL RECOMMENDATION') -ForegroundColor Cyan
-Write-Host ('========================================') -ForegroundColor Cyan
+Write-Output ''
+Write-Output ('========================================') -ForegroundColor Cyan
+Write-Output ('  FINAL RECOMMENDATION') -ForegroundColor Cyan
+Write-Output ('========================================') -ForegroundColor Cyan
 
 $brr = $resB | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
 $crr = $resC | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
 $drr = $resD | ? { $_.TP -ge $_.SL } | Sort-Object S -Descending
 
-Write-Host ('B: ADX>25 + +DI>-DI  -> TP=' + $brr[0].TP + '% SL=' + $brr[0].SL + '% WR=' + $brr[0].WR + '% T=' + $brr[0].T + ' PnL=' + $brr[0].Pnl) -ForegroundColor White
-Write-Host ('   Walk-fwd: ' + $allT + 't WR=' + $allWR + '% | 3mo: ' + $fwT + 't WR=' + $fwWR + '% Ret=' + $fwRet + '%')
-Write-Host ('C: ADX>25 + Price>MA50 -> TP=' + $crr[0].TP + '% SL=' + $crr[0].SL + '% WR=' + $crr[0].WR + '% T=' + $crr[0].T + ' PnL=' + $crr[0].Pnl) -ForegroundColor White
-Write-Host ('D: ADX>25 + MA20>MA50 -> TP=' + $drr[0].TP + '% SL=' + $drr[0].SL + '% WR=' + $drr[0].WR + '% T=' + $drr[0].T + ' PnL=' + $drr[0].Pnl) -ForegroundColor White
+Write-Output ('B: ADX>25 + +DI>-DI  -> TP=' + $brr[0].TP + '% SL=' + $brr[0].SL + '% WR=' + $brr[0].WR + '% T=' + $brr[0].T + ' PnL=' + $brr[0].Pnl) -ForegroundColor White
+Write-Output ('   Walk-fwd: ' + $allT + 't WR=' + $allWR + '% | 3mo: ' + $fwT + 't WR=' + $fwWR + '% Ret=' + $fwRet + '%')
+Write-Output ('C: ADX>25 + Price>MA50 -> TP=' + $crr[0].TP + '% SL=' + $crr[0].SL + '% WR=' + $crr[0].WR + '% T=' + $crr[0].T + ' PnL=' + $crr[0].Pnl) -ForegroundColor White
+Write-Output ('D: ADX>25 + MA20>MA50 -> TP=' + $drr[0].TP + '% SL=' + $drr[0].SL + '% WR=' + $drr[0].WR + '% T=' + $drr[0].T + ' PnL=' + $drr[0].Pnl) -ForegroundColor White
 
-Write-Host ''
-Write-Host ('RECOMMENDED:' ) -ForegroundColor Green
-Write-Host '  Variant B: ADX>25 + +DI>-DI (direction-filtered LONG)' -ForegroundColor Green
-Write-Host ('  TP=' + $brr[0].TP + '% SL=' + $brr[0].SL + '%') -ForegroundColor Green
-Write-Host ''
-Write-Host 'NOTE: A (no filter) is NOT viable - 62% of signals fire in bearish -DI>+DI conditions.' -ForegroundColor Red
+Write-Output ''
+Write-Output ('RECOMMENDED:' ) -ForegroundColor Green
+Write-Output '  Variant B: ADX>25 + +DI>-DI (direction-filtered LONG)'
+Write-Output ('  TP=' + $brr[0].TP + '% SL=' + $brr[0].SL + '%') -ForegroundColor Green
+Write-Output ''
+Write-Output 'NOTE: A (no filter) is NOT viable - 62% of signals fire in bearish -DI>+DI conditions.'

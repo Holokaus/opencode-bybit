@@ -51,7 +51,7 @@ $recvWindow = "5000"
 $baseUrl = "https://api.bybit.com"
 
 # Step 1: Clock sync check
-Write-Host "[MAINNET] Checking connection..." -ForegroundColor Cyan
+Write-Output "[MAINNET] Checking connection..."
 try {
     $resp = Invoke-WebRequest -Uri "$baseUrl/v5/market/time" -UseBasicParsing -TimeoutSec 10
     $json = $resp.Content | ConvertFrom-Json
@@ -60,13 +60,13 @@ try {
     $localMs = [System.DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     $diff = [Math]::Abs($serverMs - $localMs)
     if ($diff -gt 5000) {
-        Write-Host "Clock sync ERROR: ${diff}ms off. Sync system clock and retry." -ForegroundColor Red
+        Write-Output "Clock sync ERROR: ${diff}ms off. Sync system clock and retry."
         exit 1
     }
-    Write-Host "Clock sync: OK (${diff}ms)" -ForegroundColor Green
+    Write-Output "Clock sync: OK (${diff}ms)"
 } catch {
-    Write-Host "Clock check failed: $_" -ForegroundColor Yellow
-    Write-Host "Proceeding..." -ForegroundColor Yellow
+    Write-Output "Clock check failed: $_"
+    Write-Output "Proceeding..."
 }
 
 function Call-Bybit {
@@ -91,26 +91,26 @@ function Call-Bybit {
         $content = $resp.Content | ConvertFrom-Json
         return $content
     } catch {
-        Write-Host "Request failed: $_" -ForegroundColor Red
+        Write-Output "Request failed: $_"
         return $null
     }
 }
 
 $acctTypes = @("UNIFIED", "CONTRACT", "SPOT", "FUND")
 foreach ($at in $acctTypes) {
-    Write-Host "`n--- $at account ---"
+    Write-Output "`n--- $at account ---"
     $r = Call-Bybit -endpoint "/v5/account/wallet-balance" -query "accountType=$at"
     if ($r -and $r.retCode -eq 0) {
-        Write-Host "Raw result:"
+        Write-Output "Raw result:"
         $r.result | ConvertTo-Json -Depth 10
-    } elseif ($r) { Write-Host "Error [$($r.retCode)]: $($r.retMsg)" -ForegroundColor Yellow }
+    } elseif ($r) { Write-Output "Error [$($r.retCode)]: $($r.retMsg)" }
 }
 
-Write-Host "`n--- Account Info ---"
+Write-Output "`n--- Account Info ---"
 $r = Call-Bybit -endpoint "/v5/account/info" -query ""
 if ($r -and $r.retCode -eq 0) {
     $r.result | ConvertTo-Json -Depth 5
 }
-elseif ($r) { Write-Host "Error [$($r.retCode)]: $($r.retMsg)" -ForegroundColor Red }
+elseif ($r) { Write-Output "Error [$($r.retCode)]: $($r.retMsg)" }
 
-Write-Host "`n[MAINNET] Signing: RSA-SHA256 (private.pem, 2048-bit)" -ForegroundColor Green
+Write-Output "`n[MAINNET] Signing: RSA-SHA256 (private.pem, 2048-bit)"

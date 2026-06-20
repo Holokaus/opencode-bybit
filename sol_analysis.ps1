@@ -52,7 +52,7 @@ function Call-Bybit-GET {
         $url = "https://api.bybit.com$endpoint`?$query"
         $resp = Invoke-WebRequest -Uri $url -Headers $headers -UseBasicParsing -TimeoutSec 15
         return ($resp.Content | ConvertFrom-Json).result
-    } catch { Write-Host "Error: $_"; return $null }
+    } catch { Write-Output "Error: $_"; return $null }
 }
 
 function Get-Klines {
@@ -106,14 +106,14 @@ $timeframes = @(
 $rsiPeriods = @(7, 10, 14, 20, 25)
 
 foreach ($tf in $timeframes) {
-    Write-Host "`n============================================" -ForegroundColor Cyan
-    Write-Host "  SOLUSDT - $($tf.name) Timeframe" -ForegroundColor Yellow
-    Write-Host "============================================" -ForegroundColor Cyan
+    Write-Output "`n============================================"
+    Write-Output "  SOLUSDT - $($tf.name) Timeframe"
+    Write-Output "============================================"
     
     $limit = if ($tf.name -eq "1d") { 200 } elseif ($tf.name -eq "4h") { 300 } elseif ($tf.name -eq "1h") { 200 } else { 200 }
     $klines = Get-Klines -category "spot" -symbol "SOLUSDT" -interval $tf.interval -limit $limit
     
-    if (-not $klines) { Write-Host "No data"; continue }
+    if (-not $klines) { Write-Output "No data"; continue }
     
     # Parse close prices
     $closePrices = $klines | ForEach-Object { [double]$_[4] }
@@ -130,13 +130,13 @@ foreach ($tf in $timeframes) {
     $lastLow = $lowPrices[-1]
     $currentPrice = $lastClose
     
-    Write-Host "Current Price: $currentPrice" -ForegroundColor Green
-    Write-Host "  Data points: $($closePrices.Count)"
-    Write-Host "  High: $($closePrices | Measure-Object -Maximum).Maximum"
-    Write-Host "  Low: $($closePrices | Measure-Object -Minimum).Minimum"
+    Write-Output "Current Price: $currentPrice"
+    Write-Output "  Data points: $($closePrices.Count)"
+    Write-Output "  High: $($closePrices | Measure-Object -Maximum).Maximum"
+    Write-Output "  Low: $($closePrices | Measure-Object -Minimum).Minimum"
     
     # RSI Analysis for different periods
-    Write-Host "`n--- RSI Analysis ---" -ForegroundColor Yellow
+    Write-Output "`n--- RSI Analysis ---"
     $rsiResults = @{}
     foreach ($per in $rsiPeriods) {
         $rsiVals = Calculate-RSI -prices $closePrices -period $per
@@ -167,12 +167,12 @@ foreach ($tf in $timeframes) {
         if ($suggestedOB -gt 100) { $suggestedOB = 85 }
         if ($suggestedOS -lt 0) { $suggestedOS = 15 }
         
-        Write-Host "  RSI($per): last=$([Math]::Round($lastRsi,1)) | range=[$([Math]::Round($rsiMin,1))-$([Math]::Round($rsiMax,1))] | avg=$([Math]::Round($rsiAvg,1))"
-        Write-Host "    Suggested OB: ~$suggestedOB (vs std 70) | Suggested OS: ~$suggestedOS (vs std 30)"
+        Write-Output "  RSI($per): last=$([Math]::Round($lastRsi,1)) | range=[$([Math]::Round($rsiMin,1))-$([Math]::Round($rsiMax,1))] | avg=$([Math]::Round($rsiAvg,1))"
+        Write-Output "    Suggested OB: ~$suggestedOB (vs std 70) | Suggested OS: ~$suggestedOS (vs std 30)"
     }
     
     # MACD
-    Write-Host "`n--- MACD (12,26,9) ---" -ForegroundColor Yellow
+    Write-Output "`n--- MACD (12,26,9) ---"
     $ema12 = $closePrices[0]
     $ema26 = $closePrices[0]
     $macdLine = [double[]]::new($closePrices.Count)
@@ -192,21 +192,21 @@ foreach ($tf in $timeframes) {
     $lastMacd = $macdLine[-1]
     $lastSig = $signalLine[-1]
     $lastHist = $lastMacd - $lastSig
-    Write-Host "  MACD: $([Math]::Round($lastMacd,4)) | Signal: $([Math]::Round($lastSig,4)) | Hist: $([Math]::Round($lastHist,4))"
+    Write-Output "  MACD: $([Math]::Round($lastMacd,4)) | Signal: $([Math]::Round($lastSig,4)) | Hist: $([Math]::Round($lastHist,4))"
     
     # Moving Average analysis
-    Write-Host "`n--- Moving Averages ---" -ForegroundColor Yellow
+    Write-Output "`n--- Moving Averages ---"
     $maPeriods = @(7, 20, 50, 100, 200)
     foreach ($maP in $maPeriods) {
         if ($closePrices.Count -le $maP) { continue }
         $sma = Calculate-SMA -prices $closePrices -period $maP
         $lastSma = $sma[-1]
         if ($lastClose -gt $lastSma) { $pos = "ABOVE" } else { $pos = "BELOW" }
-        Write-Host "  MA($maP): $([Math]::Round($lastSma,2)) | Price is $pos MA($maP)"
+        Write-Output "  MA($maP): $([Math]::Round($lastSma,2)) | Price is $pos MA($maP)"
     }
     
     # Support & Resistance levels
-    Write-Host "`n--- Key Levels Support/Resistance ---" -ForegroundColor Yellow
+    Write-Output "`n--- Key Levels Support/Resistance ---"
     $sortedPrices = $closePrices | Sort-Object -Unique
     $recentPrices = $closePrices[-30..-1]
     $sortedRecent = $recentPrices | Sort-Object
@@ -214,12 +214,12 @@ foreach ($tf in $timeframes) {
     $s2 = $sortedRecent[ [Math]::Floor($sortedRecent.Count*0.10) ]
     $r1 = $sortedRecent[ [Math]::Ceiling($sortedRecent.Count*0.75) ]
     $r2 = $sortedRecent[ [Math]::Ceiling($sortedRecent.Count*0.90) ]
-    Write-Host "  S2: $([Math]::Round($s2,2)) | S1: $([Math]::Round($s1,2)) | R1: $([Math]::Round($r1,2)) | R2: $([Math]::Round($r2,2))"
+    Write-Output "  S2: $([Math]::Round($s2,2)) | S1: $([Math]::Round($s1,2)) | R1: $([Math]::Round($r1,2)) | R2: $([Math]::Round($r2,2))"
 }
 
-Write-Host "`n`n====================================" -ForegroundColor Magenta
-Write-Host "  SOL CHARACTER PROFILE SUMMARY" -ForegroundColor Magenta
-Write-Host "====================================" -ForegroundColor Magenta
+Write-Output "`n`n===================================="
+Write-Output "  SOL CHARACTER PROFILE SUMMARY"
+Write-Output "===================================="
 
 # Fetch daily data for final summary
 $dailyKlines = Get-Klines -category "spot" -symbol "SOLUSDT" -interval "D" -limit 365
@@ -238,13 +238,13 @@ if ($dailyKlines) {
     $maxUp = ($returns | Measure-Object -Maximum).Maximum
     $maxDown = ($returns | Measure-Object -Minimum).Minimum
     
-    Write-Host "SOL Volatility Profile (Daily):"
-    Write-Host "  Avg daily move: $([Math]::Round($avgAbsMove,2))%"
-    Write-Host "  Max up day: $([Math]::Round($maxUp,2))%"
-    Write-Host "  Max down day: $([Math]::Round($maxDown,2))%"
+    Write-Output "SOL Volatility Profile (Daily):"
+    Write-Output "  Avg daily move: $([Math]::Round($avgAbsMove,2))%"
+    Write-Output "  Max up day: $([Math]::Round($maxUp,2))%"
+    Write-Output "  Max down day: $([Math]::Round($maxDown,2))%"
     
     # Win rate by day of week
-    Write-Host "`nDay-of-week performance:"
+    Write-Output "`nDay-of-week performance:"
     for ($d = 0; $d -le 6; $d++) {
         $dayReturns = @()
         for ($i = 1; $i -lt $dailyClose.Count; $i++) {
@@ -255,7 +255,7 @@ if ($dailyKlines) {
             $winRate = (($dayReturns | Where-Object { $_ -gt 0 }).Count / $dayReturns.Count * 100)
             $avgDayRet = ($dayReturns | Measure-Object -Average).Average
             $dayName = [System.DayOfWeek]$d
-            Write-Host "  $($dayName): win $([Math]::Round($winRate,1))% | avg $([Math]::Round($avgDayRet,2))% ($($dayReturns.Count) samples)"
+            Write-Output "  $($dayName): win $([Math]::Round($winRate,1))% | avg $([Math]::Round($avgDayRet,2))% ($($dayReturns.Count) samples)"
         }
     }
 }

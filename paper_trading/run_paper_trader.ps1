@@ -125,7 +125,7 @@ function Get-Balance {
 function Place-Order {
     param($symbol, $side, $qty)
     if (-not $Script:Config.UseDemoApi) { return "PAPER" }
-    $b = '{"category":"spot","symbol":"' + $symbol + '","side":"' + $side + '","orderType":"Market","qty":"' + $qty + '"}'
+    $b = '{"category":"linear","symbol":"' + $symbol + '","side":"' + $side + '","orderType":"Market","qty":"' + $qty + '"}'
     $data = Call-Bybit "POST" "/v5/order/create" "" $b
     if ($data -and $data.retCode -eq 0) { return $data.result.orderId }
     Write-Warning ("Order failed: {0} {1}" -f $data.retCode, $data.retMsg)
@@ -134,7 +134,7 @@ function Place-Order {
 
 function Cancel-Order {
     param($symbol, $orderId)
-    $b = '{"category":"spot","symbol":"' + $symbol + '","orderId":"' + $orderId + '"}'
+    $b = '{"category":"linear","symbol":"' + $symbol + '","orderId":"' + $orderId + '"}'
     $data = Call-Bybit "POST" "/v5/order/cancel" "" $b
     return ($data -and $data.retCode -eq 0)
 }
@@ -355,7 +355,7 @@ function Save-State {
 # ===== LOGGING =====
 function Write-Log {
     param($msg);$ts=Get-Date -Format 'yyyy-MM-dd HH:mm:ss';$line="$ts | $msg"
-    Add-Content -Path $Script:Paths.LogFile -Value $line -Force;Write-Host $line }
+    Add-Content -Path $Script:Paths.LogFile -Value $line -Force;Write-Output $line }
 function Log-Trade {
     param($sym,$side,$entry,$exit,$reason,$pnl,$capAfter,$exitTs,$entryTs,$orderId)
     $line="{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}" -f $sym,$entryTs,$exitTs,$side,
@@ -424,13 +424,13 @@ try{[Console]::TreatControlCAsInput=$false}catch{};$shutdown=$false
 Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action{$shutdown=$true}|Out-Null
 
 # Banner
-Write-Host"";Write-Host("="*70)-ForegroundColor Cyan
-Write-Host "  MULTI-STRATEGY PAPER TRADER" -ForegroundColor Cyan
+Write-Output"";Write-Output("="*70)
+Write-Output "  MULTI-STRATEGY PAPER TRADER"
 foreach($sc in $Script:Config.Symbols){$ss=$Script:State.Symbols[$sc.Symbol]
-    Write-Host("  {0,-8} {1,-11} | TP={2}% SL={3}% | Cap={4,7:F2} | Trades={5} | Pos={6}"-f
-        $sc.Symbol,$sc.Strategy,$sc.TP,$sc.SL,$ss.Capital,$ss.TotalTrades,$ss.Positions.Count)-ForegroundColor Cyan}
-Write-Host("  Demo API: {0}"-f$Script:Config.UseDemoApi)-ForegroundColor $(if($Script:Config.UseDemoApi){'Green'}else{'Gray'})
-Write-Host("="*70)-ForegroundColor Cyan;Write-Host""
+    Write-Output("  {0,-8} {1,-11} | TP={2}% SL={3}% | Cap={4,7:F2} | Trades={5} | Pos={6}"-f
+        $sc.Symbol,$sc.Strategy,$sc.TP,$sc.SL,$ss.Capital,$ss.TotalTrades,$ss.Positions.Count)
+Write-Output("  Demo API: {0}"-f$Script:Config.UseDemoApi)
+Write-Output("="*70)
 
 $loopCount=0
 while(-not$shutdown){$loopCount++
@@ -469,8 +469,8 @@ while(-not$shutdown){$loopCount++
         # Status line
         if($loopCount%10-eq0){$parts=foreach($sc in $Script:Config.Symbols){$ss=$Script:State.Symbols[$sc.Symbol]
             "{0}:{1}p,{2}t"-f$sc.Symbol.Substring(0,3),$ss.Positions.Count,$ss.TotalTrades}
-            Write-Host("[{0}] Cap={1:F2} | {2}"-f(Get-Date -Format 'HH:mm:ss'),$Script:State.TotalCapital,($parts-join" "))}
+            Write-Output("[{0}] Cap={1:F2} | {2}"-f(Get-Date -Format 'HH:mm:ss'),$Script:State.TotalCapital,($parts-join" "))}
         Save-State
     }catch{Write-Log ("ERROR: $_");Write-Log ("Stack: $($_.ScriptStackTrace)")}
     Start-Sleep -Seconds $Script:Config.CheckIntervalSec}
-Write-Log"=== SHUTDOWN ===";Save-State;Write-Host "State saved."-ForegroundColor Cyan
+Write-Log"=== SHUTDOWN ===";Save-State;Write-Output "State saved."

@@ -73,13 +73,13 @@ function Test-TP-SL { param($c, $h, $l, $entryIdx, $tpPct, $slPct, $feePct)
     return $null
 }
 
-Write-Host "Fetching 900 candles ICPUSDT 12h..." -ForegroundColor Yellow
+Write-Output "Fetching 900 candles ICPUSDT 12h..."
 $k = Get-K 720 900
-if (-not $k) { Write-Host "FAILED" -ForegroundColor Red; exit 1 }
-Write-Host ("Got " + $k.Count + " candles") -ForegroundColor Green
+if (-not $k) { Write-Output "FAILED" exit 1 }
+Write-Output ("Got " + $k.Count + " candles") -ForegroundColor Green
 $c = $k | % { [double]$_[4] }; $h = $k | % { [double]$_[2] }; $l = $k | % { [double]$_[3] }
 
-Write-Host "Computing indicators..." -ForegroundColor Yellow
+Write-Output "Computing indicators..."
 $adx = Calc-ADX $h $l $c 14
 $ma20 = Calc-EMA $c 20; $ma50 = Calc-EMA $c 50; $ma200 = Calc-EMA $c 200
 
@@ -110,16 +110,16 @@ function Eval-Strat { param($name, $sigArr)
     $res = $res | Sort-Object S -Descending
     $bestEV = ($res | Sort-Object EV -Descending)[0]
     $bestRR = ($res | Where-Object { $_.TP -ge $_.SL } | Sort-Object S -Descending)[0]
-    Write-Host ("`n" + $name) -ForegroundColor Cyan
+    Write-Output ("`n" + $name) -ForegroundColor Cyan
     $res[0..5] | % {
-        Write-Host ("  TP=" + $_.TP + " SL=" + $_.SL + " WR=" + $_.WR + " T=" + $_.T + " PnL=" + $_.Pnl + " EV=" + [Math]::Round($_.EV,4) + " S=" + $_.S)
+        Write-Output ("  TP=" + $_.TP + " SL=" + $_.SL + " WR=" + $_.WR + " T=" + $_.T + " PnL=" + $_.Pnl + " EV=" + [Math]::Round($_.EV,4) + " S=" + $_.S)
     }
-    if ($bestRR) { Write-Host ("  Best 1:1: TP=" + $bestRR.TP + " SL=" + $bestRR.SL + " WR=" + $bestRR.WR + " T=" + $bestRR.T + " PnL=" + $bestRR.Pnl + " EV=" + [Math]::Round($bestRR.EV,4)) -ForegroundColor Yellow }
-    if ($bestEV) { Write-Host ("  Best EV: TP=" + $bestEV.TP + " SL=" + $bestEV.SL + " WR=" + $bestEV.WR + " T=" + $bestEV.T + " PnL=" + $bestEV.Pnl + " EV=" + [Math]::Round($bestEV.EV,4)) -ForegroundColor Green }
+    if ($bestRR) { Write-Output ("  Best 1:1: TP=" + $bestRR.TP + " SL=" + $bestRR.SL + " WR=" + $bestRR.WR + " T=" + $bestRR.T + " PnL=" + $bestRR.Pnl + " EV=" + [Math]::Round($bestRR.EV,4)) -ForegroundColor Yellow }
+    if ($bestEV) { Write-Output ("  Best EV: TP=" + $bestEV.TP + " SL=" + $bestEV.SL + " WR=" + $bestEV.WR + " T=" + $bestEV.T + " PnL=" + $bestEV.Pnl + " EV=" + [Math]::Round($bestEV.EV,4)) -ForegroundColor Green }
     return $res
 }
 
-Write-Host "Generating signals..." -ForegroundColor Yellow
+Write-Output "Generating signals..."
 
 # A: ADX>25 no filter
 $sigA = [bool[]]::new($c.Count-$si)
@@ -179,9 +179,9 @@ $sigJ = [bool[]]::new($c.Count-$si)
 for ($i = $si; $i -lt $c.Count; $i++) { $sigJ[$i-$si] = $adx[$i] -gt 25 -and $c[$i] -gt $ma50[$i] }
 $resJ = Eval-Strat "J: ADX>25 + Price>MA50" $sigJ
 
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  COMPARISON: Best Config per Strategy" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-Output "`n========================================"
+Write-Output "  COMPARISON: Best Config per Strategy"
+Write-Output "========================================"
 
 $all = @(
     @{n="A: ADX>25 (none)";r=$resA},@{n="B: ADX+DI dir";r=$resB},@{n="C: MA20>MA50";r=$resC},
@@ -190,20 +190,20 @@ $all = @(
     @{n="J: ADX+PxMA50";r=$resJ}
 )
 
-Write-Host ("{0,-20}{1,-8}{2,-8}{3,-8}{4,-10}{5,-10}{6,-10}" -f "Strategy","EV","WR","Trades","PnL","TP/SL","S")
+Write-Output ("{0,-20}{1,-8}{2,-8}{3,-8}{4,-10}{5,-10}{6,-10}" -f "Strategy","EV","WR","Trades","PnL","TP/SL","S")
 foreach ($s in $all) {
     $be = ($s.r | Sort-Object EV -Descending)[0]
     if ($be) {
-        Write-Host ("{0,-20}{1,-8}{2,-8}{3,-8}{4,-10}{5,-10}{6,-10}" -f $s.n,
+        Write-Output ("{0,-20}{1,-8}{2,-8}{3,-8}{4,-10}{5,-10}{6,-10}" -f $s.n,
             [Math]::Round($be.EV,4),$be.WR,$be.T,$be.Pnl,($be.TP.ToString()+"/"+$be.SL.ToString()),$be.S)
     }
 }
 
 # Also show best 1:1 R:R per strategy
-Write-Host "`nBest 1:1 R:R (TP>=SL) per Strategy:" -ForegroundColor Yellow
+Write-Output "`nBest 1:1 R:R (TP>=SL) per Strategy:"
 foreach ($s in $all) {
     $br = ($s.r | Where-Object { $_.TP -ge $_.SL } | Sort-Object S -Descending)[0]
     if ($br) {
-        Write-Host ("{0,-20} TP={1}% SL={2}% WR={3}% T={4} PnL={5} S={6}" -f $s.n,$br.TP,$br.SL,$br.WR,$br.T,$br.Pnl,$br.S)
+        Write-Output ("{0,-20} TP={1}% SL={2}% WR={3}% T={4} PnL={5} S={6}" -f $s.n,$br.TP,$br.SL,$br.WR,$br.T,$br.Pnl,$br.S)
     }
 }

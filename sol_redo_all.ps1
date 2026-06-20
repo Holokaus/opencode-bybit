@@ -136,7 +136,7 @@ foreach($tf in $tfs){
     }
     if ($bestTF) {
         $allResults += @{tf=$tf.n;per=$bestTF.per;ob=$bestTF.ob;os=$bestTF.os;wr=$bestTF.wr;tt=$bestTF.tt;lw=$bestTF.lw;ll=$bestTF.ll;sw=$bestTF.sw;sl=$bestTF.sl}
-        Write-Host "    RSI($($bestTF.per)) OB=$($bestTF.ob) OS=$($bestTF.os) | WR=$($bestTF.wr)% | $($bestTF.tt) sigs" -ForegroundColor Green
+        Write-Output "    RSI($($bestTF.per)) OB=$($bestTF.ob) OS=$($bestTF.os) | WR=$($bestTF.wr)% | $($bestTF.tt) sigs"
     } else { Write-Output "    No significant signals" }
 }
 
@@ -148,7 +148,7 @@ $sortedResults | ForEach-Object {
     Write-Output ("  {0,-4} | RSI({1,-2}) OB={2,-2} OS={3,-2} | WR={4,-5}% | {5,-3} sigs | L:{6}/{7} S:{8}/{9}" -f $_.tf,$_.per,$_.ob,$_.os,$_.wr,$_.tt,$_.lw,$_.ll,$_.sw,$_.sl)
 }
 
-Write-Host "`n=== WINNER: $($sortedResults[0].tf) RSI($($sortedResults[0].per)) OB=$($sortedResults[0].ob) OS=$($sortedResults[0].os) WR=$($sortedResults[0].wr)% ===" -ForegroundColor Green
+Write-Output "`n=== WINNER: $($sortedResults[0].tf) RSI($($sortedResults[0].per)) OB=$($sortedResults[0].ob) OS=$($sortedResults[0].os) WR=$($sortedResults[0].wr)% ==="
 
 # If we have results, pick the winner. Otherwise default to 4h RSI(41)
 if ($sortedResults) {
@@ -344,8 +344,8 @@ Write-Output "  OB=$($winner.ob) OS=$($winner.os)"
 Write-Output "  MA(50): $([Math]::Round($ma50[-1],2)) | $(if($curP-gt$ma50[-1]){'ABOVE (uptrend)'}else{'BELOW (downtrend)'})"
 Write-Output "  ATR: $([Math]::Round($atr14[-1],2)) ($([Math]::Round($atr14[-1]/$curP*100,2))%)"
 
-if($prevR-gt$winner.os-and$latestR-le$winner.os-and$latestR-ne0){Write-Host "`n  >>> LONG SIGNAL <<<" -ForegroundColor Green;$tp=$curP*1.015;$sl=$curP*0.995;$tp2=$curP+$atr14[-1]*2;$sl2=$curP-$atr14[-1]*1.75;Write-Output "  Entry: $([Math]::Round($curP,2)) TP(a):$([Math]::Round($tp,2)) SL(a):$([Math]::Round($sl,2))"}
-elseif($prevR-lt$winner.ob-and$latestR-ge$winner.ob-and$latestR-ne100){Write-Host "`n  >>> SHORT SIGNAL <<<" -ForegroundColor Red;$tp=$curP*0.985;$sl=$curP*1.005;$tp2=$curP-$atr14[-1]*2;$sl2=$curP+$atr14[-1]*1.75;Write-Output "  Entry: $([Math]::Round($curP,2)) TP(a):$([Math]::Round($tp,2)) SL(a):$([Math]::Round($sl,2))"}
+if($prevR-gt$winner.os-and$latestR-le$winner.os-and$latestR-ne0){Write-Output "`n  >>> LONG SIGNAL <<<" "  Entry: $([Math]::Round($curP,2)) TP(a):$([Math]::Round($tp,2)) SL(a):$([Math]::Round($sl,2))"}
+elseif($prevR-lt$winner.ob-and$latestR-ge$winner.ob-and$latestR-ne100){Write-Output "`n  >>> SHORT SIGNAL <<<" "  Entry: $([Math]::Round($curP,2)) TP(a):$([Math]::Round($tp,2)) SL(a):$([Math]::Round($sl,2))"}
 else{Write-Output "`n  NO SIGNAL. RSI=$([Math]::Round($latestR,1)) between $($winner.os)-$($winner.ob)";Write-Output "  Distance to OS: $([Math]::Round($latestR-$winner.os,1)) | to OB: $([Math]::Round($winner.ob-$latestR,1))"}
 
 $log="[CORRECT] $(Get-Date -Format 'yyyy-MM-dd HH:mm') P=$([Math]::Round($curP,2)) R=$([Math]::Round($latestR,1)) TF=$($winner.tf) RSIper=$($winner.per) OB=$($winner.ob) OS=$($winner.os)"

@@ -27,23 +27,23 @@ function Calc-ADX{param($h,$l,$c,$per)$tr=[double[]]::new($c.Count);$up=[double[
 function Calc-StochRSI{param($p,$per)$rsi=Calc-RSI $p $per;$k=[double[]]::new($p.Count);for($i=$per;$i-lt$p.Count;$i++){$mn=($rsi[($i-$per+1)..$i]|Measure-Object -Minimum).Minimum;$mx=($rsi[($i-$per+1)..$i]|Measure-Object -Maximum).Maximum;$k[$i]=if($mx-$mn-eq0){50}else{($rsi[$i]-$mn)/($mx-$mn)*100}};return $k}
 function Test-Sig{param($c,$sigL,$sigS,$si)$lw=0;$ll=0;$sw=0;$sl=0;for($rel=0;$rel-lt$sigL.Length-3;$rel++){$idx=$rel+$si;if($sigL[$rel]){$fL=($c[($idx+1)..($idx+3)]|Measure-Object -Minimum).Minimum;if(($c[$idx]-$fL)/$c[$idx]*100-gt1.0){$lw++}else{$ll++}};if($sigS[$rel]){$fH=($c[($idx+1)..($idx+3)]|Measure-Object -Maximum).Maximum;if(($fH-$c[$idx])/$c[$idx]*100-gt1.0){$sw++}else{$sl++}}};$t=$lw+$ll+$sw+$sl;$wr=if($t){[Math]::Round(($lw+$sw)/$t*100,1)}else{0};return @{wr=$wr;t=$t;lw=$lw;ll=$ll;sw=$sw;sl=$sl}}
 
-Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "  ICP FULL GRID - ALL STRATEGIES X ALL TIMEFRAMES" -ForegroundColor Cyan
-Write-Host "================================================================" -ForegroundColor Cyan
+Write-Output "================================================================"
+Write-Output "  ICP FULL GRID - ALL STRATEGIES X ALL TIMEFRAMES"
+Write-Output "================================================================"
 
 # Phase 0: Cache all kline data
-Write-Host "`n[0] CACHING ALL KLINES..." -ForegroundColor Yellow
+Write-Output "`n[0] CACHING ALL KLINES..."
 $tfs=@(@{n="15m";i="15"},@{n="30m";i="30"},@{n="1h";i="60"},@{n="2h";i="120"},@{n="4h";i="240"},@{n="6h";i="360"},@{n="12h";i="720"})
 $kc=@{}
 foreach($tf in $tfs){Write-Output "  $($tf.n)...";$k=Get-K $tf.i 800;if($k-and$k.Count-ge100){$kc[$tf.n]=@($k|?{$_})}}
 Write-Output "  Cached $($kc.Count) timeframes"
 
 # Phase 1: For each TF, compute all indicators and test all strategies
-Write-Host "`n--- PHASE 1: ALL STRATEGIES TESTING ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 1: ALL STRATEGIES TESTING ---"
 $allStrategies=@();$script:strategySignals=@{}
 for($ti=0;$ti-lt$tfs.Length;$ti++){$tf=$tfs[$ti];$ttf=$tf.n;$k=$kc[$ttf];if(-not$k){continue}
     $o=$k|%{[double]$_[1]};$c=$k|%{[double]$_[4]};$h=$k|%{[double]$_[2]};$l=$k|%{[double]$_[3]};$v=$k|%{[double]$_[5]};$ts=$k|%{[long]$_[0]}
-    Write-Host "`n>>> $ttf ($($c.Count) candles) <<<" -ForegroundColor Cyan
+    Write-Output "`n>>> $ttf ($($c.Count) candles) <<<"
 
     # Compute all base indicators
     $vma=Calc-EMA $v 20;$vma10=Calc-EMA $v 10
@@ -182,9 +182,9 @@ for($ti=0;$ti-lt$tfs.Length;$ti++){$tf=$tfs[$ti];$ttf=$tf.n;$k=$kc[$ttf];if(-not
 }
 
 # Phase 2: Overall ranking
-Write-Host "`n`n================================================================" -ForegroundColor Cyan
-Write-Host "  OVERALL RANKING" -ForegroundColor Cyan
-Write-Host "================================================================" -ForegroundColor Cyan
+Write-Output "`n`n================================================================"
+Write-Output "  OVERALL RANKING"
+Write-Output "================================================================"
 
 # Rank by score (WR * sigs), min 3 sigs
 $valid = $allStrategies | Where-Object { $_.sigs -ge 3 } | Sort-Object { $_.wr * $_.sigs } -Descending
@@ -204,7 +204,7 @@ $topNames = $topCandidates | % { "$($_.tf) $($_.name)" }
 Write-Output ($topNames -join "`n")
 
 # Phase 3: TP/SL for top candidates
-Write-Host "`n--- PHASE 3: TP/SL FOR TOP CANDIDATES ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 3: TP/SL FOR TOP CANDIDATES ---"
 $tps=@(0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0,8.0);$sls=@(0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,5.0)
 $tpResults=@()
 
@@ -212,7 +212,7 @@ foreach($cand in $topCandidates){
     $tf=$cand.tf;$k=$kc[$tf];if(-not$k){continue}
     $c=$k|%{[double]$_[4]};$h=$k|%{[double]$_[2]};$l=$k|%{[double]$_[3]};$v=$k|%{[double]$_[5]}
 
-    Write-Host "`n>>> $($cand.tf) $($cand.name) <<<" -ForegroundColor Cyan
+    Write-Output "`n>>> $($cand.tf) $($cand.name) <<<"
 
     $sigData=$script:strategySignals["$($cand.tf)|$($cand.name)"]
     $le=@();$se=@()
@@ -238,10 +238,10 @@ foreach($cand in $topCandidates){
 }
 
 # Phase 4: 3-month simulation for best overall
-Write-Host "`n--- PHASE 4: 3-MONTH SIMULATION (BEST OVERALL) ---" -ForegroundColor Yellow
+Write-Output "`n--- PHASE 4: 3-MONTH SIMULATION (BEST OVERALL) ---"
 $bestOverall = $tpResults | Where-Object { $_.TP -ge $_.SL } | Sort-Object S -Descending | Select-Object -First 1
 if($bestOverall){
-    Write-Host "  Best overall config: $($bestOverall.TF) $($bestOverall.Name) TP=$($bestOverall.TP)% SL=$($bestOverall.SL)%" -ForegroundColor Green
+    Write-Output "  Best overall config: $($bestOverall.TF) $($bestOverall.Name) TP=$($bestOverall.TP)% SL=$($bestOverall.SL)%"
     $tf=$bestOverall.TF;$k=$kc[$tf];$c=$k|%{[double]$_[4]};$h=$k|%{[double]$_[2]};$l=$k|%{[double]$_[3]};$v=$k|%{[double]$_[5]};$ts=$k|%{[long]$_[0]}
     $vma=Calc-EMA $v 20
 
@@ -266,17 +266,17 @@ if($bestOverall){
 }
 
 # Phase 5: Live signal for best
-Write-Host "`n--- LIVE SIGNAL ---" -ForegroundColor Yellow
+Write-Output "`n--- LIVE SIGNAL ---"
 if($bestOverall){
     $tf=$bestOverall.TF;$k=$kc[$tf];$c=$k|%{[double]$_[4]};$ts=$k|%{[long]$_[0]}
     $lp=$c[-1];$ldt=[DateTimeOffset]::FromUnixTimeMilliseconds($ts[-1]);$sigData=$script:strategySignals["$tf|$($bestOverall.Name)"]
     Write-Output "  $tf @ $($ldt.ToString('MM-dd HH:mm')) UTC | $($bestOverall.Name)"
     Write-Output "  Price=$([Math]::Round($lp,4))"
     if($sigData){
-        $li=$sigData.l.Count-1;if($sigData.l[$li]){Write-Host "  >>> LONG <<<" -ForegroundColor Green}
-        elseif($sigData.s[$li]){Write-Host "  >>> SHORT <<<" -ForegroundColor Red}
+        $li=$sigData.l.Count-1;if($sigData.l[$li]){Write-Output "  >>> LONG <<<"
+        elseif($sigData.s[$li]){Write-Output "  >>> SHORT <<<"
         else{Write-Output "  No signal"}
     }
 }
 
-Write-Host "`n=== FULL GRID COMPLETE ===" -ForegroundColor Cyan
+Write-Output "`n=== FULL GRID COMPLETE ==="

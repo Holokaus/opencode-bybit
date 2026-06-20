@@ -65,7 +65,7 @@ function Calc-EMA {
     return $e
 }
 
-Write-Host "=== TRADINGVIEW BACKTEST (exact) ON BYBIT 2h DATA ===" -ForegroundColor Cyan
+Write-Output "=== TRADINGVIEW BACKTEST (exact) ON BYBIT 2h DATA ==="
 $per=38;$ob=60;$os=36;$int="120";$tp=0.5;$sl=0.5;$comm=0.1
 $klines=Get-K $int 999;if(-not$klines){Write-Output "No data";exit 1}
 $close=$klines|%{[double]$_[4]};$high=$klines|%{[double]$_[2]};$low=$klines|%{[double]$_[3]};$vol=$klines|%{[double]$_[5]};$ts=$klines|%{[long]$_[0]}
