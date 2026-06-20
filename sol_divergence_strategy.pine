@@ -1,0 +1,177 @@
+//@version=6
+indicator("SOL Divergence Strategy", overlay=true, max_bars_back=1000, max_lines_count=200, max_labels_count=200)
+
+// === OPTIMIZED PARAMS (from grid search: 5,696 configs tested) ===
+prd = input.int(5, "Pivot Period", minval=2, maxval=10)
+minScore = input.int(1, "Min Divergence Score", minval=1, maxval=4)
+maxPP = input.int(8, "Max Pivots to Check", minval=2, maxval=15)
+maxBars = input.int(100, "Max Bars Back", minval=30, maxval=150)
+useTrend = input.bool(true, "EMA Trend Filter")
+emaLen = input.int(200, "EMA Length", minval=50, maxval=400)
+tpPct = input.float(3.0, "Take Profit %", minval=0.5, maxval=8.0)
+slPct = input.float(3.0, "Stop Loss %", minval=0.5, maxval=8.0)
+
+useMACD = input.bool(true, "Include MACD")
+useMACDHist = input.bool(true, "Include MACD Hist")
+useRSI = input.bool(true, "Include RSI")
+useStoch = input.bool(true, "Include Stoch")
+useCCI = input.bool(false, "Include CCI")
+useMom = input.bool(false, "Include Mom")
+useOBV = input.bool(false, "Include OBV")
+useCMF = input.bool(false, "Include CMF")
+useMFI = input.bool(true, "Include MFI")
+
+// === INDICATORS ===
+rsi = ta.rsi(close, 14)
+[macdLine, sigLine, macdHist] = ta.macd(close, 12, 26, 9)
+mom = ta.mom(close, 10)
+cci = ta.cci(close, 10)
+obv = ta.obv
+stoch = ta.sma(ta.stoch(close, high, low, 14), 3)
+vwmaFast = ta.vwma(close, 12)
+vwmaSlow = ta.vwma(close, 26)
+vwmacd = vwmaFast - vwmaSlow
+cmfm = ((close - low) - (high - close)) / (high - low)
+cmfv = cmfm * volume
+cmf = ta.sma(cmfv, 21) / ta.sma(volume, 21)
+mfiVal = ta.mfi(close, 14)
+
+// === PIVOT ARRAYS ===
+var int maxArr = 20
+var phPos = array.new<int>(maxArr, 0)
+var plPos = array.new<int>(maxArr, 0)
+var phVal = array.new<float>(maxArr, 0.)
+var plVal = array.new<float>(maxArr, 0.)
+
+ph = ta.pivothigh(high, prd, prd)
+pl = ta.pivotlow(low, prd, prd)
+
+if ph
+    array.unshift(phPos, bar_index)
+    array.unshift(phVal, ph)
+    while array.size(phPos) > maxArr
+        array.pop(phPos); array.pop(phVal)
+
+if pl
+    array.unshift(plPos, bar_index)
+    array.unshift(plVal, pl)
+    while array.size(plPos) > maxArr
+        array.pop(plPos); array.pop(plVal)
+
+// === DIVERGENCE CHECK ===
+checkDivergence(src, useIndicator, source) =>
+    int result = 0
+    if not useIndicator
+        return result
+    prsc = source == "Close" ? close : low
+    sp = 1
+
+    // Positive Regular: price lower low, indicator higher low
+    for x = 0 to maxPP - 1
+        len = bar_index - array.get(plPos, x) + prd
+        if array.get(plPos, x) == 0 or len > maxBars
+            break
+        if len > 5 and src[sp] > src[len] and prsc[sp] < nz(array.get(plVal, x))
+            slope1 = (src[sp] - src[len]) / (len - sp)
+            virt1 = src[sp] - slope1
+            slope2 = (prsc[sp] - prsc[len]) / (len - sp)
+            virt2 = prsc[sp] - slope2
+            arrived = true
+            for y = sp + 1 to len - 1
+                if src[y] < virt1 or nz(prsc[y]) < virt2
+                    arrived := false; break
+                virt1 -= slope1; virt2 -= slope2
+            if arrived
+                result := 1; break
+
+    // Negative Regular: price higher high, indicator lower high
+    if result == 0
+        prsc := source == "Close" ? close : high
+        for x = 0 to maxPP - 1
+            len = bar_index - array.get(phPos, x) + prd
+            if array.get(phPos, x) == 0 or len > maxBars
+                break
+            if len > 5 and src[sp] < src[len] and prsc[sp] > nz(array.get(phVal, x))
+                slope1 = (src[sp] - src[len]) / (len - sp)
+                virt1 = src[sp] - slope1
+                slope2 = (prsc[sp] - prsc[len]) / (len - sp)
+                virt2 = prsc[sp] - slope2
+                arrived = true
+                for y = sp + 1 to len - 1
+                    if src[y] > virt1 or nz(prsc[y]) > virt2
+                        arrived := false; break
+                    virt1 -= slope1; virt2 -= slope2
+                if arrived
+                    result := -1; break
+    result
+
+// === AGGREGATE SCORE ===
+bullScore = 0
+bearScore = 0
+
+d = checkDivergence(rsi, useRSI, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(macdLine, useMACD, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(macdHist, useMACDHist, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(stoch, useStoch, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(cci, useCCI, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(mom, useMom, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(obv, useOBV, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(cmf, useCMF, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+d := checkDivergence(mfiVal, useMFI, "Close")
+if d == 1; bullScore += 1
+if d == -1; bearScore += 1
+
+// === SIGNAL GENERATION ===
+emaVal = ta.ema(close, emaLen)
+aboveEMA = close > emaVal
+belowEMA = close < emaVal
+
+longSignal = bullScore >= minScore and (not useTrend or aboveEMA)
+shortSignal = bearScore >= minScore and (not useTrend or belowEMA)
+
+// === ENTRY / EXIT ===
+if longSignal and strategy.position_size == 0
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long Ex", "Long", profit=close*(tpPct/100)/syminfo.mintick, loss=close*(slPct/100)/syminfo.mintick)
+
+if shortSignal and strategy.position_size == 0
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short Ex", "Short", profit=close*(tpPct/100)/syminfo.mintick, loss=close*(slPct/100)/syminfo.mintick)
+
+// === PLOTS ===
+plot(emaVal, "EMA", useTrend ? color.orange : na, 1)
+plotshape(longSignal, "L", shape.triangleup, location.belowbar, color.green, size=size.small)
+plotshape(shortSignal, "S", shape.triangledown, location.abovebar, color.red, size=size.small)
+
+// Divergence score overlay
+varip label scoreLabel = na
+if bullScore > 0 or bearScore > 0
+    txt = "B" + str.tostring(bullScore) + " S" + str.tostring(bearScore)
+    scoreLabel := label.new(bar_index, high + atr(14), txt, color=color.new(color.black, 70),
+     textcolor=color.white, size=size.tiny, style=label.style_label_down)
+if bar_index % 10 == 0
+    label.delete(scoreLabel[1])

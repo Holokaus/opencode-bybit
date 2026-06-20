@@ -1,0 +1,84 @@
+// ==========================================================
+// VARIANTS TO TEST — paste one at a time into Pine Editor
+// Start with V1, check Strategy Tester, then try next
+// ==========================================================
+
+// ---- V1: wider OB/OS (fewer but higher quality signals) ----
+// @version=6
+// strategy("SOL V1 - RSI(38) OB=68 OS=32", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+// rsiLen=38; obLevel=68; osLevel=32; volMaLen=20; volThreshold=0.8; tpPct=0.5; slPct=0.5
+// rsi=ta.rsi(close,rsiLen); volOk=volume>ta.sma(volume,volMaLen)*volThreshold
+// longEntry=rsi[1]>osLevel and rsi<=osLevel and rsi!=0 and volOk
+// shortEntry=rsi[1]<obLevel and rsi>=obLevel and rsi!=100 and volOk
+// isJan=month==1; isSat=dayofweek==7
+// var skipNext=false; prevClosed=nz(strategy.closedtrades[1])
+// if strategy.closedtrades>prevClosed; if strategy.closedtrades.profit(strategy.closedtrades-1)<0; skipNext:=true; else; skipNext:=false
+// if (longEntry or shortEntry) and skipNext; skipNext:=false
+// allowTrade=not isJan and not isSat and not skipNext
+// if longEntry and allowTrade; strategy.entry("L",strategy.long); strategy.exit("Lx","L",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// if shortEntry and allowTrade; strategy.entry("S",strategy.short); strategy.exit("Sx","S",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/sys.info.mintick)
+// hline(obLevel,color=color.red,linestyle=hline.style_dashed); hline(osLevel,color=color.green,linestyle=hline.style_dashed); plot(rsi,"RSI",color=color.purple)
+
+// ---- V2: no volume filter (more signals, simpler) ----
+// @version=6
+// strategy("SOL V2 - RSI(38) no vol", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+// rsiLen=38; obLevel=60; osLevel=36; tpPct=0.5; slPct=0.5
+// rsi=ta.rsi(close,rsiLen)
+// longEntry=rsi[1]>osLevel and rsi<=osLevel and rsi!=0
+// shortEntry=rsi[1]<obLevel and rsi>=obLevel and rsi!=100
+// isJan=month==1; isSat=dayofweek==7
+// var skipNext=false; prevClosed=nz(strategy.closedtrades[1])
+// if strategy.closedtrades>prevClosed; if strategy.closedtrades.profit(strategy.closedtrades-1)<0; skipNext:=true; else; skipNext:=false
+// if (longEntry or shortEntry) and skipNext; skipNext:=false
+// allowTrade=not isJan and not isSat and not skipNext
+// if longEntry and allowTrade; strategy.entry("L",strategy.long); strategy.exit("Lx","L",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// if shortEntry and allowTrade; strategy.entry("S",strategy.short); strategy.exit("Sx","S",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// hline(obLevel,color=color.red,linestyle=hline.style_dashed); hline(osLevel,color=color.green,linestyle=hline.style_dashed); plot(rsi,"RSI",color=color.purple)
+
+// ---- V3: RSI(26) from 12h winner adapted to 2h ----
+// @version=6
+// strategy("SOL V3 - RSI(26) OB=64 OS=44", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+// rsiLen=26; obLevel=64; osLevel=44; volMaLen=20; volThreshold=0.8; tpPct=0.5; slPct=0.5
+// rsi=ta.rsi(close,rsiLen); volOk=volume>ta.sma(volume,volMaLen)*volThreshold
+// longEntry=rsi[1]>osLevel and rsi<=osLevel and rsi!=0 and volOk
+// shortEntry=rsi[1]<obLevel and rsi>=obLevel and rsi!=100 and volOk
+// isJan=month==1; isSat=dayofweek==7
+// var skipNext=false; prevClosed=nz(strategy.closedtrades[1])
+// if strategy.closedtrades>prevClosed; if strategy.closedtrades.profit(strategy.closedtrades-1)<0; skipNext:=true; else; skipNext:=false
+// if (longEntry or shortEntry) and skipNext; skipNext:=false
+// allowTrade=not isJan and not isSat and not skipNext
+// if longEntry and allowTrade; strategy.entry("L",strategy.long); strategy.exit("Lx","L",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// if shortEntry and allowTrade; strategy.entry("S",strategy.short); strategy.exit("Sx","S",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// hline(obLevel,color=color.red,linestyle=hline.style_dashed); hline(osLevel,color=color.green,linestyle=hline.style_dashed); plot(rsi,"RSI",color=color.purple)
+
+// ---- V4: better R:R — 1.0% TP / 0.75% SL ----
+// @version=6
+// strategy("SOL V4 - R:R 1.33", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+// rsiLen=38; obLevel=60; osLevel=36; volMaLen=20; volThreshold=0.8; tpPct=1.0; slPct=0.75
+// rsi=ta.rsi(close,rsiLen); volOk=volume>ta.sma(volume,volMaLen)*volThreshold
+// longEntry=rsi[1]>osLevel and rsi<=osLevel and rsi!=0 and volOk
+// shortEntry=rsi[1]<obLevel and rsi>=obLevel and rsi!=100 and volOk
+// isJan=month==1; isSat=dayofweek==7
+// var skipNext=false; prevClosed=nz(strategy.closedtrades[1])
+// if strategy.closedtrades>prevClosed; if strategy.closedtrades.profit(strategy.closedtrades-1)<0; skipNext:=true; else; skipNext:=false
+// if (longEntry or shortEntry) and skipNext; skipNext:=false
+// allowTrade=not isJan and not isSat and not skipNext
+// if longEntry and allowTrade; strategy.entry("L",strategy.long); strategy.exit("Lx","L",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// if shortEntry and allowTrade; strategy.entry("S",strategy.short); strategy.exit("Sx","S",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// hline(obLevel,color=color.red,linestyle=hline.style_dashed); hline(osLevel,color=color.green,linestyle=hline.style_dashed); plot(rsi,"RSI",color=color.purple)
+
+// ---- V5: wider OB/OS + better R:R ----
+// @version=6
+// strategy("SOL V5 - OB=68 OS=32 R:R 1.33", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+// rsiLen=38; obLevel=68; osLevel=32; volMaLen=20; volThreshold=0.8; tpPct=1.0; slPct=0.75
+// rsi=ta.rsi(close,rsiLen); volOk=volume>ta.sma(volume,volMaLen)*volThreshold
+// longEntry=rsi[1]>osLevel and rsi<=osLevel and rsi!=0 and volOk
+// shortEntry=rsi[1]<obLevel and rsi>=obLevel and rsi!=100 and volOk
+// isJan=month==1; isSat=dayofweek==7
+// var skipNext=false; prevClosed=nz(strategy.closedtrades[1])
+// if strategy.closedtrades>prevClosed; if strategy.closedtrades.profit(strategy.closedtrades-1)<0; skipNext:=true; else; skipNext:=false
+// if (longEntry or shortEntry) and skipNext; skipNext:=false
+// allowTrade=not isJan and not isSat and not skipNext
+// if longEntry and allowTrade; strategy.entry("L",strategy.long); strategy.exit("Lx","L",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// if shortEntry and allowTrade; strategy.entry("S",strategy.short); strategy.exit("Sx","S",profit=close*(tpPct/100)/syminfo.mintick,loss=close*(slPct/100)/syminfo.mintick)
+// hline(obLevel,color=color.red,linestyle=hline.style_dashed); hline(osLevel,color=color.green,linestyle=hline.style_dashed); plot(rsi,"RSI",color=color.purple)

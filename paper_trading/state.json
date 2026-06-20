@@ -1,0 +1,40 @@
+{
+    "Symbols":  {
+                    "ICPUSDT":  {
+                                    "DemoOrderIds":  [
+
+                                                     ],
+                                    "Capital":  50,
+                                    "Losses":  0,
+                                    "Wins":  0,
+                                    "LastSignal":  false,
+                                    "Positions":  [
+
+                                                  ],
+                                    "TotalTrades":  0,
+                                    "PeakCapital":  50,
+                                    "LastCandleTs":  1781913600000,
+                                    "ConsecLosses":  0
+                                },
+                    "SOLUSDT":  {
+                                    "DemoOrderIds":  [
+
+                                                     ],
+                                    "Capital":  50,
+                                    "Losses":  0,
+                                    "Wins":  0,
+                                    "LastSignal":  false,
+                                    "Positions":  [
+
+                                                  ],
+                                    "TotalTrades":  0,
+                                    "PeakCapital":  50,
+                                    "LastCandleTs":  1781928000000,
+                                    "ConsecLosses":  0
+                                }
+                },
+    "PeakCapital":  100,
+    "Version":  3,
+    "TotalCapital":  100,
+    "FirstRun":  true
+}

@@ -1,0 +1,10 @@
+function Read-DerLength($d,[ref]$o){if($d[$o.Value]-lt0x80){$l=$d[$o.Value];$o.Value++;return $l}$n=$d[$o.Value]-band0x7F;$o.Value++;$l=0;for($i=0;$i-lt$n;$i++){$l=($l-shl8)-bor$d[$o.Value];$o.Value++}return $l}
+function Read-DerInteger($d,[ref]$o){if($d[$o.Value]-ne0x02){throw"bad"}$o.Value++;$l=Read-DerLength $d $o;$v=[byte[]]::new($l);[Array]::Copy($d,$o.Value,$v,0,$l);$s=if($v.Length-gt1-and$v[0]-eq0){1}else{0};$t=[byte[]]::new($v.Length-$s);[Array]::Copy($v,$s,$t,0,$t.Length);$o.Value+=$l;return $t}
+$pem=[System.IO.File]::ReadAllText("bybit_private.pem");$b64=($pem-replace'-----[A-Z ]+-----','')-replace'\s','';$der=[System.Convert]::FromBase64String($b64);$o=0;if($der[$o]-ne0x30){throw"bad"};$o++;Read-DerLength $der([ref]$o)|Out-Null
+$rs=New-Object System.Security.Cryptography.RSAParameters;Read-DerInteger $der([ref]$o)|Out-Null
+$rs.Modulus=Read-DerInteger $der([ref]$o);$rs.Exponent=Read-DerInteger $der([ref]$o);$rs.D=Read-DerInteger $der([ref]$o);$rs.P=Read-DerInteger $der([ref]$o);$rs.Q=Read-DerInteger $der([ref]$o);$rs.DP=Read-DerInteger $der([ref]$o);$rs.DQ=Read-DerInteger $der([ref]$o);$rs.InverseQ=Read-DerInteger $der([ref]$o)
+$r=New-Object System.Security.Cryptography.RSACryptoServiceProvider;$r.ImportParameters($rs);$ak="gkPx5g3xgL2pthIg16";$rw="5000"
+$ts=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();$q="category=spot&symbol=SOLUSDT";$ps="${ts}${ak}${rw}${q}"
+$b=[Text.Encoding]::UTF8.GetBytes($ps);$h=[Security.Cryptography.SHA256]::Create();$sg=[Convert]::ToBase64String($r.SignData($b,$h))
+$hd=@{"X-BAPI-API-KEY"=$ak;"X-BAPI-TIMESTAMP"="$ts";"X-BAPI-SIGN"=$sg;"X-BAPI-RECV-WINDOW"=$rw;"X-BAPI-SIGN-TYPE"="2";"User-Agent"="bybit-skill/1.4.2"}
+try{$resp=Invoke-WebRequest -Uri "https://api.bybit.com/v5/market/tickers?$q" -Headers $hd -UseBasicParsing -TimeoutSec 10;$r=($resp.Content|ConvertFrom-Json).result.list[0];Write-Output "SOL/USDT: $($r.lastPrice)";Write-Output "24h: $($r.changePercentage)% | H:$($r.highPrice24h) L:$($r.lowPrice24h)";Write-Output "Bid:$($r.bid1Price) Ask:$($r.ask1Price) Vol:$($r.volume24h)";Write-Output "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"}catch{Write-Output "Error: $_"}

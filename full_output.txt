@@ -1,0 +1,2536 @@
+﻿================================================================
+  ICP FULL GRID - ALL STRATEGIES X ALL TIMEFRAMES
+================================================================
+
+[0] CACHING ALL KLINES...
+  15m...
+  30m...
+  1h...
+  2h...
+  4h...
+  6h...
+  12h...
+  Cached 7 timeframes
+
+--- PHASE 1: ALL STRATEGIES TESTING ---
+  CACHE KEY: 12h count=800
+  CACHE KEY: 30m count=800
+  CACHE KEY: 2h count=800
+  CACHE KEY: 15m count=800
+  CACHE KEY: 1h count=800
+  CACHE KEY: 6h count=800
+  CACHE KEY: 4h count=800
+
+>>> 15m (800 candles) <<<
+  Best RSI: RSI(47) OB=60 OS=40 WR=55.6% (9 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+
+
+tf   : 15m
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=13.4 % | 112 sigs (L:0/0 S:15/112)
+tf   : 15m
+name : Vol>Avg*1.5 + Bull
+wr   : 13.4
+sigs : 112
+lw   : 0
+ll   : 0
+sw   : 15
+sl   : 97
+
+  Vol>Avg*2.0 + Bull                            WR=16.7 % | 54 sigs (L:0/0 S:9/54)
+tf   : 15m
+name : Vol>Avg*2.0 + Bull
+wr   : 16.7
+sigs : 54
+lw   : 0
+ll   : 0
+sw   : 9
+sl   : 45
+
+  Vol>Avg*3.0 + Bull                            WR=15.8 % | 19 sigs (L:0/0 S:3/19)
+tf   : 15m
+name : Vol>Avg*3.0 + Bull
+wr   : 15.8
+sigs : 19
+lw   : 0
+ll   : 0
+sw   : 3
+sl   : 16
+
+  Vol>Avg*1.5 (any dir)                         WR=12.9 % | 224 sigs (L:14/112 S:15/112)
+tf   : 15m
+name : Vol>Avg*1.5 (any dir)
+wr   : 12.9
+sigs : 224
+lw   : 14
+ll   : 98
+sw   : 15
+sl   : 97
+
+  Vol>Avg*2.0 (any dir)                         WR=14.8 % | 108 sigs (L:7/54 S:9/54)
+tf   : 15m
+name : Vol>Avg*2.0 (any dir)
+wr   : 14.8
+sigs : 108
+lw   : 7
+ll   : 47
+sw   : 9
+sl   : 45
+
+  Price>MA20 (uptrend)                          WR=13.9 % | 597 sigs (L:39/307 S:44/290)
+tf   : 15m
+name : Price>MA20 (uptrend)
+wr   : 13.9
+sigs : 597
+lw   : 39
+ll   : 268
+sw   : 44
+sl   : 246
+
+  Price>MA50 (uptrend)                          WR=14.7 % | 597 sigs (L:42/307 S:46/290)
+tf   : 15m
+name : Price>MA50 (uptrend)
+wr   : 14.7
+sigs : 597
+lw   : 42
+ll   : 265
+sw   : 46
+sl   : 244
+
+  Price>MA200 (uptrend)                         WR=14.7 % | 597 sigs (L:39/280 S:49/317)
+tf   : 15m
+name : Price>MA200 (uptrend)
+wr   : 14.7
+sigs : 597
+lw   : 39
+ll   : 241
+sw   : 49
+sl   : 268
+
+  MA20>MA50 (uptrend)                           WR=13.6 % | 597 sigs (L:37/276 S:44/321)
+tf   : 15m
+name : MA20>MA50 (uptrend)
+wr   : 13.6
+sigs : 597
+lw   : 37
+ll   : 239
+sw   : 44
+sl   : 277
+
+  MA50>MA100 (uptrend)                          WR=14.7 % | 597 sigs (L:47/315 S:41/282)
+tf   : 15m
+name : MA50>MA100 (uptrend)
+wr   : 14.7
+sigs : 597
+lw   : 47
+ll   : 268
+sw   : 41
+sl   : 241
+
+  MA20>MA200 (uptrend)                          WR=13.4 % | 597 sigs (L:40/302 S:40/295)
+tf   : 15m
+name : MA20>MA200 (uptrend)
+wr   : 13.4
+sigs : 597
+lw   : 40
+ll   : 262
+sw   : 40
+sl   : 255
+
+  Price>MA20>MA50                               WR=12.7 % | 307 sigs (L:39/307 S:0/0)
+tf   : 15m
+name : Price>MA20>MA50
+wr   : 12.7
+sigs : 307
+lw   : 39
+ll   : 268
+sw   : 0
+sl   : 0
+
+  Price>MA20>MA100                              WR=12.7 % | 307 sigs (L:39/307 S:0/0)
+tf   : 15m
+name : Price>MA20>MA100
+wr   : 12.7
+sigs : 307
+lw   : 39
+ll   : 268
+sw   : 0
+sl   : 0
+
+  MA20x50 crossover                             WR=0    % | 16 sigs (L:0/8 S:0/8)
+tf   : 15m
+name : MA20x50 crossover
+wr   : 0
+sigs : 16
+lw   : 0
+ll   : 8
+sw   : 0
+sl   : 8
+
+  ADX>25 + DI direction                         WR=17.4 % | 396 sigs (L:0/0 S:69/396)
+tf   : 15m
+name : ADX>25 + DI direction
+wr   : 17.4
+sigs : 396
+lw   : 0
+ll   : 0
+sw   : 69
+sl   : 327
+
+  ADX>30 + DI direction                         WR=21.3 % | 282 sigs (L:0/0 S:60/282)
+tf   : 15m
+name : ADX>30 + DI direction
+wr   : 21.3
+sigs : 282
+lw   : 0
+ll   : 0
+sw   : 60
+sl   : 222
+
+  ADX>25 (any dir)                              WR=14   % | 792 sigs (L:42/396 S:69/396)
+tf   : 15m
+name : ADX>25 (any dir)
+wr   : 14
+sigs : 792
+lw   : 42
+ll   : 354
+sw   : 69
+sl   : 327
+
+  Stoch<20 (oversold)                           WR=10.3 % | 302 sigs (L:11/163 S:20/139)
+tf   : 15m
+name : Stoch<20 (oversold)
+wr   : 10.3
+sigs : 302
+lw   : 11
+ll   : 152
+sw   : 20
+sl   : 119
+
+  Stoch<30 (oversold)                           WR=10.7 % | 393 sigs (L:17/219 S:25/174)
+tf   : 15m
+name : Stoch<30 (oversold)
+wr   : 10.7
+sigs : 393
+lw   : 17
+ll   : 202
+sw   : 25
+sl   : 149
+
+  Stoch<40 (oversold)                           WR=11.3 % | 504 sigs (L:23/278 S:34/226)
+tf   : 15m
+name : Stoch<40 (oversold)
+wr   : 11.3
+sigs : 504
+lw   : 23
+ll   : 255
+sw   : 34
+sl   : 192
+
+  Stoch crossover 20/80                         WR=13.9 % | 108 sigs (L:5/57 S:10/51)
+tf   : 15m
+name : Stoch crossover 20/80
+wr   : 13.9
+sigs : 108
+lw   : 5
+ll   : 52
+sw   : 10
+sl   : 41
+
+  ATR>1.5x range up/dn                          WR=27.3 % | 22 sigs (L:4/12 S:2/10)
+tf   : 15m
+name : ATR>1.5x range up/dn
+wr   : 27.3
+sigs : 22
+lw   : 4
+ll   : 8
+sw   : 2
+sl   : 8
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=13.4 % | 112 sigs (L:0/0 S:15/112)
+tf   : 15m
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 13.4
+sigs : 112
+lw   : 0
+ll   : 0
+sw   : 15
+sl   : 97
+
+  Vol(1.5)+MA20>MA50                            WR=12.5 % | 112 sigs (L:14/112 S:0/0)
+tf   : 15m
+name : Vol(1.5)+MA20>MA50
+wr   : 12.5
+sigs : 112
+lw   : 14
+ll   : 98
+sw   : 0
+sl   : 0
+
+  Stoch<30+ADX(25)                              WR=10.7 % | 393 sigs (L:17/219 S:25/174)
+tf   : 15m
+name : Stoch<30+ADX(25)
+wr   : 10.7
+sigs : 393
+lw   : 17
+ll   : 202
+sw   : 25
+sl   : 149
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 15m
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  DONE 15m (800 candles, 34 strategies)
+
+>>> 30m (800 candles) <<<
+  Best RSI: RSI(17) OB=64 OS=44 WR=40% (45 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=25.5 % | 102 sigs (L:26/102 S:0/0)
+tf   : 30m
+name : Vol>Avg*1.5 + Bull
+wr   : 25.5
+sigs : 102
+lw   : 26
+ll   : 76
+sw   : 0
+sl   : 0
+
+  Vol>Avg*2.0 + Bull                            WR=23.9 % | 46 sigs (L:11/46 S:0/0)
+tf   : 30m
+name : Vol>Avg*2.0 + Bull
+wr   : 23.9
+sigs : 46
+lw   : 11
+ll   : 35
+sw   : 0
+sl   : 0
+
+  Vol>Avg*3.0 + Bull                            WR=16.7 % | 12 sigs (L:2/12 S:0/0)
+tf   : 30m
+name : Vol>Avg*3.0 + Bull
+wr   : 16.7
+sigs : 12
+lw   : 2
+ll   : 10
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 (any dir)                         WR=32.8 % | 204 sigs (L:26/102 S:41/102)
+tf   : 30m
+name : Vol>Avg*1.5 (any dir)
+wr   : 32.8
+sigs : 204
+lw   : 26
+ll   : 76
+sw   : 41
+sl   : 61
+
+  Vol>Avg*2.0 (any dir)                         WR=34.8 % | 92 sigs (L:11/46 S:21/46)
+tf   : 30m
+name : Vol>Avg*2.0 (any dir)
+wr   : 34.8
+sigs : 92
+lw   : 11
+ll   : 35
+sw   : 21
+sl   : 25
+
+  Price>MA20 (uptrend)                          WR=35.3 % | 597 sigs (L:104/295 S:107/302)
+tf   : 30m
+name : Price>MA20 (uptrend)
+wr   : 35.3
+sigs : 597
+lw   : 104
+ll   : 191
+sw   : 107
+sl   : 195
+
+  Price>MA50 (uptrend)                          WR=34   % | 597 sigs (L:96/283 S:107/314)
+tf   : 30m
+name : Price>MA50 (uptrend)
+wr   : 34
+sigs : 597
+lw   : 96
+ll   : 187
+sw   : 107
+sl   : 207
+
+  Price>MA200 (uptrend)                         WR=29.8 % | 597 sigs (L:69/169 S:109/428)
+tf   : 30m
+name : Price>MA200 (uptrend)
+wr   : 29.8
+sigs : 597
+lw   : 69
+ll   : 100
+sw   : 109
+sl   : 319
+
+  MA20>MA50 (uptrend)                           WR=30.8 % | 597 sigs (L:98/303 S:86/294)
+tf   : 30m
+name : MA20>MA50 (uptrend)
+wr   : 30.8
+sigs : 597
+lw   : 98
+ll   : 205
+sw   : 86
+sl   : 208
+
+  MA50>MA100 (uptrend)                          WR=29.3 % | 597 sigs (L:73/180 S:102/417)
+tf   : 30m
+name : MA50>MA100 (uptrend)
+wr   : 29.3
+sigs : 597
+lw   : 73
+ll   : 107
+sw   : 102
+sl   : 315
+
+  MA20>MA200 (uptrend)                          WR=29.6 % | 597 sigs (L:77/217 S:100/380)
+tf   : 30m
+name : MA20>MA200 (uptrend)
+wr   : 29.6
+sigs : 597
+lw   : 77
+ll   : 140
+sw   : 100
+sl   : 280
+
+  Price>MA20>MA50                               WR=35.3 % | 295 sigs (L:104/295 S:0/0)
+tf   : 30m
+name : Price>MA20>MA50
+wr   : 35.3
+sigs : 295
+lw   : 104
+ll   : 191
+sw   : 0
+sl   : 0
+
+  Price>MA20>MA100                              WR=35.3 % | 295 sigs (L:104/295 S:0/0)
+tf   : 30m
+name : Price>MA20>MA100
+wr   : 35.3
+sigs : 295
+lw   : 104
+ll   : 191
+sw   : 0
+sl   : 0
+
+  MA20x50 crossover                             WR=35.7 % | 14 sigs (L:2/7 S:3/7)
+tf   : 30m
+name : MA20x50 crossover
+wr   : 35.7
+sigs : 14
+lw   : 2
+ll   : 5
+sw   : 3
+sl   : 4
+
+  ADX>25 + DI direction                         WR=31.4 % | 369 sigs (L:116/369 S:0/0)
+tf   : 30m
+name : ADX>25 + DI direction
+wr   : 31.4
+sigs : 369
+lw   : 116
+ll   : 253
+sw   : 0
+sl   : 0
+
+  ADX>30 + DI direction                         WR=34.3 % | 248 sigs (L:85/248 S:0/0)
+tf   : 30m
+name : ADX>30 + DI direction
+wr   : 34.3
+sigs : 248
+lw   : 85
+ll   : 163
+sw   : 0
+sl   : 0
+
+  ADX>25 (any dir)                              WR=32.4 % | 738 sigs (L:116/369 S:123/369)
+tf   : 30m
+name : ADX>25 (any dir)
+wr   : 32.4
+sigs : 738
+lw   : 116
+ll   : 253
+sw   : 123
+sl   : 246
+
+  Stoch<20 (oversold)                           WR=28.5 % | 312 sigs (L:48/158 S:41/154)
+tf   : 30m
+name : Stoch<20 (oversold)
+wr   : 28.5
+sigs : 312
+lw   : 48
+ll   : 110
+sw   : 41
+sl   : 113
+
+  Stoch<30 (oversold)                           WR=28.2 % | 390 sigs (L:59/199 S:51/191)
+tf   : 30m
+name : Stoch<30 (oversold)
+wr   : 28.2
+sigs : 390
+lw   : 59
+ll   : 140
+sw   : 51
+sl   : 140
+
+  Stoch<40 (oversold)                           WR=29   % | 490 sigs (L:76/247 S:66/243)
+tf   : 30m
+name : Stoch<40 (oversold)
+wr   : 29
+sigs : 490
+lw   : 76
+ll   : 171
+sw   : 66
+sl   : 177
+
+  Stoch crossover 20/80                         WR=34.6 % | 104 sigs (L:19/53 S:17/51)
+tf   : 30m
+name : Stoch crossover 20/80
+wr   : 34.6
+sigs : 104
+lw   : 19
+ll   : 34
+sw   : 17
+sl   : 34
+
+  ATR>1.5x range up/dn                          WR=31.2 % | 16 sigs (L:2/7 S:3/9)
+tf   : 30m
+name : ATR>1.5x range up/dn
+wr   : 31.2
+sigs : 16
+lw   : 2
+ll   : 5
+sw   : 3
+sl   : 6
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=25.5 % | 102 sigs (L:26/102 S:0/0)
+tf   : 30m
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 25.5
+sigs : 102
+lw   : 26
+ll   : 76
+sw   : 0
+sl   : 0
+
+  Vol(1.5)+MA20>MA50                            WR=25.5 % | 102 sigs (L:26/102 S:0/0)
+tf   : 30m
+name : Vol(1.5)+MA20>MA50
+wr   : 25.5
+sigs : 102
+lw   : 26
+ll   : 76
+sw   : 0
+sl   : 0
+
+  Stoch<30+ADX(25)                              WR=28.2 % | 390 sigs (L:59/199 S:51/191)
+tf   : 30m
+name : Stoch<30+ADX(25)
+wr   : 28.2
+sigs : 390
+lw   : 59
+ll   : 140
+sw   : 51
+sl   : 140
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 30m
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=30.8 % | 597 sigs (L:98/303 S:86/294)
+tf   : 30m
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 30.8
+sigs : 597
+lw   : 98
+ll   : 205
+sw   : 86
+sl   : 208
+
+  DONE 30m (800 candles, 68 strategies)
+
+>>> 1h (800 candles) <<<
+  Best RSI: RSI(44) OB=60 OS=40 WR=66.7% (15 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=43.5 % | 92 sigs (L:0/0 S:40/92)
+tf   : 1h
+name : Vol>Avg*1.5 + Bull
+wr   : 43.5
+sigs : 92
+lw   : 0
+ll   : 0
+sw   : 40
+sl   : 52
+
+  Vol>Avg*2.0 + Bull                            WR=42.6 % | 47 sigs (L:0/0 S:20/47)
+tf   : 1h
+name : Vol>Avg*2.0 + Bull
+wr   : 42.6
+sigs : 47
+lw   : 0
+ll   : 0
+sw   : 20
+sl   : 27
+
+  Vol>Avg*3.0 + Bull                            WR=60   % | 15 sigs (L:0/0 S:9/15)
+tf   : 1h
+name : Vol>Avg*3.0 + Bull
+wr   : 60
+sigs : 15
+lw   : 0
+ll   : 0
+sw   : 9
+sl   : 6
+
+  Vol>Avg*1.5 (any dir)                         WR=41.8 % | 184 sigs (L:37/92 S:40/92)
+tf   : 1h
+name : Vol>Avg*1.5 (any dir)
+wr   : 41.8
+sigs : 184
+lw   : 37
+ll   : 55
+sw   : 40
+sl   : 52
+
+  Vol>Avg*2.0 (any dir)                         WR=44.7 % | 94 sigs (L:22/47 S:20/47)
+tf   : 1h
+name : Vol>Avg*2.0 (any dir)
+wr   : 44.7
+sigs : 94
+lw   : 22
+ll   : 25
+sw   : 20
+sl   : 27
+
+  Price>MA20 (uptrend)                          WR=44.6 % | 597 sigs (L:131/305 S:135/292)
+tf   : 1h
+name : Price>MA20 (uptrend)
+wr   : 44.6
+sigs : 597
+lw   : 131
+ll   : 174
+sw   : 135
+sl   : 157
+
+  Price>MA50 (uptrend)                          WR=43.4 % | 597 sigs (L:125/285 S:134/312)
+tf   : 1h
+name : Price>MA50 (uptrend)
+wr   : 43.4
+sigs : 597
+lw   : 125
+ll   : 160
+sw   : 134
+sl   : 178
+
+  Price>MA200 (uptrend)                         WR=41.9 % | 597 sigs (L:99/199 S:151/398)
+tf   : 1h
+name : Price>MA200 (uptrend)
+wr   : 41.9
+sigs : 597
+lw   : 99
+ll   : 100
+sw   : 151
+sl   : 247
+
+  MA20>MA50 (uptrend)                           WR=39.4 % | 597 sigs (L:106/241 S:129/356)
+tf   : 1h
+name : MA20>MA50 (uptrend)
+wr   : 39.4
+sigs : 597
+lw   : 106
+ll   : 135
+sw   : 129
+sl   : 227
+
+  MA50>MA100 (uptrend)                          WR=41   % | 597 sigs (L:112/228 S:133/369)
+tf   : 1h
+name : MA50>MA100 (uptrend)
+wr   : 41
+sigs : 597
+lw   : 112
+ll   : 116
+sw   : 133
+sl   : 236
+
+  MA20>MA200 (uptrend)                          WR=42   % | 597 sigs (L:113/233 S:138/364)
+tf   : 1h
+name : MA20>MA200 (uptrend)
+wr   : 42
+sigs : 597
+lw   : 113
+ll   : 120
+sw   : 138
+sl   : 226
+
+  Price>MA20>MA50                               WR=46.2 % | 292 sigs (L:0/0 S:135/292)
+tf   : 1h
+name : Price>MA20>MA50
+wr   : 46.2
+sigs : 292
+lw   : 0
+ll   : 0
+sw   : 135
+sl   : 157
+
+  Price>MA20>MA100                              WR=46.2 % | 292 sigs (L:0/0 S:135/292)
+tf   : 1h
+name : Price>MA20>MA100
+wr   : 46.2
+sigs : 292
+lw   : 0
+ll   : 0
+sw   : 135
+sl   : 157
+
+  MA20x50 crossover                             WR=46.2 % | 13 sigs (L:1/7 S:5/6)
+tf   : 1h
+name : MA20x50 crossover
+wr   : 46.2
+sigs : 13
+lw   : 1
+ll   : 6
+sw   : 5
+sl   : 1
+
+  ADX>25 + DI direction                         WR=38.5 % | 397 sigs (L:0/0 S:153/397)
+tf   : 1h
+name : ADX>25 + DI direction
+wr   : 38.5
+sigs : 397
+lw   : 0
+ll   : 0
+sw   : 153
+sl   : 244
+
+  ADX>30 + DI direction                         WR=41.1 % | 258 sigs (L:0/0 S:106/258)
+tf   : 1h
+name : ADX>30 + DI direction
+wr   : 41.1
+sigs : 258
+lw   : 0
+ll   : 0
+sw   : 106
+sl   : 152
+
+  ADX>25 (any dir)                              WR=38.4 % | 794 sigs (L:152/397 S:153/397)
+tf   : 1h
+name : ADX>25 (any dir)
+wr   : 38.4
+sigs : 794
+lw   : 152
+ll   : 245
+sw   : 153
+sl   : 244
+
+  Stoch<20 (oversold)                           WR=33.9 % | 319 sigs (L:54/163 S:54/156)
+tf   : 1h
+name : Stoch<20 (oversold)
+wr   : 33.9
+sigs : 319
+lw   : 54
+ll   : 109
+sw   : 54
+sl   : 102
+
+  Stoch<30 (oversold)                           WR=34.4 % | 404 sigs (L:70/198 S:69/206)
+tf   : 1h
+name : Stoch<30 (oversold)
+wr   : 34.4
+sigs : 404
+lw   : 70
+ll   : 128
+sw   : 69
+sl   : 137
+
+  Stoch<40 (oversold)                           WR=34.6 % | 488 sigs (L:90/230 S:79/258)
+tf   : 1h
+name : Stoch<40 (oversold)
+wr   : 34.6
+sigs : 488
+lw   : 90
+ll   : 140
+sw   : 79
+sl   : 179
+
+  Stoch crossover 20/80                         WR=38.5 % | 109 sigs (L:26/55 S:16/54)
+tf   : 1h
+name : Stoch crossover 20/80
+wr   : 38.5
+sigs : 109
+lw   : 26
+ll   : 29
+sw   : 16
+sl   : 38
+
+  ATR>1.5x range up/dn                          WR=45.5 % | 22 sigs (L:5/14 S:5/8)
+tf   : 1h
+name : ATR>1.5x range up/dn
+wr   : 45.5
+sigs : 22
+lw   : 5
+ll   : 9
+sw   : 5
+sl   : 3
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=43.5 % | 92 sigs (L:0/0 S:40/92)
+tf   : 1h
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 43.5
+sigs : 92
+lw   : 0
+ll   : 0
+sw   : 40
+sl   : 52
+
+  Vol(1.5)+MA20>MA50                            WR=43.5 % | 92 sigs (L:0/0 S:40/92)
+tf   : 1h
+name : Vol(1.5)+MA20>MA50
+wr   : 43.5
+sigs : 92
+lw   : 0
+ll   : 0
+sw   : 40
+sl   : 52
+
+  Stoch<30+ADX(25)                              WR=34.4 % | 404 sigs (L:70/198 S:69/206)
+tf   : 1h
+name : Stoch<30+ADX(25)
+wr   : 34.4
+sigs : 404
+lw   : 70
+ll   : 128
+sw   : 69
+sl   : 137
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 1h
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  DONE 1h (800 candles, 102 strategies)
+
+>>> 2h (800 candles) <<<
+  Best RSI: RSI(50) OB=64 OS=44 WR=50% (20 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=46.8 % | 94 sigs (L:44/94 S:0/0)
+tf   : 2h
+name : Vol>Avg*1.5 + Bull
+wr   : 46.8
+sigs : 94
+lw   : 44
+ll   : 50
+sw   : 0
+sl   : 0
+
+  Vol>Avg*2.0 + Bull                            WR=54.3 % | 46 sigs (L:25/46 S:0/0)
+tf   : 2h
+name : Vol>Avg*2.0 + Bull
+wr   : 54.3
+sigs : 46
+lw   : 25
+ll   : 21
+sw   : 0
+sl   : 0
+
+  Vol>Avg*3.0 + Bull                            WR=47.4 % | 19 sigs (L:9/19 S:0/0)
+tf   : 2h
+name : Vol>Avg*3.0 + Bull
+wr   : 47.4
+sigs : 19
+lw   : 9
+ll   : 10
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 (any dir)                         WR=45.7 % | 188 sigs (L:44/94 S:42/94)
+tf   : 2h
+name : Vol>Avg*1.5 (any dir)
+wr   : 45.7
+sigs : 188
+lw   : 44
+ll   : 50
+sw   : 42
+sl   : 52
+
+  Vol>Avg*2.0 (any dir)                         WR=50   % | 92 sigs (L:25/46 S:21/46)
+tf   : 2h
+name : Vol>Avg*2.0 (any dir)
+wr   : 50
+sigs : 92
+lw   : 25
+ll   : 21
+sw   : 21
+sl   : 25
+
+  Price>MA20 (uptrend)                          WR=42.2 % | 597 sigs (L:126/251 S:126/346)
+tf   : 2h
+name : Price>MA20 (uptrend)
+wr   : 42.2
+sigs : 597
+lw   : 126
+ll   : 125
+sw   : 126
+sl   : 220
+
+  Price>MA50 (uptrend)                          WR=39.4 % | 597 sigs (L:110/218 S:125/379)
+tf   : 2h
+name : Price>MA50 (uptrend)
+wr   : 39.4
+sigs : 597
+lw   : 110
+ll   : 108
+sw   : 125
+sl   : 254
+
+  Price>MA200 (uptrend)                         WR=43.6 % | 597 sigs (L:115/197 S:145/400)
+tf   : 2h
+name : Price>MA200 (uptrend)
+wr   : 43.6
+sigs : 597
+lw   : 115
+ll   : 82
+sw   : 145
+sl   : 255
+
+  MA20>MA50 (uptrend)                           WR=39.9 % | 597 sigs (L:111/206 S:127/391)
+tf   : 2h
+name : MA20>MA50 (uptrend)
+wr   : 39.9
+sigs : 597
+lw   : 111
+ll   : 95
+sw   : 127
+sl   : 264
+
+  MA50>MA100 (uptrend)                          WR=44.1 % | 597 sigs (L:129/225 S:134/372)
+tf   : 2h
+name : MA50>MA100 (uptrend)
+wr   : 44.1
+sigs : 597
+lw   : 129
+ll   : 96
+sw   : 134
+sl   : 238
+
+  MA20>MA200 (uptrend)                          WR=42   % | 597 sigs (L:120/217 S:131/380)
+tf   : 2h
+name : MA20>MA200 (uptrend)
+wr   : 42
+sigs : 597
+lw   : 120
+ll   : 97
+sw   : 131
+sl   : 249
+
+  Price>MA20>MA50                               WR=36.4 % | 346 sigs (L:0/0 S:126/346)
+tf   : 2h
+name : Price>MA20>MA50
+wr   : 36.4
+sigs : 346
+lw   : 0
+ll   : 0
+sw   : 126
+sl   : 220
+
+  Price>MA20>MA100                              WR=36.4 % | 346 sigs (L:0/0 S:126/346)
+tf   : 2h
+name : Price>MA20>MA100
+wr   : 36.4
+sigs : 346
+lw   : 0
+ll   : 0
+sw   : 126
+sl   : 220
+
+  MA20x50 crossover                             WR=45.5 % | 11 sigs (L:3/6 S:2/5)
+tf   : 2h
+name : MA20x50 crossover
+wr   : 45.5
+sigs : 11
+lw   : 3
+ll   : 3
+sw   : 2
+sl   : 3
+
+  ADX>25 + DI direction                         WR=42.9 % | 366 sigs (L:0/0 S:157/366)
+tf   : 2h
+name : ADX>25 + DI direction
+wr   : 42.9
+sigs : 366
+lw   : 0
+ll   : 0
+sw   : 157
+sl   : 209
+
+  ADX>30 + DI direction                         WR=46.9 % | 275 sigs (L:0/0 S:129/275)
+tf   : 2h
+name : ADX>30 + DI direction
+wr   : 46.9
+sigs : 275
+lw   : 0
+ll   : 0
+sw   : 129
+sl   : 146
+
+  ADX>25 (any dir)                              WR=44.9 % | 732 sigs (L:172/366 S:157/366)
+tf   : 2h
+name : ADX>25 (any dir)
+wr   : 44.9
+sigs : 732
+lw   : 172
+ll   : 194
+sw   : 157
+sl   : 209
+
+  Stoch<20 (oversold)                           WR=37.6 % | 303 sigs (L:63/157 S:51/146)
+tf   : 2h
+name : Stoch<20 (oversold)
+wr   : 37.6
+sigs : 303
+lw   : 63
+ll   : 94
+sw   : 51
+sl   : 95
+
+  Stoch<30 (oversold)                           WR=38.7 % | 406 sigs (L:85/209 S:72/197)
+tf   : 2h
+name : Stoch<30 (oversold)
+wr   : 38.7
+sigs : 406
+lw   : 85
+ll   : 124
+sw   : 72
+sl   : 125
+
+  Stoch<40 (oversold)                           WR=38.3 % | 496 sigs (L:103/261 S:87/235)
+tf   : 2h
+name : Stoch<40 (oversold)
+wr   : 38.3
+sigs : 496
+lw   : 103
+ll   : 158
+sw   : 87
+sl   : 148
+
+  Stoch crossover 20/80                         WR=44.3 % | 106 sigs (L:23/52 S:24/54)
+tf   : 2h
+name : Stoch crossover 20/80
+wr   : 44.3
+sigs : 106
+lw   : 23
+ll   : 29
+sw   : 24
+sl   : 30
+
+  ATR>1.5x range up/dn                          WR=63.6 % | 22 sigs (L:10/14 S:4/8)
+tf   : 2h
+name : ATR>1.5x range up/dn
+wr   : 63.6
+sigs : 22
+lw   : 10
+ll   : 4
+sw   : 4
+sl   : 4
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol(1.5)+MA20>MA50                            WR=44.7 % | 94 sigs (L:0/0 S:42/94)
+tf   : 2h
+name : Vol(1.5)+MA20>MA50
+wr   : 44.7
+sigs : 94
+lw   : 0
+ll   : 0
+sw   : 42
+sl   : 52
+
+  Stoch<30+ADX(25)                              WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : Stoch<30+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 2h
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  DONE 2h (800 candles, 136 strategies)
+
+>>> 4h (800 candles) <<<
+  Best RSI: RSI(35) OB=64 OS=44 WR=55.6% (27 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=46.6 % | 88 sigs (L:0/0 S:41/88)
+tf   : 4h
+name : Vol>Avg*1.5 + Bull
+wr   : 46.6
+sigs : 88
+lw   : 0
+ll   : 0
+sw   : 41
+sl   : 47
+
+  Vol>Avg*2.0 + Bull                            WR=37.8 % | 37 sigs (L:0/0 S:14/37)
+tf   : 4h
+name : Vol>Avg*2.0 + Bull
+wr   : 37.8
+sigs : 37
+lw   : 0
+ll   : 0
+sw   : 14
+sl   : 23
+
+  Vol>Avg*3.0 + Bull                            WR=61.5 % | 13 sigs (L:0/0 S:8/13)
+tf   : 4h
+name : Vol>Avg*3.0 + Bull
+wr   : 61.5
+sigs : 13
+lw   : 0
+ll   : 0
+sw   : 8
+sl   : 5
+
+  Vol>Avg*1.5 (any dir)                         WR=43.2 % | 176 sigs (L:35/88 S:41/88)
+tf   : 4h
+name : Vol>Avg*1.5 (any dir)
+wr   : 43.2
+sigs : 176
+lw   : 35
+ll   : 53
+sw   : 41
+sl   : 47
+
+  Vol>Avg*2.0 (any dir)                         WR=40.5 % | 74 sigs (L:16/37 S:14/37)
+tf   : 4h
+name : Vol>Avg*2.0 (any dir)
+wr   : 40.5
+sigs : 74
+lw   : 16
+ll   : 21
+sw   : 14
+sl   : 23
+
+  Price>MA20 (uptrend)                          WR=47.4 % | 597 sigs (L:131/249 S:152/348)
+tf   : 4h
+name : Price>MA20 (uptrend)
+wr   : 47.4
+sigs : 597
+lw   : 131
+ll   : 118
+sw   : 152
+sl   : 196
+
+  Price>MA50 (uptrend)                          WR=47.6 % | 597 sigs (L:135/251 S:149/346)
+tf   : 4h
+name : Price>MA50 (uptrend)
+wr   : 47.6
+sigs : 597
+lw   : 135
+ll   : 116
+sw   : 149
+sl   : 197
+
+  Price>MA200 (uptrend)                         WR=50.1 % | 597 sigs (L:158/284 S:141/313)
+tf   : 4h
+name : Price>MA200 (uptrend)
+wr   : 50.1
+sigs : 597
+lw   : 158
+ll   : 126
+sw   : 141
+sl   : 172
+
+  MA20>MA50 (uptrend)                           WR=47.4 % | 597 sigs (L:150/282 S:133/315)
+tf   : 4h
+name : MA20>MA50 (uptrend)
+wr   : 47.4
+sigs : 597
+lw   : 150
+ll   : 132
+sw   : 133
+sl   : 182
+
+  MA50>MA100 (uptrend)                          WR=49.2 % | 597 sigs (L:161/310 S:133/287)
+tf   : 4h
+name : MA50>MA100 (uptrend)
+wr   : 49.2
+sigs : 597
+lw   : 161
+ll   : 149
+sw   : 133
+sl   : 154
+
+  MA20>MA200 (uptrend)                          WR=48.7 % | 597 sigs (L:163/305 S:128/292)
+tf   : 4h
+name : MA20>MA200 (uptrend)
+wr   : 48.7
+sigs : 597
+lw   : 163
+ll   : 142
+sw   : 128
+sl   : 164
+
+  Price>MA20>MA50                               WR=52.6 % | 249 sigs (L:131/249 S:0/0)
+tf   : 4h
+name : Price>MA20>MA50
+wr   : 52.6
+sigs : 249
+lw   : 131
+ll   : 118
+sw   : 0
+sl   : 0
+
+  Price>MA20>MA100                              WR=52.6 % | 249 sigs (L:131/249 S:0/0)
+tf   : 4h
+name : Price>MA20>MA100
+wr   : 52.6
+sigs : 249
+lw   : 131
+ll   : 118
+sw   : 0
+sl   : 0
+
+  MA20x50 crossover                             WR=66.7 % | 9 sigs (L:3/4 S:3/5)
+tf   : 4h
+name : MA20x50 crossover
+wr   : 66.7
+sigs : 9
+lw   : 3
+ll   : 1
+sw   : 3
+sl   : 2
+
+  ADX>25 + DI direction                         WR=49.1 % | 381 sigs (L:187/381 S:0/0)
+tf   : 4h
+name : ADX>25 + DI direction
+wr   : 49.1
+sigs : 381
+lw   : 187
+ll   : 194
+sw   : 0
+sl   : 0
+
+  ADX>30 + DI direction                         WR=52.6 % | 272 sigs (L:143/272 S:0/0)
+tf   : 4h
+name : ADX>30 + DI direction
+wr   : 52.6
+sigs : 272
+lw   : 143
+ll   : 129
+sw   : 0
+sl   : 0
+
+  ADX>25 (any dir)                              WR=46.2 % | 762 sigs (L:187/381 S:165/381)
+tf   : 4h
+name : ADX>25 (any dir)
+wr   : 46.2
+sigs : 762
+lw   : 187
+ll   : 194
+sw   : 165
+sl   : 216
+
+  Stoch<20 (oversold)                           WR=38.1 % | 323 sigs (L:72/174 S:51/149)
+tf   : 4h
+name : Stoch<20 (oversold)
+wr   : 38.1
+sigs : 323
+lw   : 72
+ll   : 102
+sw   : 51
+sl   : 98
+
+  Stoch<30 (oversold)                           WR=38.4 % | 427 sigs (L:96/228 S:68/199)
+tf   : 4h
+name : Stoch<30 (oversold)
+wr   : 38.4
+sigs : 427
+lw   : 96
+ll   : 132
+sw   : 68
+sl   : 131
+
+  Stoch<40 (oversold)                           WR=39.3 % | 512 sigs (L:111/272 S:90/240)
+tf   : 4h
+name : Stoch<40 (oversold)
+wr   : 39.3
+sigs : 512
+lw   : 111
+ll   : 161
+sw   : 90
+sl   : 150
+
+  Stoch crossover 20/80                         WR=57   % | 107 sigs (L:31/52 S:30/55)
+tf   : 4h
+name : Stoch crossover 20/80
+wr   : 57
+sigs : 107
+lw   : 31
+ll   : 21
+sw   : 30
+sl   : 25
+
+  ATR>1.5x range up/dn                          WR=46.7 % | 15 sigs (L:6/11 S:1/4)
+tf   : 4h
+name : ATR>1.5x range up/dn
+wr   : 46.7
+sigs : 15
+lw   : 6
+ll   : 5
+sw   : 1
+sl   : 3
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=39.8 % | 88 sigs (L:35/88 S:0/0)
+tf   : 4h
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 39.8
+sigs : 88
+lw   : 35
+ll   : 53
+sw   : 0
+sl   : 0
+
+  Vol(1.5)+MA20>MA50                            WR=39.8 % | 88 sigs (L:35/88 S:0/0)
+tf   : 4h
+name : Vol(1.5)+MA20>MA50
+wr   : 39.8
+sigs : 88
+lw   : 35
+ll   : 53
+sw   : 0
+sl   : 0
+
+  Stoch<30+ADX(25)                              WR=38.4 % | 427 sigs (L:96/228 S:68/199)
+tf   : 4h
+name : Stoch<30+ADX(25)
+wr   : 38.4
+sigs : 427
+lw   : 96
+ll   : 132
+sw   : 68
+sl   : 131
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 4h
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  DONE 4h (800 candles, 170 strategies)
+
+>>> 6h (800 candles) <<<
+  Best RSI: RSI(50) OB=64 OS=44 WR=63.2% (19 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=56   % | 75 sigs (L:42/75 S:0/0)
+tf   : 6h
+name : Vol>Avg*1.5 + Bull
+wr   : 56
+sigs : 75
+lw   : 42
+ll   : 33
+sw   : 0
+sl   : 0
+
+  Vol>Avg*2.0 + Bull                            WR=62.9 % | 35 sigs (L:22/35 S:0/0)
+tf   : 6h
+name : Vol>Avg*2.0 + Bull
+wr   : 62.9
+sigs : 35
+lw   : 22
+ll   : 13
+sw   : 0
+sl   : 0
+
+  Vol>Avg*3.0 + Bull                            WR=60   % | 10 sigs (L:6/10 S:0/0)
+tf   : 6h
+name : Vol>Avg*3.0 + Bull
+wr   : 60
+sigs : 10
+lw   : 6
+ll   : 4
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 (any dir)                         WR=57.3 % | 150 sigs (L:42/75 S:44/75)
+tf   : 6h
+name : Vol>Avg*1.5 (any dir)
+wr   : 57.3
+sigs : 150
+lw   : 42
+ll   : 33
+sw   : 44
+sl   : 31
+
+  Vol>Avg*2.0 (any dir)                         WR=55.7 % | 70 sigs (L:22/35 S:17/35)
+tf   : 6h
+name : Vol>Avg*2.0 (any dir)
+wr   : 55.7
+sigs : 70
+lw   : 22
+ll   : 13
+sw   : 17
+sl   : 18
+
+  Price>MA20 (uptrend)                          WR=49.7 % | 597 sigs (L:132/226 S:165/371)
+tf   : 6h
+name : Price>MA20 (uptrend)
+wr   : 49.7
+sigs : 597
+lw   : 132
+ll   : 94
+sw   : 165
+sl   : 206
+
+  Price>MA50 (uptrend)                          WR=51.8 % | 597 sigs (L:138/221 S:171/376)
+tf   : 6h
+name : Price>MA50 (uptrend)
+wr   : 51.8
+sigs : 597
+lw   : 138
+ll   : 83
+sw   : 171
+sl   : 205
+
+  Price>MA200 (uptrend)                         WR=52.6 % | 597 sigs (L:116/176 S:198/421)
+tf   : 6h
+name : Price>MA200 (uptrend)
+wr   : 52.6
+sigs : 597
+lw   : 116
+ll   : 60
+sw   : 198
+sl   : 223
+
+  MA20>MA50 (uptrend)                           WR=51.4 % | 597 sigs (L:161/270 S:146/327)
+tf   : 6h
+name : MA20>MA50 (uptrend)
+wr   : 51.4
+sigs : 597
+lw   : 161
+ll   : 109
+sw   : 146
+sl   : 181
+
+  MA50>MA100 (uptrend)                          WR=54.8 % | 597 sigs (L:155/256 S:172/341)
+tf   : 6h
+name : MA50>MA100 (uptrend)
+wr   : 54.8
+sigs : 597
+lw   : 155
+ll   : 101
+sw   : 172
+sl   : 169
+
+  MA20>MA200 (uptrend)                          WR=53.4 % | 597 sigs (L:163/269 S:156/328)
+tf   : 6h
+name : MA20>MA200 (uptrend)
+wr   : 53.4
+sigs : 597
+lw   : 163
+ll   : 106
+sw   : 156
+sl   : 172
+
+  Price>MA20>MA50                               WR=58.4 % | 226 sigs (L:132/226 S:0/0)
+tf   : 6h
+name : Price>MA20>MA50
+wr   : 58.4
+sigs : 226
+lw   : 132
+ll   : 94
+sw   : 0
+sl   : 0
+
+  Price>MA20>MA100                              WR=58.4 % | 226 sigs (L:132/226 S:0/0)
+tf   : 6h
+name : Price>MA20>MA100
+wr   : 58.4
+sigs : 226
+lw   : 132
+ll   : 94
+sw   : 0
+sl   : 0
+
+  MA20x50 crossover                             WR=55.6 % | 9 sigs (L:3/4 S:2/5)
+tf   : 6h
+name : MA20x50 crossover
+wr   : 55.6
+sigs : 9
+lw   : 3
+ll   : 1
+sw   : 2
+sl   : 3
+
+  ADX>25 + DI direction                         WR=60.6 % | 419 sigs (L:254/419 S:0/0)
+tf   : 6h
+name : ADX>25 + DI direction
+wr   : 60.6
+sigs : 419
+lw   : 254
+ll   : 165
+sw   : 0
+sl   : 0
+
+  ADX>30 + DI direction                         WR=62   % | 368 sigs (L:228/368 S:0/0)
+tf   : 6h
+name : ADX>30 + DI direction
+wr   : 62
+sigs : 368
+lw   : 228
+ll   : 140
+sw   : 0
+sl   : 0
+
+  ADX>25 (any dir)                              WR=53.2 % | 838 sigs (L:254/419 S:192/419)
+tf   : 6h
+name : ADX>25 (any dir)
+wr   : 53.2
+sigs : 838
+lw   : 254
+ll   : 165
+sw   : 192
+sl   : 227
+
+  Stoch<20 (oversold)                           WR=47.5 % | 322 sigs (L:95/184 S:58/138)
+tf   : 6h
+name : Stoch<20 (oversold)
+wr   : 47.5
+sigs : 322
+lw   : 95
+ll   : 89
+sw   : 58
+sl   : 80
+
+  Stoch<30 (oversold)                           WR=48   % | 408 sigs (L:118/226 S:78/182)
+tf   : 6h
+name : Stoch<30 (oversold)
+wr   : 48
+sigs : 408
+lw   : 118
+ll   : 108
+sw   : 78
+sl   : 104
+
+  Stoch<40 (oversold)                           WR=48.2 % | 502 sigs (L:147/280 S:95/222)
+tf   : 6h
+name : Stoch<40 (oversold)
+wr   : 48.2
+sigs : 502
+lw   : 147
+ll   : 133
+sw   : 95
+sl   : 127
+
+  Stoch crossover 20/80                         WR=62.9 % | 105 sigs (L:38/57 S:28/48)
+tf   : 6h
+name : Stoch crossover 20/80
+wr   : 62.9
+sigs : 105
+lw   : 38
+ll   : 19
+sw   : 28
+sl   : 20
+
+  ATR>1.5x range up/dn                          WR=68.8 % | 16 sigs (L:6/10 S:5/6)
+tf   : 6h
+name : ATR>1.5x range up/dn
+wr   : 68.8
+sigs : 16
+lw   : 6
+ll   : 4
+sw   : 5
+sl   : 1
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=56   % | 75 sigs (L:42/75 S:0/0)
+tf   : 6h
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 56
+sigs : 75
+lw   : 42
+ll   : 33
+sw   : 0
+sl   : 0
+
+  Vol(1.5)+MA20>MA50                            WR=56   % | 75 sigs (L:42/75 S:0/0)
+tf   : 6h
+name : Vol(1.5)+MA20>MA50
+wr   : 56
+sigs : 75
+lw   : 42
+ll   : 33
+sw   : 0
+sl   : 0
+
+  Stoch<30+ADX(25)                              WR=48   % | 408 sigs (L:118/226 S:78/182)
+tf   : 6h
+name : Stoch<30+ADX(25)
+wr   : 48
+sigs : 408
+lw   : 118
+ll   : 108
+sw   : 78
+sl   : 104
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 6h
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=51.4 % | 597 sigs (L:161/270 S:146/327)
+tf   : 6h
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 51.4
+sigs : 597
+lw   : 161
+ll   : 109
+sw   : 146
+sl   : 181
+
+  DONE 6h (800 candles, 204 strategies)
+
+>>> 12h (800 candles) <<<
+  Best RSI: RSI(38) OB=68 OS=40 WR=68.8% (16 sigs)
+  Testing all strategies...
+  RSI alone                                     WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI alone
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)                                  WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.7)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(20)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.7)+ADX(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(25)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.7)+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.7)+ADX(30)                          WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.7)+ADX(30)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+Stoch(20)                        WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.8)+Stoch(20)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  RSI+Vol(0.8)+ATRreg                           WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : RSI+Vol(0.8)+ATRreg
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol>Avg*1.5 + Bull                            WR=62.9 % | 70 sigs (L:0/0 S:44/70)
+tf   : 12h
+name : Vol>Avg*1.5 + Bull
+wr   : 62.9
+sigs : 70
+lw   : 0
+ll   : 0
+sw   : 44
+sl   : 26
+
+  Vol>Avg*2.0 + Bull                            WR=71.4 % | 35 sigs (L:0/0 S:25/35)
+tf   : 12h
+name : Vol>Avg*2.0 + Bull
+wr   : 71.4
+sigs : 35
+lw   : 0
+ll   : 0
+sw   : 25
+sl   : 10
+
+  Vol>Avg*3.0 + Bull                            WR=53.3 % | 15 sigs (L:0/0 S:8/15)
+tf   : 12h
+name : Vol>Avg*3.0 + Bull
+wr   : 53.3
+sigs : 15
+lw   : 0
+ll   : 0
+sw   : 8
+sl   : 7
+
+  Vol>Avg*1.5 (any dir)                         WR=60   % | 140 sigs (L:40/70 S:44/70)
+tf   : 12h
+name : Vol>Avg*1.5 (any dir)
+wr   : 60
+sigs : 140
+lw   : 40
+ll   : 30
+sw   : 44
+sl   : 26
+
+  Vol>Avg*2.0 (any dir)                         WR=65.7 % | 70 sigs (L:21/35 S:25/35)
+tf   : 12h
+name : Vol>Avg*2.0 (any dir)
+wr   : 65.7
+sigs : 70
+lw   : 21
+ll   : 14
+sw   : 25
+sl   : 10
+
+  Price>MA20 (uptrend)                          WR=55.9 % | 597 sigs (L:128/196 S:206/401)
+tf   : 12h
+name : Price>MA20 (uptrend)
+wr   : 55.9
+sigs : 597
+lw   : 128
+ll   : 68
+sw   : 206
+sl   : 195
+
+  Price>MA50 (uptrend)                          WR=59.5 % | 597 sigs (L:124/169 S:231/428)
+tf   : 12h
+name : Price>MA50 (uptrend)
+wr   : 59.5
+sigs : 597
+lw   : 124
+ll   : 45
+sw   : 231
+sl   : 197
+
+  Price>MA200 (uptrend)                         WR=56.4 % | 597 sigs (L:66/83 S:271/514)
+tf   : 12h
+name : Price>MA200 (uptrend)
+wr   : 56.4
+sigs : 597
+lw   : 66
+ll   : 17
+sw   : 271
+sl   : 243
+
+  MA20>MA50 (uptrend)                           WR=60.8 % | 597 sigs (L:122/164 S:241/433)
+tf   : 12h
+name : MA20>MA50 (uptrend)
+wr   : 60.8
+sigs : 597
+lw   : 122
+ll   : 42
+sw   : 241
+sl   : 192
+
+  MA50>MA100 (uptrend)                          WR=56.8 % | 597 sigs (L:93/125 S:246/472)
+tf   : 12h
+name : MA50>MA100 (uptrend)
+wr   : 56.8
+sigs : 597
+lw   : 93
+ll   : 32
+sw   : 246
+sl   : 226
+
+  MA20>MA200 (uptrend)                          WR=59.5 % | 597 sigs (L:105/135 S:250/462)
+tf   : 12h
+name : MA20>MA200 (uptrend)
+wr   : 59.5
+sigs : 597
+lw   : 105
+ll   : 30
+sw   : 250
+sl   : 212
+
+  Price>MA20>MA50                               WR=65.3 % | 196 sigs (L:128/196 S:0/0)
+tf   : 12h
+name : Price>MA20>MA50
+wr   : 65.3
+sigs : 196
+lw   : 128
+ll   : 68
+sw   : 0
+sl   : 0
+
+  Price>MA20>MA100                              WR=65.3 % | 196 sigs (L:128/196 S:0/0)
+tf   : 12h
+name : Price>MA20>MA100
+wr   : 65.3
+sigs : 196
+lw   : 128
+ll   : 68
+sw   : 0
+sl   : 0
+
+  MA20x50 crossover                             WR=53.3 % | 15 sigs (L:3/7 S:5/8)
+tf   : 12h
+name : MA20x50 crossover
+wr   : 53.3
+sigs : 15
+lw   : 3
+ll   : 4
+sw   : 5
+sl   : 3
+
+  ADX>25 + DI direction                         WR=52.5 % | 488 sigs (L:0/0 S:256/488)
+tf   : 12h
+name : ADX>25 + DI direction
+wr   : 52.5
+sigs : 488
+lw   : 0
+ll   : 0
+sw   : 256
+sl   : 232
+
+  ADX>30 + DI direction                         WR=53.4 % | 399 sigs (L:0/0 S:213/399)
+tf   : 12h
+name : ADX>30 + DI direction
+wr   : 53.4
+sigs : 399
+lw   : 0
+ll   : 0
+sw   : 213
+sl   : 186
+
+  ADX>25 (any dir)                              WR=58.5 % | 976 sigs (L:315/488 S:256/488)
+tf   : 12h
+name : ADX>25 (any dir)
+wr   : 58.5
+sigs : 976
+lw   : 315
+ll   : 173
+sw   : 256
+sl   : 232
+
+  Stoch<20 (oversold)                           WR=59.4 % | 323 sigs (L:118/193 S:74/130)
+tf   : 12h
+name : Stoch<20 (oversold)
+wr   : 59.4
+sigs : 323
+lw   : 118
+ll   : 75
+sw   : 74
+sl   : 56
+
+  Stoch<30 (oversold)                           WR=59.2 % | 407 sigs (L:145/241 S:96/166)
+tf   : 12h
+name : Stoch<30 (oversold)
+wr   : 59.2
+sigs : 407
+lw   : 145
+ll   : 96
+sw   : 96
+sl   : 70
+
+  Stoch<40 (oversold)                           WR=60   % | 513 sigs (L:186/292 S:122/221)
+tf   : 12h
+name : Stoch<40 (oversold)
+wr   : 60
+sigs : 513
+lw   : 186
+ll   : 106
+sw   : 122
+sl   : 99
+
+  Stoch crossover 20/80                         WR=64.6 % | 99 sigs (L:35/51 S:29/48)
+tf   : 12h
+name : Stoch crossover 20/80
+wr   : 64.6
+sigs : 99
+lw   : 35
+ll   : 16
+sw   : 29
+sl   : 19
+
+  ATR>1.5x range up/dn                          WR=62.5 % | 24 sigs (L:11/18 S:4/6)
+tf   : 12h
+name : ATR>1.5x range up/dn
+wr   : 62.5
+sigs : 24
+lw   : 11
+ll   : 7
+sw   : 4
+sl   : 2
+
+  Vol(1.5)+ADX(25)+MA20dir                      WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : Vol(1.5)+ADX(25)+MA20dir
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol(1.5)+MA20>MA50                            WR=57.1 % | 70 sigs (L:40/70 S:0/0)
+tf   : 12h
+name : Vol(1.5)+MA20>MA50
+wr   : 57.1
+sigs : 70
+lw   : 40
+ll   : 30
+sw   : 0
+sl   : 0
+
+  Stoch<30+ADX(25)                              WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : Stoch<30+ADX(25)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  Vol(2.0)+ATRhigh (breakout)                   WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : Vol(2.0)+ATRhigh (breakout)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  MA20>MA50+ADX(25)+Vol(1.5)                    WR=0    % | 0 sigs (L:0/0 S:0/0)
+tf   : 12h
+name : MA20>MA50+ADX(25)+Vol(1.5)
+wr   : 0
+sigs : 0
+lw   : 0
+ll   : 0
+sw   : 0
+sl   : 0
+
+  DONE 12h (800 candles, 238 strategies)
+  POST-LOOP: allStrategies=238
+
+
+================================================================
+  OVERALL RANKING
+================================================================
+
+Top 20 by Score (WR * sigs):
+
+
+
+tf  name                         wr sigs
+--  ----                         -- ----
+12h ADX>25 (any dir)           58.5  976
+6h  ADX>25 (any dir)           53.2  838
+12h MA20>MA50 (uptrend)        60.8  597
+12h Price>MA50 (uptrend)       59.5  597
+12h MA20>MA200 (uptrend)       59.5  597
+4h  ADX>25 (any dir)           46.2  762
+12h MA50>MA100 (uptrend)       56.8  597
+12h Price>MA200 (uptrend)      56.4  597
+12h Price>MA20 (uptrend)       55.9  597
+2h  ADX>25 (any dir)           44.9  732
+6h  MA50>MA100 (uptrend)       54.8  597
+6h  MA20>MA200 (uptrend)       53.4  597
+6h  Price>MA200 (uptrend)      52.6  597
+6h  Price>MA50 (uptrend)       51.8  597
+12h Stoch<40 (oversold)          60  513
+6h  MA20>MA50 (uptrend)        51.4  597
+6h  MA20>MA50+ADX(25)+Vol(1.5) 51.4  597
+1h  ADX>25 (any dir)           38.4  794
+4h  Price>MA200 (uptrend)      50.1  597
+6h  Price>MA20 (uptrend)       49.7  597
+
+
+
+Top 10 by WR (min 10 sigs):
+
+tf  name                    wr sigs  lw ll sw sl
+--  ----                    -- ----  -- -- -- --
+12h Vol>Avg*2.0 + Bull    71.4   35   0  0 25 10
+6h  ATR>1.5x range up/dn  68.8   16   6  4  5  1
+12h Vol>Avg*2.0 (any dir) 65.7   70  21 14 25 10
+12h Price>MA20>MA50       65.3  196 128 68  0  0
+12h Price>MA20>MA100      65.3  196 128 68  0  0
+12h Stoch crossover 20/80 64.6   99  35 16 29 19
+2h  ATR>1.5x range up/dn  63.6   22  10  4  4  4
+12h Vol>Avg*1.5 + Bull    62.9   70   0  0 44 26
+6h  Vol>Avg*2.0 + Bull    62.9   35  22 13  0  0
+6h  Stoch crossover 20/80 62.9  105  38 19 28 20
+
+
+
+Top 5 candidates for deeper analysis:
+
+tf  name                   wr sigs
+--  ----                   -- ----
+12h ADX>25 (any dir)     58.5  976
+6h  ADX>25 (any dir)     53.2  838
+12h MA20>MA50 (uptrend)  60.8  597
+12h Price>MA50 (uptrend) 59.5  597
+12h MA20>MA200 (uptrend) 59.5  597
+
+
+12h ADX>25 (any dir)
+6h ADX>25 (any dir)
+12h MA20>MA50 (uptrend)
+12h Price>MA50 (uptrend)
+12h MA20>MA200 (uptrend)
+
+--- PHASE 3: TP/SL FOR TOP CANDIDATES ---
+
+>>> 12h ADX>25 (any dir) <<<
+  0 long, 0 short entries
+  Best 1:1 R:R:
+
+>>> 6h ADX>25 (any dir) <<<
+  0 long, 0 short entries
+  Best 1:1 R:R:
+
+>>> 12h MA20>MA50 (uptrend) <<<
+  0 long, 0 short entries
+  Best 1:1 R:R:
+
+>>> 12h Price>MA50 (uptrend) <<<
+  0 long, 0 short entries
+  Best 1:1 R:R:
+
+>>> 12h MA20>MA200 (uptrend) <<<
+  0 long, 0 short entries
+  Best 1:1 R:R:
+
+--- PHASE 4: 3-MONTH SIMULATION (BEST OVERALL) ---
+
+--- LIVE SIGNAL ---
+
+=== FULL GRID COMPLETE ===

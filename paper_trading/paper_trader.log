@@ -1,0 +1,17 @@
+2026-06-20 08:54:22 | Fresh state initialized
+2026-06-20 08:55:36 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 08:57:40 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 08:57:42 | [ICPUSDT] 06-20 00:00 | ADX=29.9 +DI=11.8 -DI=22.3 Price=2.287 => SHORT
+2026-06-20 08:57:42 | [ICPUSDT] SKIP entry - first run (recording candle only)
+2026-06-20 08:57:43 | [SOLUSDT] 06-20 04:00 | DivScore: BULL=0 BEAR=0 Price=71.83 => NONE
+2026-06-20 08:57:43 | [SOLUSDT] SKIP entry - first run (recording candle only)
+2026-06-20 08:57:43 | First run complete - signal detection enabled
+2026-06-20 09:12:23 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 09:12:25 | First run complete - signal detection enabled
+2026-06-20 10:06:58 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 10:08:09 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 10:08:22 | ERROR: The term 'if' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+2026-06-20 10:08:22 | Stack: at <ScriptBlock>, C:\Users\A\Downloads\opencode-bybit\paper_trading\run_paper_trader.ps1: line 440
+2026-06-20 10:09:05 | State v3: TotalCap=100.00 | SOLUSDT:0t,0pos ICPUSDT:0t,0pos
+2026-06-20 10:09:18 | [ICPUSDT] WARN: klines 0
+2026-06-20 10:09:19 | First run complete - signal detection enabled

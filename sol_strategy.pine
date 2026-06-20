@@ -1,0 +1,32 @@
+//@version=6
+strategy("SOL 2h RSI(38)+Volume", overlay=true, initial_capital=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_value=0.1, margin_long=100, margin_short=100)
+
+rsiLen = 38
+obLevel = 60
+osLevel = 36
+volMaLen = 20
+volThreshold = 0.8
+tpPct = 0.5
+slPct = 0.5
+
+rsi = ta.rsi(close, rsiLen)
+volSma = ta.sma(volume, volMaLen)
+volOk = volume > volSma * volThreshold
+
+longEntry = rsi[1] > osLevel and rsi <= osLevel and rsi != 0 and volOk
+shortEntry = rsi[1] < obLevel and rsi >= obLevel and rsi != 100 and volOk
+
+allowTrade = true
+
+if longEntry and allowTrade
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long Ex", "Long", profit=close*(tpPct/100)/syminfo.mintick, loss=close*(slPct/100)/syminfo.mintick)
+
+if shortEntry and allowTrade
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short Ex", "Short", profit=close*(tpPct/100)/syminfo.mintick, loss=close*(slPct/100)/syminfo.mintick)
+
+hline(obLevel, color=color.red, linestyle=hline.style_dashed)
+hline(osLevel, color=color.green, linestyle=hline.style_dashed)
+plot(rsi, "RSI", color=color.purple)
+plot(volSma, "VolSMA", color=color.orange, display=display.none)
