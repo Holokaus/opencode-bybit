@@ -1,0 +1,106 @@
+﻿========================================================================
+  INSTITUTIONAL MARKET BEHAVIOR RESEARCH -- FINAL REPORT
+========================================================================
+  Generated: 2026-06-21 23:05:40
+========================================================================
+
+========================================================================
+  ASSET: SOLUSDT
+========================================================================
+
+--- BEST TIMEFRAME ---
+  30m: score=47.65 *
+  1h: score=47.24
+  15m: score=47.13
+  1d: score=45.76
+  4h: score=45.06
+  12h: score=44.82
+  BEST: 30m (BehaviorScore=47.65)
+  TrendPersistence=72.89%  MeanRev=52.77%  BreakoutCont=47.53%
+
+--- DOMINANT REGIMES ---
+  VOLATILITY_EXPANSION: 10127 bars (100%)
+
+--- RECURRING BEHAVIORS ---
+  VOLATILITY_EXPANSION:
+    Avg 1B Move: 0.0083% | 5B: 0.0423% | 20B: 0.174%
+    Reversal: 50.96% | Continuation: 69.09%
+    Breakout: 12.66% | Fade: 23.65%
+    Avg Duration: 2.2 bars | Up Bias: 49.3%
+
+--- BEST DETECTORS ---
+  Regime: VOLATILITY_EXPANSION
+    1st: Stoch(k=21,d=9,ob=85,os=10) F1=9.9
+    2nd: Stoch(k=5,d=5,ob=80,os=10) F1=9.78
+    3rd: ATR(len=21,mult=1.5) F1=9.76
+    Avg F1: 18.45 | Precision: 49.57 | Recall: 17.03
+
+--- STRONGEST EDGE CANDIDATES ---
+  Rank | Indicator | Params | Regime | Expectancy | Sharpe | PosFolds% | MaxDD
+  -----+-----------+-------+--------+------------+--------+----------+-------
+  1    | Stoch     | k=5,d=5,ob=80,os=10 | VOLATILITY_EXPANSION |   2.2592 | 1.5309 |    100% |   4.5
+  2    | Stoch     | k=21,d=9,ob=85,os=10 | VOLATILITY_EXPANSION |   0.4586 | 0.3884 |    100% |   9.2
+
+========================================================================
+  ASSET: ICPUSDT
+========================================================================
+
+--- BEST TIMEFRAME ---
+  30m: score=47.16 *
+  1h: score=46.26
+  15m: score=45.96
+  1d: score=45.84
+  12h: score=45.59
+  4h: score=44.18
+  BEST: 30m (BehaviorScore=47.16)
+  TrendPersistence=71.42%  MeanRev=56.04%  BreakoutCont=45.11%
+
+--- DOMINANT REGIMES ---
+  VOLATILITY_EXPANSION: 10193 bars (100%)
+  ACCUMULATION: 1 bars (0%)
+
+--- RECURRING BEHAVIORS ---
+  VOLATILITY_EXPANSION:
+    Avg 1B Move: -0.0063% | 5B: -0.0346% | 20B: -0.1053%
+    Reversal: 50.6% | Continuation: 69.02%
+    Breakout: 12.01% | Fade: 25.15%
+    Avg Duration: 2.1 bars | Up Bias: 48.5%
+  ACCUMULATION:
+    Avg 1B Move: 4.1581% | 5B: 8.2128% | 20B: 7.9029%
+    Reversal: 100% | Continuation: 100%
+    Breakout: 0% | Fade: 0%
+    Avg Duration: 1 bars | Up Bias: 0%
+
+--- BEST DETECTORS ---
+  Regime: VOLATILITY_EXPANSION
+    1st: Stoch(k=14,d=9,ob=80,os=10) F1=9.85
+    2nd: Stoch(k=5,d=5,ob=85,os=20) F1=9.81
+    3rd: Bollinger(per=50,mult=2.5) F1=9.8
+    Avg F1: 17.54 | Precision: 49.42 | Recall: 15.9
+  Regime: ACCUMULATION
+    1st: Bollinger(per=50,mult=3) F1=1.01
+    2nd: Bollinger(per=50,mult=3) F1=1.01
+    3rd: EMACross(fast=5,slow=21) F1=0.67
+    Avg F1: 0.01 | Precision: 0 | Recall: 6.83
+
+--- STRONGEST EDGE CANDIDATES ---
+  Rank | Indicator | Params | Regime | Expectancy | Sharpe | PosFolds% | MaxDD
+  -----+-----------+-------+--------+------------+--------+----------+-------
+  1    | Stoch     | k=14,d=9,ob=80,os=10 | VOLATILITY_EXPANSION |   0.8049 | 0.4822 |    100% |     9
+
+========================================================================
+  CROSS-ASSET PATTERNS (BEHAVIORS THAT PERSIST ACROSS YEARS AND REGIMES)
+========================================================================
+
+========================================================================
+  METHODOLOGY NOTES
+========================================================================
+  - Phases executed in order: Data->Timeframes->Regimes->Behaviors->Detectors->Playbook->Walk-Forward->Monte Carlo->Edge
+  - Indicators are sensors, NOT profit generators
+  - Behaviors were discovered from market structure, NOT from indicator outputs
+  - Walk-forward validation: 5-fold rolling windows, train/freeze/test
+  - Monte Carlo: 1000 iterations with fee (0.02-0.15%) and slippage (0-0.1%) randomization
+  - Edge ranking by: expectancy > robustness (fold consistency) > Sharpe > drawdown > frequency
+  - All prior results invalidated by temporal exclusion and skip-after-loss removal
+========================================================================
+
