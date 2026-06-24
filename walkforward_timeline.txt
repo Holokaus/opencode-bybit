@@ -1,0 +1,28 @@
+﻿Fold 1:
+TRAIN [0-19999] (20000 bars)
+TEST  [20000-29999] (10000 bars)
+
+Fold 2:
+TRAIN [0-29999] (30000 bars)
+TEST  [30000-39999] (10000 bars)
+
+Fold 3:
+TRAIN [0-39999] (40000 bars)
+TEST  [40000-49999] (10000 bars)
+
+Fold 4:
+TRAIN [0-49999] (50000 bars)
+TEST  [50000-59999] (10000 bars)
+
+Fold 5:
+TRAIN [0-59999] (60000 bars)
+TEST  [60000-69999] (10000 bars)
+
+Fold 6:
+TRAIN [0-69999] (70000 bars)
+TEST  [70000-79999] (10000 bars)
+
+Fold 7:
+TRAIN [0-79999] (80000 bars)
+TEST  [80000-89999] (10000 bars)
+

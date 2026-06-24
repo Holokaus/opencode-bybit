@@ -1,0 +1,300 @@
+[21:02:39.192] === FORENSIC AUDIT STARTED ===
+[21:02:49.018] Data loaded: 93871 bars
+[21:02:50.766] === AUDIT 1: LATENCY TRACE ===
+[21:02:51.453] Total signal bars: 4684
+[21:02:51.715] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:02:51.719] Computing aggregate metrics per latency mode...
+[21:02:53.945]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:02:56.075]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:02:57.846]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:02:59.479]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:02:59.486] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:02:59.540] Params: fsw=10000 tsw=20000 nfw=7
+[21:02:59.578]   Fold 1: train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:02:59.600]   Fold 2: train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:02:59.635]   Fold 3: train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:02:59.686]   Fold 4: train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:02:59.731]   Fold 5: train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:02:59.762]   Fold 6: train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:02:59.785]   Fold 7: train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:02:59.830] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:02:59.852] Checking signal computation boundaries...
+[21:02:59.878]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:02:59.907]     Training signal on bars 0..29999 (30000 bars)
+[21:02:59.949]     Test signal on bars 20000..29999 (10000 bars)
+[21:02:59.969]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:03:00.002]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:03:00.053]     Training signal on bars 0..39999 (40000 bars)
+[21:03:00.099]     Test signal on bars 30000..39999 (10000 bars)
+[21:03:00.126]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:03:00.160]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:03:00.185]     Training signal on bars 0..49999 (50000 bars)
+[21:03:00.215]     Test signal on bars 40000..49999 (10000 bars)
+[21:03:00.247]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:03:00.287]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:03:00.318]     Training signal on bars 0..59999 (60000 bars)
+[21:03:00.352]     Test signal on bars 50000..59999 (10000 bars)
+[21:03:00.386]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:03:00.409]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:03:00.437]     Training signal on bars 0..69999 (70000 bars)
+[21:03:00.465]     Test signal on bars 60000..69999 (10000 bars)
+[21:03:00.493]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:03:00.554]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:03:00.568]     Training signal on bars 0..79999 (80000 bars)
+[21:03:00.601]     Test signal on bars 70000..79999 (10000 bars)
+[21:03:00.653]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:03:00.767]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:03:00.793]     Training signal on bars 0..89999 (90000 bars)
+[21:03:00.820]     Test signal on bars 80000..89999 (10000 bars)
+[21:03:00.867]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:03:00.899] === FORENSIC AUDIT COMPLETE ===
+[21:05:17.570] === FORENSIC AUDIT STARTED ===
+[21:05:28.341] Data loaded: 93871 bars
+[21:05:30.814] === AUDIT 1: LATENCY TRACE ===
+[21:05:31.796] Total signal bars: 4684
+[21:05:32.182] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:05:32.187] Computing aggregate metrics per latency mode...
+[21:05:35.119]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:05:37.399]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:05:39.515]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:05:41.575]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:05:41.619] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:05:41.679] Params: fsw=10000 tsw=20000 nfw=7
+[21:05:41.723]   Fold 1: train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:05:41.753]   Fold 2: train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:05:41.800]   Fold 3: train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:05:41.855]   Fold 4: train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:05:41.909]   Fold 5: train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:05:41.972]   Fold 6: train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:05:42.000]   Fold 7: train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:05:42.050] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:05:42.082] Checking signal computation boundaries...
+[21:05:42.116]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:05:42.172]     Training signal on bars 0..29999 (30000 bars)
+[21:05:42.255]     Test signal on bars 20000..29999 (10000 bars)
+[21:05:42.302]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:05:42.342]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:05:42.378]     Training signal on bars 0..39999 (40000 bars)
+[21:05:42.413]     Test signal on bars 30000..39999 (10000 bars)
+[21:05:42.450]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:05:42.485]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:05:42.576]     Training signal on bars 0..49999 (50000 bars)
+[21:05:42.670]     Test signal on bars 40000..49999 (10000 bars)
+[21:05:42.686]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:05:42.720]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:05:42.772]     Training signal on bars 0..59999 (60000 bars)
+[21:05:42.848]     Test signal on bars 50000..59999 (10000 bars)
+[21:05:42.889]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:05:42.918]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:05:42.956]     Training signal on bars 0..69999 (70000 bars)
+[21:05:42.989]     Test signal on bars 60000..69999 (10000 bars)
+[21:05:43.021]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:05:43.055]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:05:43.120]     Training signal on bars 0..79999 (80000 bars)
+[21:05:43.152]     Test signal on bars 70000..79999 (10000 bars)
+[21:05:43.204]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:05:43.288]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:05:43.320]     Training signal on bars 0..89999 (90000 bars)
+[21:05:43.371]     Test signal on bars 80000..89999 (10000 bars)
+[21:05:43.435]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:05:43.466] === FORENSIC AUDIT COMPLETE ===
+[21:06:31.203] === FORENSIC AUDIT STARTED ===
+[21:06:48.373] Data loaded: 93871 bars
+[21:06:51.188] === AUDIT 1: LATENCY TRACE ===
+[21:06:52.152] Total signal bars: 4684
+[21:06:52.488] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:06:52.505] Computing aggregate metrics per latency mode...
+[21:06:54.995]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:06:57.405]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:06:59.836]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:07:02.701]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:07:02.744] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:07:02.774] Params: fsw=10000 tsw=20000 nfw=7
+[21:07:03.354]   Fold 1: te=30000 train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:07:03.621]   Fold 2: te=40000 train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:07:03.673]   Fold 3: te=50000 train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:07:03.735]   Fold 4: te=60000 train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:07:03.851]   Fold 5: te=70000 train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:07:03.874]   Fold 6: te=80000 train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:07:04.069]   Fold 7: te=90000 train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:07:04.101] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:07:04.135] Checking signal computation boundaries...
+[21:07:04.168]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:07:04.201]     Training signal on bars 0..29999 (30000 bars)
+[21:07:04.232]     Test signal on bars 20000..29999 (10000 bars)
+[21:07:04.269]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:07:04.311]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:07:04.341]     Training signal on bars 0..39999 (40000 bars)
+[21:07:04.397]     Test signal on bars 30000..39999 (10000 bars)
+[21:07:04.424]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:07:04.453]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:07:04.485]     Training signal on bars 0..49999 (50000 bars)
+[21:07:04.523]     Test signal on bars 40000..49999 (10000 bars)
+[21:07:04.586]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:07:04.661]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:07:04.673]     Training signal on bars 0..59999 (60000 bars)
+[21:07:04.704]     Test signal on bars 50000..59999 (10000 bars)
+[21:07:04.743]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:07:04.820]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:07:04.848]     Training signal on bars 0..69999 (70000 bars)
+[21:07:04.931]     Test signal on bars 60000..69999 (10000 bars)
+[21:07:04.936]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:07:04.974]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:07:05.002]     Training signal on bars 0..79999 (80000 bars)
+[21:07:05.037]     Test signal on bars 70000..79999 (10000 bars)
+[21:07:05.082]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:07:05.107]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:07:05.138]     Training signal on bars 0..89999 (90000 bars)
+[21:07:05.171]     Test signal on bars 80000..89999 (10000 bars)
+[21:07:05.205]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:07:05.240] === FORENSIC AUDIT COMPLETE ===
+[21:07:48.938] === FORENSIC AUDIT STARTED ===
+[21:07:53.659] Data loaded: 93871 bars
+[21:07:54.738] === AUDIT 1: LATENCY TRACE ===
+[21:07:55.141] Total signal bars: 4684
+[21:07:55.262] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:07:55.265] Computing aggregate metrics per latency mode...
+[21:07:56.190]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:07:57.002]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:07:57.744]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:07:58.509]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:07:58.511] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:07:58.530] Params: fsw=10000 tsw=20000 nfw=7
+[21:07:58.569]   Fold 1: te=30000 train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:07:58.573]   Fold 2: te=40000 train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:07:58.586]   Fold 3: te=50000 train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:07:58.600]   Fold 4: te=60000 train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:07:58.615]   Fold 5: te=70000 train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:07:58.646]   Fold 6: te=80000 train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:07:58.664]   Fold 7: te=90000 train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:07:58.697] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:07:58.711] Checking signal computation boundaries...
+[21:07:58.734]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:07:58.758]     Training signal on bars 0..29999 (30000 bars)
+[21:07:58.783]     Test signal on bars 20000..29999 (10000 bars)
+[21:07:58.806]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:07:58.831]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:07:58.856]     Training signal on bars 0..39999 (40000 bars)
+[21:07:58.881]     Test signal on bars 30000..39999 (10000 bars)
+[21:07:58.901]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:07:58.921]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:07:58.952]     Training signal on bars 0..49999 (50000 bars)
+[21:07:58.974]     Test signal on bars 40000..49999 (10000 bars)
+[21:07:58.997]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:07:59.020]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:07:59.041]     Training signal on bars 0..59999 (60000 bars)
+[21:07:59.064]     Test signal on bars 50000..59999 (10000 bars)
+[21:07:59.086]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:07:59.102]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:07:59.124]     Training signal on bars 0..69999 (70000 bars)
+[21:07:59.144]     Test signal on bars 60000..69999 (10000 bars)
+[21:07:59.164]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:07:59.185]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:07:59.200]     Training signal on bars 0..79999 (80000 bars)
+[21:07:59.215]     Test signal on bars 70000..79999 (10000 bars)
+[21:07:59.232]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:07:59.252]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:07:59.272]     Training signal on bars 0..89999 (90000 bars)
+[21:07:59.290]     Test signal on bars 80000..89999 (10000 bars)
+[21:07:59.305]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:07:59.325] === FORENSIC AUDIT COMPLETE ===
+[21:08:33.176] === FORENSIC AUDIT STARTED ===
+[21:08:43.043] Data loaded: 93871 bars
+[21:08:44.961] === AUDIT 1: LATENCY TRACE ===
+[21:08:45.469] Total signal bars: 4684
+[21:08:45.618] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:08:45.621] Computing aggregate metrics per latency mode...
+[21:08:46.873]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:08:47.971]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:08:49.095]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:08:50.297]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:08:50.299] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:08:50.331] Params: fsw=10000 tsw=20000 nfw=7
+[21:08:50.396]   Fold 1: te=30000 train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:08:50.400]   Fold 2: te=40000 train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:08:50.427]   Fold 3: te=50000 train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:08:50.449]   Fold 4: te=60000 train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:08:50.471]   Fold 5: te=70000 train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:08:50.496]   Fold 6: te=80000 train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:08:50.520]   Fold 7: te=90000 train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:08:50.545] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:08:50.567] Checking signal computation boundaries...
+[21:08:50.590]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:08:50.612]     Training signal on bars 0..29999 (30000 bars)
+[21:08:50.636]     Test signal on bars 20000..29999 (10000 bars)
+[21:08:50.659]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:08:50.681]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:08:50.705]     Training signal on bars 0..39999 (40000 bars)
+[21:08:50.728]     Test signal on bars 30000..39999 (10000 bars)
+[21:08:50.751]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:08:50.771]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:08:50.794]     Training signal on bars 0..49999 (50000 bars)
+[21:08:50.817]     Test signal on bars 40000..49999 (10000 bars)
+[21:08:50.836]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:08:50.858]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:08:50.883]     Training signal on bars 0..59999 (60000 bars)
+[21:08:50.907]     Test signal on bars 50000..59999 (10000 bars)
+[21:08:50.928]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:08:50.951]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:08:50.976]     Training signal on bars 0..69999 (70000 bars)
+[21:08:50.996]     Test signal on bars 60000..69999 (10000 bars)
+[21:08:51.019]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:08:51.043]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:08:51.064]     Training signal on bars 0..79999 (80000 bars)
+[21:08:51.092]     Test signal on bars 70000..79999 (10000 bars)
+[21:08:51.114]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:08:51.136]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:08:51.152]     Training signal on bars 0..89999 (90000 bars)
+[21:08:51.176]     Test signal on bars 80000..89999 (10000 bars)
+[21:08:51.200]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:08:51.225] === FORENSIC AUDIT COMPLETE ===
+[21:09:12.488] === FORENSIC AUDIT STARTED ===
+[21:09:20.370] Data loaded: 93871 bars
+[21:09:22.022] === AUDIT 1: LATENCY TRACE ===
+[21:09:22.595] Total signal bars: 4684
+[21:09:22.787] Saved C:\Users\A\Downloads\opencode-bybit\latency_trade_samples.csv
+[21:09:22.791] Computing aggregate metrics per latency mode...
+[21:09:24.235]   Latency 0: trades=4684 wins=3347 losses=1337 avg=0.827 PF=4.0676
+[21:09:25.382]   Latency 1: trades=4684 wins=3884 losses=800 avg=1.3059 PF=10.0606
+[21:09:26.513]   Latency 2: trades=4684 wins=4338 losses=346 avg=1.7862 PF=21.7528
+[21:09:27.849]   Latency 3: trades=4684 wins=4520 losses=164 avg=2.1796 PF=31.093
+[21:09:27.852] === AUDIT 2: WALK-FORWARD SPLITS ===
+[21:09:27.888] Params: fsw=10000 tsw=20000 nfw=7
+[21:09:27.970]   Fold 1: te=30000 train=[0..29999] test=[20000..29999] overlap=10000 bars -> YES
+[21:09:27.981]   Fold 2: te=40000 train=[0..39999] test=[30000..39999] overlap=10000 bars -> YES
+[21:09:28.007]   Fold 3: te=50000 train=[0..49999] test=[40000..49999] overlap=10000 bars -> YES
+[21:09:28.050]   Fold 4: te=60000 train=[0..59999] test=[50000..59999] overlap=10000 bars -> YES
+[21:09:28.062]   Fold 5: te=70000 train=[0..69999] test=[60000..69999] overlap=10000 bars -> YES
+[21:09:28.089]   Fold 6: te=80000 train=[0..79999] test=[70000..79999] overlap=10000 bars -> YES
+[21:09:28.120]   Fold 7: te=90000 train=[0..89999] test=[80000..89999] overlap=10000 bars -> YES
+[21:09:28.140] Saved C:\Users\A\Downloads\opencode-bybit\walkforward_fold_audit.csv
+[21:09:28.169] Checking signal computation boundaries...
+[21:09:28.191]   Fold 1 (f=0): te=30000 ts=20000 tE=30000
+[21:09:28.211]     Training signal on bars 0..29999 (30000 bars)
+[21:09:28.234]     Test signal on bars 20000..29999 (10000 bars)
+[21:09:28.259]     *** OVERLAP: Test bar 20000 <= Train bar 29999
+[21:09:28.278]   Fold 2 (f=1): te=40000 ts=30000 tE=40000
+[21:09:28.298]     Training signal on bars 0..39999 (40000 bars)
+[21:09:28.326]     Test signal on bars 30000..39999 (10000 bars)
+[21:09:28.346]     *** OVERLAP: Test bar 30000 <= Train bar 39999
+[21:09:28.370]   Fold 3 (f=2): te=50000 ts=40000 tE=50000
+[21:09:28.394]     Training signal on bars 0..49999 (50000 bars)
+[21:09:28.418]     Test signal on bars 40000..49999 (10000 bars)
+[21:09:28.445]     *** OVERLAP: Test bar 40000 <= Train bar 49999
+[21:09:28.486]   Fold 4 (f=3): te=60000 ts=50000 tE=60000
+[21:09:28.507]     Training signal on bars 0..59999 (60000 bars)
+[21:09:28.526]     Test signal on bars 50000..59999 (10000 bars)
+[21:09:28.548]     *** OVERLAP: Test bar 50000 <= Train bar 59999
+[21:09:28.570]   Fold 5 (f=4): te=70000 ts=60000 tE=70000
+[21:09:28.588]     Training signal on bars 0..69999 (70000 bars)
+[21:09:28.606]     Test signal on bars 60000..69999 (10000 bars)
+[21:09:28.627]     *** OVERLAP: Test bar 60000 <= Train bar 69999
+[21:09:28.653]   Fold 6 (f=5): te=80000 ts=70000 tE=80000
+[21:09:28.675]     Training signal on bars 0..79999 (80000 bars)
+[21:09:28.694]     Test signal on bars 70000..79999 (10000 bars)
+[21:09:28.715]     *** OVERLAP: Test bar 70000 <= Train bar 79999
+[21:09:28.735]   Fold 7 (f=6): te=90000 ts=80000 tE=90000
+[21:09:28.756]     Training signal on bars 0..89999 (90000 bars)
+[21:09:28.775]     Test signal on bars 80000..89999 (10000 bars)
+[21:09:28.795]     *** OVERLAP: Test bar 80000 <= Train bar 89999
+[21:09:28.817] === FORENSIC AUDIT COMPLETE ===
