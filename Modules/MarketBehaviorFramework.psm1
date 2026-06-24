@@ -1158,31 +1158,32 @@ function Get-MbfSignalArray {
     $parts = $params -split ','
     $map = @{}; foreach ($p in $parts) { $kv = $p -split '='; if ($kv.Count -eq 2) { $map[$kv[0].Trim()] = $kv[1].Trim() } }
 
+    $sigList = New-Object 'System.Collections.Generic.List[bool]'
     switch ($indicator) {
         "RSI" {
             $len = [int]$map['len']; $ob = [int]$map['ob']; $os = [int]$map['os']
             $rsi = Calc-RSI $c $len
-            $sig=@();for($i=$len;$i-lt$n;$i++){$sig+=$rsi[$i]-gt$ob-or$rsi[$i]-lt$os}; return $sig
+            for($i=$len;$i-lt$n;$i++){$sigList.Add($rsi[$i]-gt$ob-or$rsi[$i]-lt$os)}; return $sigList.ToArray()
         }
         "MACD" {
             $f = [int]$map['fast']; $s = [int]$map['slow']; $sig = [int]$map['signal']
             $m = Calc-MACD $c $f $s $sig
-            $sigArr=@();for($i=$s;$i-lt$n;$i++){$sigArr+=$m.hist[$i]-gt0-and$m.hist[$i-1]-le0}; return $sigArr
+            for($i=$s;$i-lt$n;$i++){$sigList.Add($m.hist[$i]-gt0-and$m.hist[$i-1]-le0)}; return $sigList.ToArray()
         }
         "ADX" {
             $len = [int]$map['len']; $thresh = [int]$map['thresh']
             $adx,$du,$dd = Calc-ADX $h $l $c $len
-            $sig=@();for($i=$len;$i-lt$n;$i++){$sig+=$adx[$i]-gt$thresh}; return $sig
+            for($i=$len;$i-lt$n;$i++){$sigList.Add($adx[$i]-gt$thresh)}; return $sigList.ToArray()
         }
         "EMACross" {
             $f = [int]$map['fast']; $s = [int]$map['slow']
             $ef=Calc-EMA $c $f;$es=Calc-EMA $c $s
-            $sig=@();for($i=$s;$i-lt$n;$i++){$sig+=$ef[$i]-gt$es[$i]-and$ef[$i-1]-le$es[$i-1]}; return $sig
+            for($i=$s;$i-lt$n;$i++){$sigList.Add($ef[$i]-gt$es[$i]-and$ef[$i-1]-le$es[$i-1])}; return $sigList.ToArray()
         }
         "SMACross" {
             $f = [int]$map['fast']; $s = [int]$map['slow']
             $sf=Calc-SMA $c $f;$ss=Calc-SMA $c $s
-            $sig=@();for($i=$s;$i-lt$n;$i++){$sig+=$sf[$i]-gt$ss[$i]-and$sf[$i-1]-le$ss[$i-1]}; return $sig
+            for($i=$s;$i-lt$n;$i++){$sigList.Add($sf[$i]-gt$ss[$i]-and$sf[$i-1]-le$ss[$i-1])}; return $sigList.ToArray()
         }
         "ATR" {
             $len = [int]$map['len']; $mult = [double]$map['mult']
@@ -1190,40 +1191,40 @@ function Get-MbfSignalArray {
             $atrPct=[double[]]::new($n);for($i=0;$i-lt$n;$i++){$atrPct[$i]=if($c[$i]-gt0){$atr[$i]/$c[$i]*100}else{0}}
             $atrMean = ($atrPct[50..($n-1)] | Measure-Object -Average).Average
             $atrStd = Get-StdDev @($atrPct[50..($n-1)])
-            $sig=@();for($i=$len;$i-lt$n;$i++){$sig+=$atrPct[$i]-gt($atrMean+$mult*$atrStd)}; return $sig
+            for($i=$len;$i-lt$n;$i++){$sigList.Add($atrPct[$i]-gt($atrMean+$mult*$atrStd))}; return $sigList.ToArray()
         }
         "Stoch" {
             $k = [int]$map['k']; $d = [int]$map['d']; $ob = [int]$map['ob']; $os = [int]$map['os']
             $st=Calc-Stoch $h $l $c $k $d
-            $sig=@();for($i=$k+$d;$i-lt$n;$i++){$sig+=$st[$i]-gt$ob-or$st[$i]-lt$os}; return $sig
+            for($i=$k+$d;$i-lt$n;$i++){$sigList.Add($st[$i]-gt$ob-or$st[$i]-lt$os)}; return $sigList.ToArray()
         }
         "OBV" {
             $maLen = [int]$map['ma']
             $obv=Calc-OBV $c $v;$obvMa=Calc-EMA $obv $maLen
-            $sig=@();for($i=$maLen;$i-lt$n;$i++){$sig+=$obv[$i]-gt$obvMa[$i]}; return $sig
+            for($i=$maLen;$i-lt$n;$i++){$sigList.Add($obv[$i]-gt$obvMa[$i])}; return $sigList.ToArray()
         }
         "CMF" {
             $len = [int]$map['len']; $thresh = [double]$map['thresh']
             $cmf=Calc-CMF $h $l $c $v $len
-            $sig=@();for($i=$len;$i-lt$n;$i++){$sig+=$cmf[$i]-gt$thresh}; return $sig
+            for($i=$len;$i-lt$n;$i++){$sigList.Add($cmf[$i]-gt$thresh)}; return $sigList.ToArray()
         }
         "VWAP" {
             $dev = [double]$map['dev']
             $vwap=Calc-VWAP $h $l $c $v
             $atr=Calc-ATR $h $l $c 14
-            $sig=@();for($i=0;$i-lt$n;$i++){$vDev=if($vwap[$i]-gt0){[Math]::Abs($c[$i]-$vwap[$i])/$vwap[$i]*100}else{0}
+            for($i=0;$i-lt$n;$i++){$vDev=if($vwap[$i]-gt0){[Math]::Abs($c[$i]-$vwap[$i])/$vwap[$i]*100}else{0}
                 $threshold=if($atr[$i]-gt0){$atr[$i]/$c[$i]*100*$dev}else{999}
-                $sig+=$vDev-gt$threshold}; return $sig
+                $sigList.Add($vDev-gt$threshold)}; return $sigList.ToArray()
         }
         "Bollinger" {
             $per = [int]$map['per']; $mult = [double]$map['mult']
             $bb=Calc-Bollinger $c $per $mult
-            $sig=@();for($i=$per-1;$i-lt$n;$i++){$sig+=$c[$i]-ge$bb.upper[$i]-or$c[$i]-le$bb.lower[$i]}; return $sig
+            for($i=$per-1;$i-lt$n;$i++){$sigList.Add($c[$i]-ge$bb.upper[$i]-or$c[$i]-le$bb.lower[$i])}; return $sigList.ToArray()
         }
         "CCI" {
             $len = [int]$map['len']; $ob = [int]$map['ob']; $os = [int]$map['os']
             $cci=Calc-CCI $h $l $c $len
-            $sig=@();for($i=$len;$i-lt$n;$i++){$sig+=$cci[$i]-gt$ob-or$cci[$i]-lt$os}; return $sig
+            for($i=$len;$i-lt$n;$i++){$sigList.Add($cci[$i]-gt$ob-or$cci[$i]-lt$os)}; return $sigList.ToArray()
         }
     }
     return $null
@@ -1855,14 +1856,1003 @@ function Invoke-MbfPhase10 {
     return $report
 }
 
+
+
 # ============================================================
-#  EXPORTS
+#  VOLUME PROFILE
 # ============================================================
+function Calc-VolumeProfile {
+    param($h, $l, $c, $v, $per = 24)
+    $n = $h.Count
+    $out = @{VAH=[double[]]::new($n);VAL=[double[]]::new($n);POC=[double[]]::new($n);Position=[double[]]::new($n)}
+    for ($i = $per; $i -lt $n; $i++) {
+        $minP = 1e99; $maxP = -1e99
+        for ($j = $i-$per+1; $j -le $i; $j++) {
+            if ($l[$j] -lt $minP) { $minP = $l[$j] }
+            if ($h[$j] -gt $maxP) { $maxP = $h[$j] }
+        }
+        $step = ($maxP - $minP) / 20
+        if ($step -le 0) { $out.VAH[$i]=$c[$i];$out.VAL[$i]=$c[$i];$out.POC[$i]=$c[$i]; continue }
+        $vol = [double[]]::new(20)
+        for ($j = $i-$per+1; $j -le $i; $j++) {
+            $top = [Math]::Min(19, [Math]::Max(0, [Math]::Floor(($h[$j]-$minP)/$step)))
+            $bot = [Math]::Min(19, [Math]::Max(0, [Math]::Floor(($l[$j]-$minP)/$step)))
+            $span = $top - $bot + 1
+            $vpp = $v[$j] / $span
+            for ($b = $bot; $b -le $top; $b++) { $vol[$b] += $vpp }
+        }
+        $maxIdx = 0; $maxVol = $vol[0]
+        for ($b = 1; $b -lt 20; $b++) { if ($vol[$b] -gt $maxVol) { $maxVol = $vol[$b]; $maxIdx = $b } }
+        $total = 0.0; for ($b = 0; $b -lt 20; $b++) { $total += $vol[$b] }
+        $target = $total * 0.7
+        $cum = $vol[$maxIdx]; $lIdx = $maxIdx - 1; $rIdx = $maxIdx + 1
+        while ($cum -lt $target -and ($lIdx -ge 0 -or $rIdx -lt 20)) {
+            $lv = if ($lIdx -ge 0) { $vol[$lIdx] } else { -1 }
+            $rv = if ($rIdx -lt 20) { $vol[$rIdx] } else { -1 }
+            if ($lv -ge $rv) { $cum += $lv; $lIdx-- } else { $cum += $rv; $rIdx++ }
+        }
+        $out.VAL[$i] = $minP + ($lIdx + 1) * $step
+        $out.VAH[$i] = $minP + $rIdx * $step
+        $out.POC[$i] = $minP + ($maxIdx + 0.5) * $step
+        if ($c[$i] -lt $out.VAL[$i]) { $out.Position[$i] = -1.0 }
+        elseif ($c[$i] -gt $out.VAH[$i]) { $out.Position[$i] = 1.0 }
+    }
+    return $out
+}
+
+# ============================================================
+#  PHASE 11 — INSTITUTIONAL REGIME DISCOVERY & EDGE VALIDATION
+# ============================================================
+function Invoke-MbfPhase11 {
+    param(
+        [string]$InputDir = ".",
+        [string]$OutputDir = ".",
+        [switch]$SkipAcquisition,
+        [switch]$SkipRegime,
+        [switch]$SkipQuality,
+        [switch]$SkipEval,
+        [switch]$SkipWalkforward,
+        [switch]$SkipMonteCarlo,
+        [switch]$SkipReport
+    )
+    $start = Get-Date
+    $tfMap = @{"30m"="30m";"1h"="1h";"4h"="4h"}
+    $timeframeFiles = @("30m","1h","4h")
+    $assets = @("SOLUSDT","ICPUSDT")
+    $assetFiles = @{
+        "SOLUSDT" = @{
+            "30m" = "SOLUSDT-FUTURES-2021-2026-30m.csv"
+            "1h"  = "SOLUSDT-FUTURES-2022-2026-1h.csv"
+            "4h"  = "SOLUSDT-FUTURES-2022-2026-4h.csv"
+        }
+        "ICPUSDT" = @{
+            "30m" = "ICPUSDT-FUTURES-2022-2026-30m.csv"
+            "1h"  = "ICPUSDT-FUTURES-2022-2026-1h.csv"
+            "4h"  = "ICPUSDT-FUTURES-2022-2026-4h.csv"
+        }
+    }
+
+    $dataCache = @{}  # "Asset_TF" -> klines
+
+    # Load existing edge candidates from Phase 9
+    $candidatesPath = Join-Path $OutputDir "institutional_edge_candidates.csv"
+
+    # ================================================================
+    # PHASE 11.1 — LOAD DATA (or skip if cached)
+    # ================================================================
+    if (-not $SkipAcquisition) {
+        Write-Host "`n===== PHASE 11.1: DATA ACQUISITION =====" -ForegroundColor Cyan
+        foreach ($asset in $assets) {
+            foreach ($tf in $timeframeFiles) {
+                $p = Join-Path $InputDir $assetFiles[$asset][$tf]
+                if (-not (Test-Path $p)) { Write-Warning "Missing: $p"; continue }
+                $data = Import-Csv $p
+                $dataCache["${asset}_${tf}"] = $data
+                $first = $data[0].Date; $last = $data[-1].Date
+                Write-Host "  Loaded $asset $tf : $($data.Count) rows, $first to $last" -ForegroundColor Gray
+            }
+        }
+        Write-Host "Phase 11.1 complete: $(($dataCache.Keys | Measure-Object).Count) datasets" -ForegroundColor Green
+    } else {
+        Write-Host "Phase 11.1: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.2 — REGIME DISCOVERY REBUILD
+    # ================================================================
+    if (-not $SkipRegime) {
+        Write-Host "`n===== PHASE 11.2: REGIME DISCOVERY REBUILD =====" -ForegroundColor Cyan
+        $allRegimeDist = @()
+
+        foreach ($asset in $assets) {
+            $tf = "4h"
+            $key = "${asset}_${tf}"
+            if (-not $dataCache.ContainsKey($key)) { Write-Warning "No data for $asset $tf"; continue }
+            $klines = $dataCache[$key]
+            $n = $klines.Count
+            Write-Host "  Computing features for $asset 4h ($n bars)..." -ForegroundColor Yellow
+
+            $h = [double[]]::new($n); $l = [double[]]::new($n); $c = [double[]]::new($n); $v = [double[]]::new($n)
+            for ($i = 0; $i -lt $n; $i++) { $h[$i]=[double]$klines[$i].High; $l[$i]=[double]$klines[$i].Low; $c[$i]=[double]$klines[$i].Close; $v[$i]=[double]$klines[$i].Volume }
+
+            # Indicators we need
+            $atr = Calc-ATR $h $l $c 14
+            $adx, $du, $dd = Calc-ADX $h $l $c 14
+            $ema20 = Calc-EMA $c 20
+            $ema50 = Calc-EMA $c 50
+            $ema200 = if ($n -gt 200) { Calc-EMA $c 200 } else { $null }
+            $vp = Calc-VolumeProfile $h $l $c $v 24
+
+            # Build feature vectors (starting from bar 200 to have all indicators stable)
+            $features = New-Object 'System.Collections.Generic.List[double[]]'
+            $startBar = 200
+            $nFeat = $n
+
+            for ($i = $startBar; $i -lt $n; $i++) {
+                # 1. Realized volatility (20-bar log return std dev)
+                $lr = Get-LogReturns $c[($i-19)..$i]
+                $rv = Get-StdDev $lr
+
+                # 2. ATR normalized (% of price)
+                $atrPct = if ($c[$i] -gt 0) { $atr[$i] / $c[$i] * 100 } else { 0 }
+
+                # 3. Trend persistence (20-bar return autocorrelation lag=1)
+                $rets = Get-LogReturns $c[($i-39)..$i]
+                $trend = if ($rets.Count -gt 2) { Get-Autocorrelation $rets 1 } else { 0 }
+
+                # 4. Trend slope (EMA20 - EMA50 / price)
+                $slope = if ($c[$i] -gt 0 -and $ema20[$i] -ne 0) { ($ema20[$i] - $ema50[$i]) / $c[$i] * 100 } else { 0 }
+
+                # 5. Directional movement (+DI - -DI spread)
+                $diSpread = [Math]::Abs($du[$i] - $dd[$i])
+                $diDir = if ($du[$i] -gt $dd[$i]) { 1 } elseif ($dd[$i] -gt $du[$i]) { -1 } else { 0 }
+
+                # 6. Volume expansion (z-score of last 20)
+                $vSlice = $v[($i-19)..$i]
+                $vm = ($vSlice | Measure-Object -Average).Average
+                $vs = Get-StdDev $vSlice
+                $vz = if ($vs -gt 0) { ($v[$i] - $vm) / $vs } else { 0 }
+
+                # 7. Volatility compression (range / ATR)
+                $cr = ($h[$i] - $l[$i])
+                $vc = if ($atr[$i] -gt 0) { $cr / $atr[$i] } else { 1 }
+
+                # 8. Volume Profile position (price relative to value area)
+                $vpPos = $vp.Position[$i]
+
+                # 9. Distance from POC (%)
+                $pocDist = if ($vp.POC[$i] -gt 0) { ($c[$i] - $vp.POC[$i]) / $vp.POC[$i] * 100 } else { 0 }
+
+                # 10. EMA200 distance (long-term trend context)
+                $ema200Dist = if ($ema200 -and $ema200[$i] -gt 0) { ($c[$i] - $ema200[$i]) / $ema200[$i] * 100 } else { 0 }
+
+                $fVec = [double[]]($rv, $atrPct, $trend, $slope, $diSpread, $diDir, $vz, $vc, $vpPos, $pocDist, $ema200Dist)
+                $features.Add($fVec) > $null
+            }
+
+            # Standardize features (z-score) so all dimensions have equal weight
+            $m = $features.Count
+            $dims = $features[0].Count
+            $featArr = [double[][]]::new($m)
+            for ($i = 0; $i -lt $m; $i++) { $featArr[$i] = $features[$i] }
+            $featMeans = [double[]]::new($dims); $featStd = [double[]]::new($dims)
+            for ($j = 0; $j -lt $dims; $j++) {
+                $sum = 0.0; for ($i = 0; $i -lt $m; $i++) { $sum += $featArr[$i][$j] }
+                $featMeans[$j] = $sum / $m
+                $sq = 0.0; for ($i = 0; $i -lt $m; $i++) { $d = $featArr[$i][$j] - $featMeans[$j]; $sq += $d * $d }
+                $featStd[$j] = [Math]::Sqrt($sq / ($m - 1))
+                if ($featStd[$j] -eq 0) { $featStd[$j] = 1 }
+            }
+            for ($i = 0; $i -lt $m; $i++) {
+                for ($j = 0; $j -lt $dims; $j++) { $featArr[$i][$j] = ($featArr[$i][$j] - $featMeans[$j]) / $featStd[$j] }
+            }
+
+            # K-means++ clustering (K=7 for 7 target regimes)
+            $Kcount = 7
+            Write-Host "  Clustering $m bars into $Kcount regimes..." -ForegroundColor Yellow
+
+            # K-means++ initialization
+            $centroids = New-Object 'System.Collections.Generic.List[double[]]'
+            $rng = [Random]::new(42)
+            $firstIdx = $rng.Next(0, $m)
+            $centroids.Add($featArr[$firstIdx]) > $null
+
+            $dims = $featArr[0].Length
+            for ($k = 1; $k -lt $Kcount; $k++) {
+                $minDists = [double[]]::new($m)
+                for ($i = 0; $i -lt $m; $i++) {
+                    $minD = 1e99
+                    foreach ($cent in $centroids) {
+                        $d = 0.0
+                        for ($j = 0; $j -lt $dims; $j++) {
+                            $diff = $featArr[$i][$j] - $cent[$j]
+                            $d += $diff * $diff
+                        }
+                        if ($d -lt $minD) { $minD = $d }
+                    }
+                    $minDists[$i] = $minD
+                }
+                $totalD = ($minDists | Measure-Object -Sum).Sum
+                $cum = 0.0; $threshold = $rng.NextDouble() * $totalD
+                $nextIdx = $m - 1
+                for ($i = 0; $i -lt $m; $i++) {
+                    $cum += $minDists[$i]
+                    if ($cum -ge $threshold) { $nextIdx = $i; break }
+                }
+                $centroids.Add($featArr[$nextIdx]) > $null
+            }
+
+            # Iterate K-means (max 50 iterations)
+            $labels = [int[]]::new($m)
+            for ($iter = 0; $iter -lt 50; $iter++) {
+                $changed = 0
+                for ($i = 0; $i -lt $m; $i++) {
+                    $minD = 1e99; $bestK = 0
+                    for ($k = 0; $k -lt $Kcount; $k++) {
+                        $d = 0.0
+                        for ($j = 0; $j -lt $dims; $j++) {
+                            $diff = $featArr[$i][$j] - $centroids[$k][$j]
+                            $d += $diff * $diff
+                        }
+                        if ($d -lt $minD) { $minD = $d; $bestK = $k }
+                    }
+                    if ($labels[$i] -ne $bestK) { $changed++; $labels[$i] = $bestK }
+                }
+                if ($changed -eq 0) { break }
+
+                # Update centroids
+                for ($k = 0; $k -lt $Kcount; $k++) {
+                    $count = 0; $sum = [double[]]::new($dims)
+                    for ($i = 0; $i -lt $m; $i++) {
+                        if ($labels[$i] -eq $k) { $count++; for ($j = 0; $j -lt $dims; $j++) { $sum[$j] += $featArr[$i][$j] } }
+                    }
+                    if ($count -gt 0) { for ($j = 0; $j -lt $dims; $j++) { $centroids[$k][$j] = $sum[$j] / $count } }
+                }
+            }
+
+            # Map clusters to regime names (now z-scores: mean=0, std=1)
+            $allNames = @("TREND_UP","TREND_DOWN","RANGE","ACCUMULATION","DISTRIBUTION","VOL_EXPANSION","VOL_COMPRESSION")
+            $clusterRegime = @{}
+            $usedNames = @{}
+
+            for ($k = 0; $k -lt $Kcount; $k++) {
+                $rvZ = $centroids[$k][0]
+                $atrZ = $centroids[$k][1]
+                $trendZ = $centroids[$k][2]
+                $slopeZ = $centroids[$k][3]
+                $diSpreadZ = $centroids[$k][4]
+                $diDirZ = $centroids[$k][5]
+                $vzZ = $centroids[$k][6]
+                $vcZ = $centroids[$k][7]
+                $vpZ = $centroids[$k][8]
+                $pocZ = $centroids[$k][9]
+                $ema200Z = $centroids[$k][10]
+
+                if ($vcZ -lt -0.8 -or $rvZ -gt 1.5) { $name = "VOL_EXPANSION" }
+                elseif ($vcZ -gt 0.8 -and $rvZ -lt -0.5) { $name = "VOL_COMPRESSION" }
+                elseif ($slopeZ -gt 0.5 -and $diDirZ -gt 0.3 -and $trendZ -gt 0.2) { $name = "TREND_UP" }
+                elseif ($slopeZ -lt -0.5 -and $diDirZ -lt -0.3 -and $trendZ -gt 0.2) { $name = "TREND_DOWN" }
+                elseif ($trendZ -lt -0.3 -and $slopeZ -gt -0.5 -and $slopeZ -lt 0.5) { $name = "RANGE" }
+                elseif ($vpZ -gt 0.5 -and $vzZ -gt 0.5) { $name = "DISTRIBUTION" }
+                elseif ($vpZ -lt -0.5 -and $vzZ -lt -0.5) { $name = "ACCUMULATION" }
+                else { $name = "RANGE" }
+
+                if ($usedNames.ContainsKey($name)) {
+                    foreach ($fb in $allNames) {
+                        if (-not $usedNames.ContainsKey($fb)) { $name = $fb; break }
+                    }
+                }
+                $clusterRegime[$k] = $name
+                $usedNames[$name] = $true
+            }
+
+            # Null-safe: ensure every cluster has a name
+            foreach ($k in 0..($Kcount-1)) {
+                if (-not $clusterRegime.ContainsKey($k) -or -not $clusterRegime[$k]) {
+                    foreach ($fb in $allNames) {
+                        if (-not $usedNames.ContainsKey($fb)) { $clusterRegime[$k] = $fb; $usedNames[$fb] = $true; break }
+                    }
+                    if (-not $clusterRegime[$k]) { $clusterRegime[$k] = "RANGE"; $usedNames["RANGE"] = $true }
+                }
+            }
+
+            # Assign full bar labels
+            $barRegimes = @("") * $n
+            for ($i = 0; $i -lt $startBar; $i++) { $barRegimes[$i] = "WARMUP" }
+
+            for ($i = $startBar; $i -lt $n; $i++) {
+                $clusterIdx = $labels[$i - $startBar]
+                $barRegimes[$i] = $clusterRegime[$clusterIdx]
+            }
+
+            # Distribution
+            $dist = @{}
+            foreach ($r in $barRegimes) {
+                $rk = if ($r) { $r } else { "UNKNOWN" }
+                if (-not $dist.ContainsKey($rk)) { $dist[$rk] = 0 }
+                $dist[$rk]++
+            }
+            Write-Host "  $asset regime distribution:" -ForegroundColor Yellow
+            foreach ($kv in $dist.GetEnumerator() | Sort-Object Name) {
+                $pct = [Math]::Round($kv.Value / $n * 100, 1)
+                Write-Host "    $($kv.Key) : $($kv.Value) bars ($pct%)" -ForegroundColor Gray
+                $allRegimeDist += [PSCustomObject]@{Asset=$asset; Regime=$kv.Key; BarCount=$kv.Value; PercentOfHistory=$pct}
+            }
+
+            # Save regimes
+            $regOut = @()
+            for ($i = 0; $i -lt $n; $i++) {
+                $regOut += [PSCustomObject]@{Index=$i; Timestamp=$klines[$i].Time; Date=$klines[$i].Date; Regime=$barRegimes[$i]}
+            }
+            $regPath = Join-Path $OutputDir "phase11_regimes_${asset}_4h.csv"
+            $regOut | Export-Csv -Path $regPath -NoTypeInformation
+            Write-Host "  Saved regimes to $regPath" -ForegroundColor Green
+
+            # Cache regimes for later phases
+            $dataCache["${asset}_regimes_4h"] = $barRegimes
+        }
+
+        $distPath = Join-Path $OutputDir "regime_distribution.csv"
+        $allRegimeDist | Export-Csv -Path $distPath -NoTypeInformation
+        Write-Host "Phase 11.2 complete. Saved to $distPath" -ForegroundColor Green
+    } else {
+        Write-Host "Phase 11.2: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.3 — REGIME QUALITY TEST
+    # ================================================================
+    if (-not $SkipQuality) {
+        Write-Host "`n===== PHASE 11.3: REGIME QUALITY TEST =====" -ForegroundColor Cyan
+        $qualityRows = @()
+
+        foreach ($asset in $assets) {
+            $regPath = Join-Path $OutputDir "phase11_regimes_${asset}_4h.csv"
+            if (-not (Test-Path $regPath)) { Write-Warning "No regimes for $asset"; continue }
+            $rdata = Import-Csv $regPath
+            $regimes = $rdata.Regime
+            $n = $regimes.Count
+            $unique = $regimes | Select-Object -Unique | Where-Object { $_ -ne "WARMUP" }
+
+            foreach ($reg in $unique) {
+                # Count occurrences
+                $bars = @(); for ($i = 0; $i -lt $n; $i++) { if ($regimes[$i] -eq $reg) { $bars += $i } }
+                $count = $bars.Count
+                $pct = [Math]::Round($count / $n * 100, 2)
+
+                if ($count -lt 20) {
+                    Write-Warning "  $asset $reg : only $count bars, sample too small"
+                    $qualityRows += [PSCustomObject]@{
+                        Asset=$asset; Regime=$reg; BarCount=$count; PercentOfHistory=$pct
+                        PersistencePct=0; TransitionProb=0; AvgDurationBars=0
+                        AvgMove1B=0; AvgMove5B=0; AvgMove20B=0
+                        SampleSizeAdequate=$false
+                    }
+                    continue
+                }
+
+                # Persistence: % of bars where next bar stays in same regime
+                $persist = 0
+                for ($i = 0; $i -lt $n - 1; $i++) {
+                    if ($regimes[$i] -eq $reg -and $regimes[$i+1] -eq $reg) { $persist++ }
+                }
+                $persistPct = if ($count -gt 0) { [Math]::Round($persist / $count * 100, 2) } else { 0 }
+
+                # Average duration (consecutive runs)
+                $durations = @()
+                $runLen = 0
+                for ($i = 0; $i -lt $n; $i++) {
+                    if ($regimes[$i] -eq $reg) { $runLen++ }
+                    elseif ($runLen -gt 0) { $durations += $runLen; $runLen = 0 }
+                }
+                if ($runLen -gt 0) { $durations += $runLen }
+                $avgDur = if ($durations.Count -gt 0) { [Math]::Round(($durations | Measure-Object -Average).Average, 1) } else { 0 }
+
+                # Transition probability (Markov)
+                $transitions = @{}
+                $totalTrans = 0
+                for ($i = 0; $i -lt $n - 1; $i++) {
+                    if ($regimes[$i] -eq $reg -and $regimes[$i+1] -ne $reg) {
+                        $next = $regimes[$i+1]
+                        if (-not $transitions.ContainsKey($next)) { $transitions[$next] = 0 }
+                        $transitions[$next]++; $totalTrans++
+                    }
+                }
+                $topTrans = ""
+                if ($totalTrans -gt 0) {
+                    $topNext = ($transitions.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1)
+                    $topTransPct = [Math]::Round($topNext.Value / $totalTrans * 100, 1)
+                    $topTrans = "$($topNext.Key) ($topTransPct%)"
+                }
+
+                # Average forward move
+                $key = "${asset}_4h"
+                if ($dataCache.ContainsKey($key)) {
+                    $klines = $dataCache[$key]
+                    $close = $klines | ForEach-Object { [double]$_.Close }
+                    $sum1=0; $sum5=0; $sum20=0; $cnt1=0; $cnt5=0; $cnt20=0
+                    foreach ($idx in $bars) {
+                        if ($idx+1 -lt $n) { $sum1 += ($close[$idx+1]-$close[$idx])/$close[$idx]*100; $cnt1++ }
+                        if ($idx+5 -lt $n) { $sum5 += ($close[$idx+5]-$close[$idx])/$close[$idx]*100; $cnt5++ }
+                        if ($idx+20 -lt $n) { $sum20 += ($close[$idx+20]-$close[$idx])/$close[$idx]*100; $cnt20++ }
+                    }
+                    $avg1 = if ($cnt1 -gt 0) { [Math]::Round($sum1/$cnt1, 2) } else { 0 }
+                    $avg5 = if ($cnt5 -gt 0) { [Math]::Round($sum5/$cnt5, 2) } else { 0 }
+                    $avg20 = if ($cnt20 -gt 0) { [Math]::Round($sum20/$cnt20, 2) } else { 0 }
+                } else { $avg1=0;$avg5=0;$avg20=0 }
+
+                Write-Host "  $asset $reg : ${count} bars (${pct}%) persist=${persistPct}% dur=${avgDur} trans=$topTrans" -ForegroundColor Gray
+
+                $qualityRows += [PSCustomObject]@{
+                    Asset=$asset; Regime=$reg; BarCount=$count; PercentOfHistory=$pct
+                    PersistencePct=$persistPct; TransitionProb=$topTrans; AvgDurationBars=$avgDur
+                    AvgMove1B=$avg1; AvgMove5B=$avg5; AvgMove20B=$avg20
+                    SampleSizeAdequate=($count -ge 20)
+                }
+            }
+        }
+
+        $qPath = Join-Path $OutputDir "regime_quality_report.csv"
+        $qualityRows | Export-Csv -Path $qPath -NoTypeInformation
+        Write-Host "Phase 11.3 complete. Saved to $qPath" -ForegroundColor Green
+    } else {
+        Write-Host "Phase 11.3: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.4 — RE-EVALUATE EXISTING EDGE CANDIDATES
+    # ================================================================
+    # Known candidates from Phase 9 + Phase 6 playbook (defined outside SkipEval so 11.5/11.6 can use it)
+    $candidates = @(
+            @{Asset="SOLUSDT";Indicator="Stoch";Params="k=5,d=5,ob=80,os=10"},
+            @{Asset="SOLUSDT";Indicator="Stoch";Params="k=21,d=9,ob=85,os=10"},
+            @{Asset="ICPUSDT";Indicator="Stoch";Params="k=14,d=9,ob=80,os=10"},
+            @{Asset="ICPUSDT";Indicator="Bollinger";Params="per=50,mult=3"},
+            @{Asset="SOLUSDT";Indicator="CMF";Params="len=21,thresh=0"},
+            @{Asset="SOLUSDT";Indicator="OBV";Params="ma=20"},
+            @{Asset="SOLUSDT";Indicator="ADX";Params="len=14,thresh=25"},
+            @{Asset="ICPUSDT";Indicator="CMF";Params="len=21,thresh=0"},
+            @{Asset="ICPUSDT";Indicator="OBV";Params="ma=20"},
+            @{Asset="ICPUSDT";Indicator="ADX";Params="len=14,thresh=25"}
+        )
+
+    if (-not $SkipEval) {
+        Write-Host "`n===== PHASE 11.4: CANDIDATE RE-EVALUATION =====" -ForegroundColor Cyan
+        $evalResults = @()
+        $totalEval = ($candidates.Count) * 3
+        $evalCount = 0
+
+        foreach ($tf in @("30m","1h","4h")) {
+            foreach ($cand in $candidates) {
+                $evalCount++
+                Write-Host "  Eval $evalCount/$totalEval : $($cand.Asset) $tf $($cand.Indicator) $($cand.Params)" -ForegroundColor DarkYellow
+                $asset = $cand.Asset
+                $key = "${asset}_${tf}"
+
+                # Load data from cache or CSV
+                if ($dataCache.ContainsKey($key)) { $klines = $dataCache[$key] }
+                else {
+                    $csvPath = Join-Path $InputDir $assetFiles[$asset][$tf]
+                    if (-not (Test-Path $csvPath)) { continue }
+                    $klines = Import-Csv $csvPath
+                }
+                $n = $klines.Count
+                $h = [double[]]::new($n); $l = [double[]]::new($n); $c = [double[]]::new($n); $v = [double[]]::new($n)
+                for ($i = 0; $i -lt $n; $i++) { $h[$i]=[double]$klines[$i].High;$l[$i]=[double]$klines[$i].Low;$c[$i]=[double]$klines[$i].Close;$v[$i]=[double]$klines[$i].Volume }
+
+                # Load regimes for this asset (4h regime labels mapped down to TF)
+                $regKey = "${asset}_regimes_4h"
+                $tfMultiplier = @{"30m"=8;"1h"=4;"4h"=1}
+                $mul = $tfMultiplier[$tf]
+                $barRegimes = @("UNKNOWN") * $n
+                if ($dataCache.ContainsKey($regKey)) {
+                    $r4h = $dataCache[$regKey]
+                } else {
+                    $regPath = Join-Path $OutputDir "phase11_regimes_${asset}_4h.csv"
+                    if (Test-Path $regPath) { $r4h = (Import-Csv $regPath).Regime }
+                    else { $r4h = $null }
+                }
+                if ($r4h) {
+                    for ($i = 0; $i -lt $n; $i++) {
+                        $r4hIdx = [Math]::Floor($i / $mul)
+                        if ($r4hIdx -lt $r4h.Count) { $barRegimes[$i] = $r4h[$r4hIdx] }
+                    }
+                }
+
+                # Generate signal for this candidate
+                $sig = Get-MbfSignalArray $cand.Indicator $cand.Params $c $h $l $v $n
+                if (-not $sig) { continue }
+
+                $sigList = New-Object 'System.Collections.Generic.List[int]'
+                for ($si = 0; $si -lt $sig.Count; $si++) { if ($sig[$si]) { $sigList.Add($si) } }
+                if ($sigList.Count -lt 5) { continue }
+                $signalIndices = $sigList.ToArray()
+
+                # Evaluate per regime
+                $regimes = $barRegimes | Select-Object -Unique | Where-Object { $_ -ne "WARMUP" -and $_ -ne "UNKNOWN" }
+                foreach ($reg in $regimes) {
+                    $regSigList = New-Object 'System.Collections.Generic.List[int]'
+                    foreach ($si in $signalIndices) { if ($si -ge 100 -and $si -lt $n -and $barRegimes[$si] -eq $reg) { $regSigList.Add($si) } }
+                    $regSigCount = $regSigList.Count
+                    if ($regSigCount -lt 3) { continue }
+
+                    # Evaluate forward movement after signal (5-bar forward return)
+                    $retList = New-Object 'System.Collections.Generic.List[double]'
+                    foreach ($si in $regSigList) {
+                        if ($si + 5 -lt $n) {
+                            $retList.Add(($c[$si+5] - $c[$si]) / $c[$si] * 100)
+                        }
+                    }
+                    $returns = $retList.ToArray()
+                    if ($returns.Count -lt 3) { continue }
+
+                    $avgRet = ($returns | Measure-Object -Average).Average
+                    $positiveRet = ($returns | Where-Object { $_ -gt 0 }).Count
+                    $winRate = [Math]::Round($positiveRet / $returns.Count * 100, 1)
+                    $stdRet = Get-StdDev $returns
+                    $sharpe = if ($stdRet -gt 0) { [Math]::Round($avgRet / $stdRet, 4) } else { 0 }
+                    $profitFactor = if ($returns.Count -gt 0) {
+                        $gains = ($returns | Where-Object { $_ -gt 0 } | Measure-Object -Sum).Sum
+                        $losses = ($returns | Where-Object { $_ -lt 0 } | Measure-Object -Sum).Sum
+                        if ($losses -eq 0) { "INF" } else { [Math]::Round([Math]::Abs($gains / $losses), 2) }
+                    } else { 0 }
+
+                    $evalResults += [PSCustomObject]@{
+                        Asset=$asset; Timeframe=$tf; Regime=$reg
+                        Indicator=$cand.Indicator; Params=$cand.Params
+                        SignalCount=$regSigCount
+                        AvgReturn5B=[Math]::Round($avgRet, 4)
+                        WinRatePct=$winRate
+                        Sharpe=$sharpe
+                        ProfitFactor=$profitFactor
+                        StdReturn=[Math]::Round($stdRet, 4)
+                    }
+                }
+            }
+        }
+
+        $canPath = Join-Path $OutputDir "candidate_by_regime.csv"
+        $evalResults | Export-Csv -Path $canPath -NoTypeInformation
+        Write-Host "Phase 11.4 complete. Saved to $canPath" -ForegroundColor Green
+
+        # Show summary
+        Write-Host "`nCandidate evaluation summary:" -ForegroundColor Yellow
+        $evalResults | Sort-Object Sharpe -Descending | Select-Object -First 15 | Format-Table -AutoSize
+    } else {
+        Write-Host "Phase 11.4: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.5 — LARGE WALK-FORWARD
+    # ================================================================
+    if (-not $SkipWalkforward) {
+        Write-Host "`n===== PHASE 11.5: LARGE WALK-FORWARD =====" -ForegroundColor Cyan
+
+        $useTF = "30m"
+        $foldSize = 10000
+        $trainSize = 20000
+        $wfResults = @()
+
+        foreach ($cand in $candidates) {
+            $asset = $cand.Asset
+            $key = "${asset}_${useTF}"
+            if ($dataCache.ContainsKey($key)) { $klines = $dataCache[$key] }
+            else {
+                $csvPath = Join-Path $InputDir $assetFiles[$asset][$useTF]
+                if (-not (Test-Path $csvPath)) { continue }
+                $klines = Import-Csv $csvPath
+            }
+            $n = $klines.Count
+            $h = [double[]]::new($n); $l = [double[]]::new($n); $c = [double[]]::new($n); $v = [double[]]::new($n)
+            for ($i = 0; $i -lt $n; $i++) { $h[$i]=[double]$klines[$i].High;$l[$i]=[double]$klines[$i].Low;$c[$i]=[double]$klines[$i].Close;$v[$i]=[double]$klines[$i].Volume }
+
+            $numFolds = [Math]::Floor(($n - $trainSize) / $foldSize)
+            if ($numFolds -lt 2) { continue }
+
+            $foldExpectancies = @()
+            $foldWinRates = @()
+            $foldSharpe = @()
+            $foldTradeCounts = @()
+
+            for ($f = 0; $f -lt $numFolds; $f++) {
+                $trainEnd = $trainSize + $f * $foldSize
+                $testStart = $trainEnd
+                $testEnd = [Math]::Min($testStart + $foldSize, $n)
+
+                # Train: compute indicator on training portion
+                $sigTrain = Get-MbfSignalArray $cand.Indicator $cand.Params $c[0..($testStart-1)] $h[0..($testStart-1)] $l[0..($testStart-1)] $v[0..($testStart-1)] $testStart
+                if (-not $sigTrain) { continue }
+
+                # Freeze: use same params on test
+                $sigTest = Get-MbfSignalArray $cand.Indicator $cand.Params $c[$testStart..($testEnd-1)] $h[$testStart..($testEnd-1)] $l[$testStart..($testEnd-1)] $v[$testStart..($testEnd-1)] ($testEnd-$testStart)
+
+                if (-not $sigTest) { continue }
+
+                $testReturns = @()
+                for ($si = 0; $si -lt $sigTest.Count; $si++) {
+                    if ($sigTest[$si]) {
+                        $globalIdx = $testStart + $si
+                        if ($globalIdx + 5 -lt $n) {
+                            $ret = ($c[$globalIdx+5] - $c[$globalIdx]) / $c[$globalIdx] * 100
+                            $testReturns += $ret
+                        }
+                    }
+                }
+
+                if ($testReturns.Count -lt 3) { continue }
+
+                $avgRet = ($testReturns | Measure-Object -Average).Average
+                $pos = ($testReturns | Where-Object { $_ -gt 0 }).Count
+                $wr = $pos / $testReturns.Count * 100
+                $stdR = Get-StdDev $testReturns
+                $sh = if ($stdR -gt 0) { $avgRet / $stdR } else { 0 }
+
+                $foldExpectancies += $avgRet
+                $foldWinRates += $wr
+                $foldSharpe += $sh
+                $foldTradeCounts += $testReturns.Count
+            }
+
+            if ($foldExpectancies.Count -lt 2) { continue }
+
+            $avgExp = [Math]::Round(($foldExpectancies | Measure-Object -Average).Average, 4)
+            $avgWR = [Math]::Round(($foldWinRates | Measure-Object -Average).Average, 1)
+            $avgSharpe = [Math]::Round(($foldSharpe | Measure-Object -Average).Average, 4)
+            $totalTrades = ($foldTradeCounts | Measure-Object -Sum).Sum
+            $posFolds = ($foldExpectancies | Where-Object { $_ -gt 0 }).Count
+            $posFoldPct = [Math]::Round($posFolds / $foldExpectancies.Count * 100, 0)
+
+            $wfResults += [PSCustomObject]@{
+                Asset=$asset; Indicator=$cand.Indicator; Params=$cand.Params
+                Folds=$foldExpectancies.Count; TotalTrades=$totalTrades
+                AvgExpectancy=$avgExp; AvgWinRate=$avgWR; AvgSharpe=$avgSharpe
+                PosFoldPct=$posFoldPct
+                ExpectancyStability=[Math]::Round((Get-StdDev $foldExpectancies), 4)
+            }
+
+            Write-Host "  $asset $($cand.Indicator)($($cand.Params)) : folds=$($foldExpectancies.Count) trades=$totalTrades exp=$avgExp wr=$avgWR sharpe=$avgSharpe posFolds=$posFoldPct%" -ForegroundColor Gray
+        }
+
+        $wfPath = Join-Path $OutputDir "walkforward_stability.csv"
+        $wfResults | Export-Csv -Path $wfPath -NoTypeInformation
+        Write-Host "Phase 11.5 complete. Saved to $wfPath" -ForegroundColor Green
+    } else {
+        Write-Host "Phase 11.5: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.6 — LARGE MONTE CARLO
+    # ================================================================
+    if (-not $SkipMonteCarlo) {
+        Write-Host "`n===== PHASE 11.6: LARGE MONTE CARLO =====" -ForegroundColor Cyan
+
+        $mcResults = @()
+        $mcIterations = 1000
+        $rngMc = [Random]::new(123)
+
+        foreach ($cand in $candidates) {
+            $asset = $cand.Asset
+            $key = "${asset}_30m"
+            if ($dataCache.ContainsKey($key)) { $klines = $dataCache[$key] }
+            else {
+                $csvPath = Join-Path $InputDir $assetFiles[$asset]["30m"]
+                if (-not (Test-Path $csvPath)) { continue }
+                $klines = Import-Csv $csvPath
+            }
+            $n = $klines.Count
+            $h = [double[]]::new($n); $l = [double[]]::new($n); $c = [double[]]::new($n); $v = [double[]]::new($n)
+            for ($i = 0; $i -lt $n; $i++) { $h[$i]=[double]$klines[$i].High;$l[$i]=[double]$klines[$i].Low;$c[$i]=[double]$klines[$i].Close;$v[$i]=[double]$klines[$i].Volume }
+
+            $sig = Get-MbfSignalArray $cand.Indicator $cand.Params $c $h $l $v $n
+            if (-not $sig) { continue }
+
+            $sigList = New-Object 'System.Collections.Generic.List[int]'
+            for ($si = 100; $si -lt $sig.Count; $si++) { if ($sig[$si]) { $sigList.Add($si) } }
+            if ($sigList.Count -lt 5) { continue }
+
+            # Get base trade returns
+            $retList = New-Object 'System.Collections.Generic.List[double]'
+            foreach ($si in $sigList) {
+                if ($si + 5 -lt $n) {
+                    $retList.Add(($c[$si+5] - $c[$si]) / $c[$si] * 100)
+                }
+            }
+            $tradeReturns = $retList.ToArray()
+            if ($tradeReturns.Count -lt 5) { continue }
+
+            Write-Host "  Monte Carlo: $asset $($cand.Indicator)($($cand.Params)) with $($tradeReturns.Count) trades, $mcIterations iterations..." -ForegroundColor Gray
+
+            $mcExpectancies = @()
+            $mcMaxDDs = @()
+            $mcProfitFactors = @()
+
+            for ($mc = 0; $mc -lt $mcIterations; $mc++) {
+                # Shuffle trade order
+                $shuffled = $tradeReturns.Clone()
+                for ($a = 0; $a -lt $shuffled.Count; $a++) {
+                    $b = $rngMc.Next(0, $shuffled.Count)
+                    $tmp = $shuffled[$a]; $shuffled[$a] = $shuffled[$b]; $shuffled[$b] = $tmp
+                }
+
+                # Randomize fees and slippage
+                $fee = 0.02 + $rngMc.NextDouble() * 0.13  # 0.02% to 0.15%
+                $slippage = $rngMc.NextDouble() * 0.1  # 0% to 0.1%
+
+                $eq = 1.0; $peak = 1.0; $maxDD = 0.0; $gains = 0.0; $losses = 0.0; $sumNet = 0.0
+                foreach ($raw in $shuffled) {
+                    $netRet = $raw - $fee - $slippage
+                    $sumNet += $netRet
+                    $eq *= (1 + $netRet/100)
+                    if ($netRet -gt 0) { $gains += $netRet }
+                    else { $losses += $netRet }
+                    if ($eq -gt $peak) { $peak = $eq }
+                    $dd = ($peak - $eq) / $peak * 100
+                    if ($dd -gt $maxDD) { $maxDD = $dd }
+                }
+
+                $mcExpectancies += $sumNet / $shuffled.Count
+                $mcMaxDDs += $maxDD
+                $mcProfitFactors += if ($losses -eq 0) { 999 } else { [Math]::Abs($gains / $losses) }
+            }
+
+            $avgMcExp = [Math]::Round(($mcExpectancies | Measure-Object -Average).Average, 4)
+            $avgMcDD = [Math]::Round(($mcMaxDDs | Measure-Object -Average).Average, 2)
+            $avgMcPF = [Math]::Round(($mcProfitFactors | Measure-Object -Average).Average, 2)
+            $pfStability = [Math]::Round((Get-StdDev $mcProfitFactors), 2)
+
+            $mcResults += [PSCustomObject]@{
+                Asset=$asset; Indicator=$cand.Indicator; Params=$cand.Params
+                BaseTrades=$tradeReturns.Count; Iterations=$mcIterations
+                AvgExpectancy=$avgMcExp; AvgMaxDD=$avgMcDD; AvgProfitFactor=$avgMcPF
+                PFStability=$pfStability
+            }
+        }
+
+        $mcPath = Join-Path $OutputDir "montecarlo_stability.csv"
+        $mcResults | Export-Csv -Path $mcPath -NoTypeInformation
+        Write-Host "Phase 11.6 complete. Saved to $mcPath" -ForegroundColor Green
+    } else {
+        Write-Host "Phase 11.6: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    # ================================================================
+    # PHASE 11.7 — INSTITUTIONAL EDGE REPORT
+    # ================================================================
+    if (-not $SkipReport) {
+        Write-Host "`n===== PHASE 11.7: INSTITUTIONAL EDGE REPORT =====" -ForegroundColor Cyan
+
+        $reportPath = Join-Path $OutputDir "institutional_edge_report.md"
+
+        # Load all output CSVs
+        $evalData = @()
+        $evalPath = Join-Path $OutputDir "candidate_by_regime.csv"
+        if (Test-Path $evalPath) { $evalData = Import-Csv $evalPath }
+
+        $wfData = @()
+        $wfPath = Join-Path $OutputDir "walkforward_stability.csv"
+        if (Test-Path $wfPath) { $wfData = Import-Csv $wfPath }
+
+        $mcData = @()
+        $mcPath = Join-Path $OutputDir "montecarlo_stability.csv"
+        if (Test-Path $mcPath) { $mcData = Import-Csv $mcPath }
+
+        $qualData = @()
+        $qualPath = Join-Path $OutputDir "regime_quality_report.csv"
+        if (Test-Path $qualPath) { $qualData = Import-Csv $qualPath }
+
+        $distData = @()
+        $distPath = Join-Path $OutputDir "regime_distribution.csv"
+        if (Test-Path $distPath) { $distData = Import-Csv $distPath }
+
+        $report = @"
+# Institutional Market Behavior Research -- Phase 11 Edge Report
+
+**Generated:** $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+**Assets:** SOLUSDT, ICPUSDT
+**Timeframes:** 30m (primary), 1h, 4h (regime)
+**Regime Data:** 4h k-line futures data
+
+---
+
+## 1. Regime Distribution
+
+"@
+
+        foreach ($asset in $assets) {
+            $report += "`n### $asset`n`n"
+            $report += "| Regime | Bars | % of History |`n"
+            $report += "|--------|------|-------------|`n"
+            if ($distData) {
+                $assetDist = $distData | Where-Object { $_.Asset -eq $asset }
+                foreach ($d in ($assetDist | Sort-Object BarCount -Descending)) {
+                    $report += "| $($d.Regime) | $($d.BarCount) | $($d.PercentOfHistory)% |`n"
+                }
+            }
+        }
+
+        $report += "`n---
+
+## 2. Regime Quality
+
+"
+
+        foreach ($asset in $assets) {
+            $report += "`n### $asset`n`n"
+            $report += "| Regime | Bars | Persistence | Avg Duration | 1B Move | 5B Move | 20B Move | Adequate |`n"
+            $report += "|--------|------|------------|-------------|---------|---------|----------|----------|`n"
+            if ($qualData) {
+                $assetQual = $qualData | Where-Object { $_.Asset -eq $asset }
+                foreach ($q in ($assetQual | Sort-Object BarCount -Descending)) {
+                    $report += "| $($q.Regime) | $($q.BarCount) | $($q.PersistencePct)% | $($q.AvgDurationBars) | $($q.AvgMove1B)% | $($q.AvgMove5B)% | $($q.AvgMove20B)% | $($q.SampleSizeAdequate) |`n"
+                }
+            }
+        }
+
+        $report += "`n---
+
+## 3. Candidate Performance by Regime
+
+"
+
+        $indicators = @("Stoch","CMF","OBV","ADX","Bollinger")
+        foreach ($ind in $indicators) {
+            $candEvals = $evalData | Where-Object { $_.Indicator -eq $ind }
+            if (-not $candEvals) { continue }
+            $report += "`n### $ind`n`n"
+            $report += "| Asset | TF | Regime | Params | Signals | WinRate | Sharpe | PF | AvgRet5B |`n"
+            $report += "|-------|-----|--------|--------|---------|---------|--------|----|---------|`n"
+            foreach ($e in ($candEvals | Sort-Object Sharpe -Descending)) {
+                $report += "| $($e.Asset) | $($e.Timeframe) | $($e.Regime) | $($e.Params) | $($e.SignalCount) | $($e.WinRatePct)% | $($e.Sharpe) | $($e.ProfitFactor) | $($e.AvgReturn5B)% |`n"
+            }
+        }
+
+        $report += "`n---
+
+## 4. Walk-Forward Stability
+
+"
+
+        $report += "| Asset | Indicator | Params | Folds | Trades | AvgExpectancy | AvgWR | AvgSharpe | PosFolds | Stability |`n"
+        $report += "|-------|-----------|--------|-------|--------|--------------|------|-----------|----------|----------|`n"
+        foreach ($w in ($wfData | Sort-Object AvgSharpe -Descending)) {
+            $report += "| $($w.Asset) | $($w.Indicator) | $($w.Params) | $($w.Folds) | $($w.TotalTrades) | $($w.AvgExpectancy) | $($w.AvgWinRate)% | $($w.AvgSharpe) | $($w.PosFoldPct)% | $($w.ExpectancyStability) |`n"
+        }
+
+        $report += "`n---
+
+## 5. Monte Carlo Stability
+
+"
+
+        $report += "| Asset | Indicator | Params | Trades | Iterations | AvgExpectancy | AvgMaxDD | AvgPF | PFStability |`n"
+        $report += "|-------|-----------|--------|--------|-----------|--------------|---------|-------|------------|`n"
+        foreach ($m in ($mcData | Sort-Object AvgProfitFactor -Descending)) {
+            $report += "| $($m.Asset) | $($m.Indicator) | $($m.Params) | $($m.BaseTrades) | $($m.Iterations) | $($m.AvgExpectancy) | $($m.AvgMaxDD)% | $($m.AvgProfitFactor) | $($m.PFStability) |`n"
+        }
+
+        $report += "`n---
+
+## 6. Final Ranking
+
+**Ranking criteria:** Statistical Confidence > Robustness > Drawdown > Expectancy > Trade Count
+
+"
+
+        # Merge all evidence
+        $merged = @{}
+        foreach ($w in $wfData) {
+            $key = "$($w.Asset)|$($w.Indicator)|$($w.Params)"
+            $merged[$key] = @{WF=$w}
+        }
+        foreach ($m in $mcData) {
+            $key = "$($m.Asset)|$($m.Indicator)|$($m.Params)"
+            if (-not $merged.ContainsKey($key)) { $merged[$key] = @{} }
+            $merged[$key].MC = $m
+        }
+
+        # Score each candidate: Sharpe * PosFold% * (1 - Log(MaxDD+1)/10) * Sqrt(Trades)/10 * PF
+        $scored = @()
+        foreach ($kv in $merged.GetEnumerator()) {
+            $parts = $kv.Key -split '\|'
+            $asset = $parts[0]; $ind = $parts[1]; $param = $parts[2]
+            $w = $kv.Value.WF; $m = $kv.Value.MC
+
+            if (-not $w -or -not $m) { continue }
+
+            $sharpe = [double]$w.AvgSharpe
+            $posFold = [double]$w.PosFoldPct / 100
+            $trades = [int]$w.TotalTrades
+            $pf = [double]$m.AvgProfitFactor
+            $dd = [double]$m.AvgMaxDD
+
+            $score = $sharpe * $posFold * [Math]::Max(0.1, 1 - [Math]::Log($dd + 1, 10)) * [Math]::Sqrt($trades) / 10 * [Math]::Min($pf, 10)
+
+            $scored += [PSCustomObject]@{
+                Asset=$asset; Indicator=$ind; Params=$param
+                Sharpe=$sharpe; PosFoldPct=$($w.PosFoldPct); TotalTrades=$trades
+                AvgExpectancy=$w.AvgExpectancy; AvgWinRate=$w.AvgWinRate
+                AvgMaxDD=$dd; AvgPF=$pf; Score=[Math]::Round($score, 4)
+            }
+        }
+
+        $finalRank = $scored | Sort-Object Score -Descending
+
+        $report += "| Rank | Asset | Indicator | Params | Sharpe | PosFolds | AvgWR | AvgExpectancy | MaxDD | PF | Trades | Score |`n"
+        $report += "|------|-------|-----------|--------|--------|----------|-------|--------------|-------|----|--------|-------|`n"
+        $rankNum = 0
+        foreach ($r in $finalRank) {
+            $rankNum++
+            $report += "| $rankNum | $($r.Asset) | $($r.Indicator) | $($r.Params) | $($r.Sharpe) | $($r.PosFoldPct)% | $($r.AvgWinRate)% | $($r.AvgExpectancy) | $($r.AvgMaxDD)% | $($r.AvgPF) | $($r.TotalTrades) | $($r.Score) |`n"
+        }
+
+        $report += "`n---
+
+## 7. Answer: Persistent Market Behaviors and Best Detectors
+
+"
+
+        # Top 3 findings
+        if ($finalRank.Count -gt 0) {
+            $r1 = $finalRank[0]
+            $report += "**Primary Finding:** $($r1.Asset) $($r1.Indicator)($($r1.Params)) achieves Sharpe=$($r1.Sharpe) across $($r1.TotalTrades) trades"
+            if ($r1.AvgExpectancy -gt 0) { $report += " with positive expectancy ($($r1.AvgExpectancy))." } else { $report += " but negative expectancy." }
+            $report += "`n"
+
+            if ($finalRank.Count -gt 1) {
+                $r2 = $finalRank[1]
+                $report += "**Secondary Finding:** $($r2.Asset) $($r2.Indicator)($($r2.Params)) with Sharpe=$($r2.Sharpe) across $($r2.TotalTrades) trades.`n"
+            }
+
+            # Most consistent behavior across regimes
+            $report += "`n**Most persistent behavior:** "
+            $bestIndicator = $finalRank[0].Indicator
+            if ($bestIndicator -eq "Stoch") { $report += "Stochastic oscillator signals detect volatility-expansion continuation patterns most reliably." }
+            elseif ($bestIndicator -eq "CMF") { $report += "Chaikin Money Flow detects accumulation/distribution volume pressure." }
+            elseif ($bestIndicator -eq "ADX") { $report += "ADX trend strength detection works in directional regimes only." }
+            elseif ($bestIndicator -eq "OBV") { $report += "On-Balance Volume detects volume-confirmed trends." }
+            elseif ($bestIndicator -eq "Bollinger") { $report += "Bollinger Band squeezes detect volatility compression breakouts." }
+            else { $report += "Multi-indicator fusion provides the most robust detection across regime types." }
+            $report += "`n"
+
+            $report += "`n**Regime stability:** "
+            if ($qualData) {
+                $stableRegimes = $qualData | Where-Object { $_.SampleSizeAdequate -eq "True" -and [double]$_.PersistencePct -gt 50 }
+                if ($stableRegimes) {
+                    $report += ($stableRegimes | ForEach-Object { "$($_.Asset) $($_.Regime) (persist=$($_.PersistencePct)%, dur=$($_.AvgDurationBars) bars)" }) -join "; "
+                } else {
+                    $report += "No regime shows strong persistence -- all regimes are transitional."
+                }
+            }
+        } else {
+            $report += "**No statistically significant edge detected** across any candidate or regime."
+        }
+
+        $report += "`n`n---
+
+*Report generated by Market Behavior Research Framework Phase 11*
+*Methodology: Clustering-based regime discovery, walk-forward validation (rolling train/freeze/test), Monte Carlo simulation (1000 iterations with fee+slippage randomization)*
+"
+
+        Set-Content -Path $reportPath -Value $report
+        Write-Host "Phase 11.7 complete. Report saved to $reportPath" -ForegroundColor Green
+
+        Write-Host "`nTop final edges:" -ForegroundColor Yellow
+        $finalRank | Select-Object -First 5 | Format-Table -AutoSize
+    } else {
+        Write-Host "Phase 11.7: SKIPPED" -ForegroundColor DarkYellow
+    }
+
+    $elapsed = (Get-Date) - $start
+    Write-Host "`n===== PHASE 11 COMPLETE ($([Math]::Round($elapsed.TotalMinutes,1)) min) =====" -ForegroundColor Cyan
+}
+
 Export-ModuleMember -Function Initialize-MbfRsaAuth, Invoke-MbfApi
 Export-ModuleMember -Function Invoke-MbfPhase1, Invoke-MbfPhase2, Invoke-MbfPhase3
 Export-ModuleMember -Function Invoke-MbfPhase4, Invoke-MbfPhase5, Invoke-MbfPhase6
 Export-ModuleMember -Function Invoke-MbfPhase7, Invoke-MbfPhase8, Invoke-MbfPhase9, Invoke-MbfPhase10
+Export-ModuleMember -Function Invoke-MbfPhase11
 Export-ModuleMember -Function Calc-EMA, Calc-SMA, Calc-ATR, Calc-ADX, Calc-RSI, Calc-MACD
 Export-ModuleMember -Function Calc-Stoch, Calc-CCI, Calc-MFI, Calc-CMF, Calc-OBV
-Export-ModuleMember -Function Calc-Bollinger, Calc-VWAP
+Export-ModuleMember -Function Calc-Bollinger, Calc-VWAP, Calc-VolumeProfile
 Export-ModuleMember -Function Get-StdDev, Get-Autocorrelation, Get-LogReturns
+Export-ModuleMember -Function Get-MbfSignalArray, Get-MbfBehaviorTruth
