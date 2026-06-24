@@ -1,0 +1,105 @@
+[20:29:55.141] === PHASE 14 STARTED ===
+[20:29:55.199] Module loaded
+[20:29:59.209] Data loaded: 93871 bars
+[20:30:00.235] Total raw signals: 4684
+[20:30:00.860] Base: trades=4684 WR=71.5% avg=0.827 Sharpe=0.426 PF=4.07 DD=37.62%
+[20:30:00.862] === PHASE 14.1: TRADE INDEPENDENCE ===
+[20:30:01.017] Overlapping trade pairs: 7147 out of 4683 possible pairs (152.6%)
+[20:30:01.674] Bars in trade: 13427 / 93771 (14.3%)
+[20:30:02.331] Independent trades: 1951 WR=56.9% Sharpe=0.1691 PF=1.73
+[20:30:02.346] Saved .\trade_independence_report.csv
+[20:30:02.351] Independence test: SURVIVES
+[20:30:02.359] === PHASE 14.2: EXECUTION COST SENSITIVITY ===
+[20:30:03.053]   Cost 0.1%: PF=3.42 Exp=0.727 Sharpe=0.3745
+[20:30:03.545]   Cost 0.2%: PF=2.88 Exp=0.627 Sharpe=0.3229
+[20:30:04.108]   Cost 0.3%: PF=2.42 Exp=0.527 Sharpe=0.2714
+[20:30:04.860]   Cost 0.5%: PF=1.71 Exp=0.327 Sharpe=0.1684
+[20:30:04.871] Saved .\execution_cost_sensitivity.csv
+[20:30:04.885] Edge breaks at: >0.50%
+[20:30:04.945] Cost survival: SURVIVES
+[20:30:04.950] === PHASE 14.3: SIGNAL LATENCY ===
+[20:30:06.168]   Latency 0: trades=4684 Sharpe=0.426
+[20:30:07.312]   Latency 1: trades=4684 Sharpe=0.6438
+[20:30:08.569]   Latency 2: trades=4684 Sharpe=0.8021
+[20:30:09.812]   Latency 3: trades=4684 Sharpe=0.9241
+[20:30:09.819] Saved .\signal_latency_report.csv
+[20:30:09.887] Latency survival: SURVIVES
+[20:30:09.890] === PHASE 14.4: PARAMETER PLATEAU ===
+[20:30:50.988]   20/81 done, current k=4,d=6,ob=75,os=10 Sharpe=0.3683
+[20:31:30.570]   40/81 done, current k=5,d=5,ob=80,os=5 Sharpe=0.4737
+[20:32:10.598]   60/81 done, current k=6,d=4,ob=80,os=15 Sharpe=0.173
+[20:32:50.664]   80/81 done, current k=6,d=6,ob=85,os=10 Sharpe=0.5249
+[20:32:52.443] Plateau: 81/81 profitable (100%) Best: k=4,d=6,ob=85,os=5 (S=0.8821)
+[20:32:52.460] Saved .\parameter_plateau.csv
+[20:32:52.476] Plateau test: SURVIVES
+[20:32:52.493] === PHASE 14.5: QUARTERLY DEGRADATION ===
+[20:32:53.502] Quarterly: 22/22 profitable, early S=0.4605 late S=0.4696 deg=0.0091
+[20:32:53.512] Saved .\quarterly_stability.csv
+[20:32:53.541] Quarterly test: SURVIVES
+[20:32:53.551] === PHASE 14.6: WALK-FORWARD AUDIT ===
+[20:32:53.567] Walk-forward: 7 folds possible
+[20:32:54.043]   Fold 1: train=[0..29999] test=[20000..29999] trades=315 Sharpe=0.5311
+[20:32:54.625]   Fold 2: train=[0..39999] test=[30000..39999] trades=279 Sharpe=0.2875
+[20:32:55.510]   Fold 3: train=[0..49999] test=[40000..49999] trades=372 Sharpe=0.4591
+[20:32:56.508]   Fold 4: train=[0..59999] test=[50000..59999] trades=507 Sharpe=0.445
+[20:32:57.508]   Fold 5: train=[0..69999] test=[60000..69999] trades=584 Sharpe=0.398
+[20:32:58.663]   Fold 6: train=[0..79999] test=[70000..79999] trades=628 Sharpe=0.4957
+[20:33:00.189]   Fold 7: train=[0..89999] test=[80000..89999] trades=467 Sharpe=0.5164
+[20:33:00.237] Saved .\walkforward_audit.md
+[20:33:00.248] Walk-forward audit: SURVIVES
+[20:33:00.271] === PHASE 14.7: EDGE SURVIVAL REPORT V2 ===
+[20:33:00.314] ERROR: Cannot convert value "of" to type "System.Int32". Error: "Input string was not in a correct format."
+[20:33:00.321] Line: 227
+[20:33:46.575] === PHASE 14 STARTED ===
+[20:33:46.619] Module loaded
+[20:33:50.460] Data loaded: 93871 bars
+[20:33:51.358] Total raw signals: 4684
+[20:33:52.124] Base: trades=4684 WR=71.5% avg=0.827 Sharpe=0.426 PF=4.07 DD=37.62%
+[20:33:52.128] === PHASE 14.1: TRADE INDEPENDENCE ===
+[20:33:52.366] Overlapping trade pairs: 7147 out of 4683 possible pairs (152.6%)
+[20:33:53.140] Bars in trade: 13427 / 93771 (14.3%)
+[20:33:53.791] Independent trades: 1951 WR=56.9% Sharpe=0.1691 PF=1.73
+[20:33:53.811] Saved .\trade_independence_report.csv
+[20:33:53.820] Independence test: SURVIVES
+[20:33:53.835] === PHASE 14.2: EXECUTION COST SENSITIVITY ===
+[20:33:54.529]   Cost 0.1%: PF=3.42 Exp=0.727 Sharpe=0.3745
+[20:33:55.093]   Cost 0.2%: PF=2.88 Exp=0.627 Sharpe=0.3229
+[20:33:55.664]   Cost 0.3%: PF=2.42 Exp=0.527 Sharpe=0.2714
+[20:33:56.373]   Cost 0.5%: PF=1.71 Exp=0.327 Sharpe=0.1684
+[20:33:56.386] Saved .\execution_cost_sensitivity.csv
+[20:33:56.400] Edge breaks at: >0.50%
+[20:33:56.439] Cost survival: SURVIVES
+[20:33:56.444] === PHASE 14.3: SIGNAL LATENCY ===
+[20:33:57.682]   Latency 0: trades=4684 Sharpe=0.426
+[20:33:58.908]   Latency 1: trades=4684 Sharpe=0.6438
+[20:34:00.079]   Latency 2: trades=4684 Sharpe=0.8021
+[20:34:01.018]   Latency 3: trades=4684 Sharpe=0.9241
+[20:34:01.023] Saved .\signal_latency_report.csv
+[20:34:01.041] Latency survival: SURVIVES
+[20:34:01.049] === PHASE 14.4: PARAMETER PLATEAU ===
+[20:34:44.179]   20/81 done, current k=4,d=6,ob=75,os=10 Sharpe=0.3683
+[20:35:24.197]   40/81 done, current k=5,d=5,ob=80,os=5 Sharpe=0.4737
+[20:36:04.231]   60/81 done, current k=6,d=4,ob=80,os=15 Sharpe=0.173
+[20:36:45.044]   80/81 done, current k=6,d=6,ob=85,os=10 Sharpe=0.5249
+[20:36:46.662] Plateau: 81/81 profitable (100%) Best: k=4,d=6,ob=85,os=5 (S=0.8821)
+[20:36:46.676] Saved .\parameter_plateau.csv
+[20:36:46.698] Plateau test: SURVIVES
+[20:36:46.723] === PHASE 14.5: QUARTERLY DEGRADATION ===
+[20:36:47.577] Quarterly: 22/22 profitable, early S=0.4605 late S=0.4696 deg=0.0091
+[20:36:47.586] Saved .\quarterly_stability.csv
+[20:36:47.617] Quarterly test: SURVIVES
+[20:36:47.628] === PHASE 14.6: WALK-FORWARD AUDIT ===
+[20:36:47.650] Walk-forward: 7 folds possible
+[20:36:48.329]   Fold 1: train=[0..29999] test=[20000..29999] trades=315 Sharpe=0.5311
+[20:36:49.131]   Fold 2: train=[0..39999] test=[30000..39999] trades=279 Sharpe=0.2875
+[20:36:50.020]   Fold 3: train=[0..49999] test=[40000..49999] trades=372 Sharpe=0.4591
+[20:36:50.756]   Fold 4: train=[0..59999] test=[50000..59999] trades=507 Sharpe=0.445
+[20:36:51.545]   Fold 5: train=[0..69999] test=[60000..69999] trades=584 Sharpe=0.398
+[20:36:53.041]   Fold 6: train=[0..79999] test=[70000..79999] trades=628 Sharpe=0.4957
+[20:36:54.454]   Fold 7: train=[0..89999] test=[80000..89999] trades=467 Sharpe=0.5164
+[20:36:54.487] Saved .\walkforward_audit.md
+[20:36:54.492] Walk-forward audit: SURVIVES
+[20:36:54.500] === PHASE 14.7: EDGE SURVIVAL REPORT V2 ===
+[20:36:54.530] Saved .\edge_survival_report_v2.md
+[20:36:54.537] === PHASE 14 COMPLETE (3.1 min) ===
+[20:36:54.544] FINAL VERDICT: EDGE SURVIVED STRICT VALIDATION

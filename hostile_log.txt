@@ -1,0 +1,73 @@
+[19:56:29.224] === HOSTILE VALIDATION STARTED ===
+[19:56:29.335] Module loaded
+[19:56:33.545] Data loaded: 93871 bars
+[20:07:14.217] === HOSTILE VALIDATION STARTED ===
+[20:07:14.356] Module loaded
+[20:07:22.113] Data loaded: 93871 bars
+[20:07:29.340] Arrays built
+[20:07:31.724] Signal computed
+[20:07:32.150] Trade count: 4684
+[20:07:34.128] Baseline: trades=4684 WR=71.5% avg=0.827 Sharpe=0.426 PF=4.07 DD=37.62%
+[20:07:34.166] === TEST 1: EXECUTION REALISM ===
+[20:07:35.507] 1A fee=0.1%: WR=67.7% Sharpe=0.3745
+[20:07:36.850] 1B fee=0.2%: WR=64.5% Sharpe=0.3229
+[20:07:38.066] 1C slip=0.05%: WR=69.4% Sharpe=0.4002
+[20:07:39.314] 1D slip=0.1%: WR=67.7% Sharpe=0.3745
+[20:07:40.760] 1E delayed fill: WR=80.6% Sharpe=0.6212
+[20:07:42.030] 1F delayed+slip+fee: WR=75.2% Sharpe=0.5277
+[20:07:44.447] 1G market impact: WR=63.1% Sharpe=0.2811
+[20:07:45.627] 1H extreme: WR=65.6% Sharpe=0.3678
+[20:07:45.630] TEST 1 complete
+[20:07:45.643] === TEST 2: PARAMETER STABILITY ===
+[20:07:47.918]   k=4,d=5,ob=80,os=10: trades=3441 WR=78.9% Sharpe=0.604 -> SURVIVES
+[20:07:51.149]   k=6,d=5,ob=80,os=10: trades=5882 WR=65.7% Sharpe=0.32 -> SURVIVES
+[20:07:54.312]   k=5,d=4,ob=80,os=10: trades=6786 WR=71.3% Sharpe=0.4244 -> SURVIVES
+[20:07:56.350]   k=5,d=6,ob=80,os=10: trades=3303 WR=71.8% Sharpe=0.4474 -> SURVIVES
+[20:07:59.688]   k=5,d=5,ob=75,os=10: trades=10116 WR=63.5% Sharpe=0.2859 -> SURVIVES
+[20:08:01.610]   k=5,d=5,ob=85,os=10: trades=1544 WR=78.6% Sharpe=0.5309 -> SURVIVES
+[20:08:04.557]   k=5,d=5,ob=80,os=15: trades=5448 WR=63.7% Sharpe=0.2569 -> SURVIVES
+[20:08:06.441]   k=5,d=5,ob=80,os=5: trades=4588 WR=72.9% Sharpe=0.4737 -> SURVIVES
+[20:08:08.210]   k=6,d=6,ob=85,os=15 (all shifted): trades=1927 WR=57.7% Sharpe=0.1498 -> SURVIVES
+[20:08:08.212] TEST 2 complete
+[20:08:08.223] === TEST 3: QUARTERLY PERFORMANCE STABILITY ===
+[20:08:08.477]   2021-Q1 : trades=262 WR=67.6% Sharpe=0.4059 -> PROFITABLE
+[20:08:08.530]   2021-Q2 : trades=302 WR=69.9% Sharpe=0.4275 -> PROFITABLE
+[20:08:08.584]   2021-Q3 : trades=279 WR=76.7% Sharpe=0.5828 -> PROFITABLE
+[20:08:08.630]   2021-Q4 : trades=228 WR=75% Sharpe=0.5879 -> PROFITABLE
+[20:08:08.688]   2022-Q1 : trades=257 WR=76.3% Sharpe=0.5573 -> PROFITABLE
+[20:08:08.707]   2022-Q2 : trades=135 WR=68.9% Sharpe=0.4412 -> PROFITABLE
+[20:08:08.741]   2022-Q3 : trades=172 WR=73.8% Sharpe=0.5881 -> PROFITABLE
+[20:08:08.755]   2022-Q4 : trades=91 WR=69.2% Sharpe=0.18 -> PROFITABLE
+[20:08:08.776]   2023-Q1 : trades=124 WR=66.9% Sharpe=0.4466 -> PROFITABLE
+[20:08:08.806]   2023-Q2 : trades=170 WR=70% Sharpe=0.4585 -> PROFITABLE
+[20:08:08.833]   2023-Q3 : trades=135 WR=68.9% Sharpe=0.3899 -> PROFITABLE
+[20:08:08.881]   2023-Q4 : trades=194 WR=73.7% Sharpe=0.5595 -> PROFITABLE
+[20:08:08.928]   2024-Q1 : trades=240 WR=65.8% Sharpe=0.4441 -> PROFITABLE
+[20:08:08.985]   2024-Q2 : trades=204 WR=71.6% Sharpe=0.4174 -> PROFITABLE
+[20:08:09.088]   2024-Q3 : trades=228 WR=65.8% Sharpe=0.4096 -> PROFITABLE
+[20:08:09.165]   2024-Q4 : trades=284 WR=68.3% Sharpe=0.3322 -> PROFITABLE
+[20:08:09.233]   2025-Q1 : trades=214 WR=72.9% Sharpe=0.4559 -> PROFITABLE
+[20:08:09.338]   2025-Q2 : trades=257 WR=76.3% Sharpe=0.524 -> PROFITABLE
+[20:08:09.416]   2025-Q3 : trades=360 WR=73.1% Sharpe=0.5156 -> PROFITABLE
+[20:08:09.482]   2025-Q4 : trades=272 WR=72.4% Sharpe=0.541 -> PROFITABLE
+[20:08:09.518]   2026-Q1 : trades=123 WR=69.9% Sharpe=0.4814 -> PROFITABLE
+[20:08:09.551]   2026-Q2 : trades=153 WR=72.5% Sharpe=0.4846 -> PROFITABLE
+[20:08:09.655] Quarterly: 22/22 profitable, early S=0.4605 late S=0.4696 deg=0.0091
+[20:08:09.657] TEST 3 complete
+[20:08:09.677] === TEST 4: WALK-FORWARD DEGRADATION ===
+[20:08:12.304] 4A 50/50: train S=0.4286 test S=0.4578 deg=6.8%
+[20:08:14.345] 4B 5-fold: avg S=0.4492 avg WR=70.8% pos=5/5 CV=0.0856
+[20:08:16.437] 4C 4-fold: avg S=0.4416 avg WR=70.5% pos=4/4
+[20:08:16.440] TEST 4 complete
+[20:08:16.459] === COMPUTING FINAL VERDICT ===
+[20:08:16.745] FINAL VERDICT: EDGE SURVIVED HOSTILE VALIDATION
+[20:08:16.749] Survived: 25/25 (100%)
+[20:08:16.767] Execution: 8/8
+[20:08:16.780] Parameter: 9/9
+[20:08:16.801] Quarterly: pass=True
+[20:08:16.814] WalkFwd: pass=True
+[20:08:16.832] === GENERATING REPORT ===
+[20:08:16.953] Report saved to .\edge_survival_report.md
+[20:08:16.971] Details saved to .\edge_survival_details.csv
+[20:08:16.992] === HOSTILE VALIDATION COMPLETE (1 min) ===
+[20:08:17.000] FINAL VERDICT: EDGE SURVIVED HOSTILE VALIDATION
