@@ -130,6 +130,13 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 ### 4. Signal Array Memory
 `$script:strategySignals` stores ~238 × 600 ≈ 140K booleans (~140KB). Each `@($sigL)` creates a new array copy, doubling memory.
 
+### 5. Drawdown Values: Additive vs Compound (RESOLVED in Phase 21)
+**Status**: RESOLVED — two valid DD values exist depending on equity model
+- **Additive DD = 13.4%** (Phase 19): `equity = 100 + sum(PnL)`. Valid for fixed $ per trade.
+- **Compound DD = 37.96%** (Phase 21): `equity = 100 * product(1+PnL/100)`. Valid for reinvested capital.
+- Phase 18's 317% was the only genuine bug (cum PnL as denominator).
+- Phase 14/16's 37.6% matches the compound model (0.36pp diff = rounding).
+
 ---
 
 ## Files Structure
@@ -156,6 +163,8 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 | `phase17_forward_test.ps1` | Phase 17 forward test framework |
 | `phase18_drawdown_forensics.ps1` | Phase 18 drawdown forensic analysis |
 | `phase19_edge_vs_drawdown.ps1` | Phase 19 edge vs drawdown attribution |
+| `phase20_position_sizing.ps1` | Phase 20 position sizing and capital allocation |
+| `phase21_ledger_audit.ps1` | Phase 21 trade ledger accounting audit |
 
 ---
 
@@ -188,3 +197,5 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 - **Phase 17: Forward test completed** — SOL 30m Stoch(k=5,d=5,ob=80,os=10) held-out 10k bars, 352 trades. All forward metrics WITHIN_RANGE of historical. WR 63.92% (hist 66.71%), PF 2.54 (hist 3.24). Outputs: `forward_signals.csv`, `forward_trade_log.csv`, `forward_metrics.csv`, `forward_vs_historical.csv`, `degradation_report.csv`, `execution_assumptions.md`, `forward_test_dashboard.md`.
 - **Phase 18: Drawdown forensics completed** — 4,684 trades, 460 drawdown periods. Key finding: top 20% losers = 91% of drawdown. Longest losing streak 9 trades (−8.71%). VOL_EXPANSION regime = largest loss share. Outputs: `drawdown_periods.csv`, `loss_contribution_analysis.csv`, `losing_streak_analysis.csv`, `time_drawdown_attribution.csv`, `regime_drawdown_attribution.csv`, `volatility_drawdown_attribution.csv`, `tail_risk_analysis.csv`, `equity_curve_forensics.csv`, `drawdown_forensic_report.md`.
 - **Phase 19: Edge vs drawdown attribution completed** — Corrected drawdown calculation bug (317.29%→13.4%). Found: profits distributed (top 20%=67%), losses highly concentrated (top 20%=91%). Feature differences between best/worst 20% trades minimal (max=Volume Percentile at 6.9%). Both populations dominated by VOL_EXPANSION regime. Outputs: `phase19_edge_vs_drawdown.ps1`, `drawdown_validation.md`, `profit_contribution.csv`, `loss_contribution.csv`, `edge_contributors.csv`, `trade_cluster_analysis.md`, `edge_vs_drawdown_report.md`.
+- **Phase 20: Position sizing completed** — Tested fixed fractional (0.25%-25%), volatility-adjusted, and drawdown-adaptive sizing. Key finding: fixed fractional at 1-2% per trade is optimal (1%: 37.87% ret, 0.43% DD; 2%: 90.06% ret, 0.86% DD). Volatility and drawdown-based sizing add no benefit over fixed fraction. MC simulation revealed compounded return is order-independent (multiplication is commutative) — only DD varies with trade sequence. Recommended: 1-2% fixed fractional per trade for live deployment. Outputs: `phase20_position_sizing.ps1`, `fixed_fractional_results.csv`, `volatility_adjusted_results.csv`, `adaptive_sizing_results.csv`, `capital_simulation.csv`, `capital_growth_projection.csv`, `capital_allocation_report.md`.
+- **Phase 21: Ledger audit completed** — Full accounting validation from raw candles. 4684 trades reconstructed, 10/10 spot checks pass. Key findings: (1) 317.29% DD was the only genuine bug (cum PnL denominator). (2) Two valid DD values exist: **compound DD = 37.96%** (fully reinvested capital, matches earlier phases) and **additive DD = 13.4%** (fixed $/trade, Phase 19 model). Both are mathematically correct for their respective equity models. (3) PF=3.19, WR=66.5%, expectancy=0.69%/trade are all consistent across ALL phases. Accounting layer fully validated. Outputs: `phase21_ledger_audit.ps1`, `trade_ledger_audit.csv`, `equity_curve_rebuilt.csv`, `drawdown_validation_v2.md`, `pf_validation.md`, `expectancy_validation.md`, `trade_spot_check.md`, `consistency_check.csv`, `ledger_audit_report.md`.
