@@ -55,6 +55,11 @@ Paper trader runs cleanly with RSA auth, dual-direction signals, no errors.
 **Fix**: Wrapped in try/catch, silently ignoring the error.
 **Files**: `paper_trading/run_paper_trader.ps1`
 
+### 8. Phase 18 Drawdown Used Wrong Denominator (`phase18_drawdown_forensics.ps1:49`)
+**Bug**: `($maxPeak−$cum)/$maxPeak×100` used cumulative PnL as denominator instead of equity (100 + cum PnL), reporting 317.29% max DD instead of 13.4%.
+**Fix**: Correct formula = `(equityPeak−equity)/equityPeak×100` where equity = 100 + cumulativePnL.
+**Files**: `phase19_edge_vs_drawdown.ps1` (documented fix), `phase18_drawdown_forensics.ps1` (unfixed, see note)
+
 ---
 
 ## Code Review Report Fixes (report.md driven)
@@ -148,6 +153,9 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 | `bybit_private.pem` | RSA private key |
 | `report.md` | Third-party code review report |
 | `AGENTS.md` | This file |
+| `phase17_forward_test.ps1` | Phase 17 forward test framework |
+| `phase18_drawdown_forensics.ps1` | Phase 18 drawdown forensic analysis |
+| `phase19_edge_vs_drawdown.ps1` | Phase 19 edge vs drawdown attribution |
 
 ---
 
@@ -177,3 +185,6 @@ Scripts mix `Write-Output` and `Write-Host`. Write-Host bypasses pipeline captur
 - **`.env` and `bybit_private.pem` removed from git** — added to `.gitignore`.
 - **Spot/short inconsistency fixed** — `Place-Order` and `Cancel-Order` changed from `category=spot` to `category=linear`.
 - **`$canTrade` bug fixed** — `sol_divergence_grid.ps1:253` removed undefined `$canTrade` filter that silently skipped all short entries.
+- **Phase 17: Forward test completed** — SOL 30m Stoch(k=5,d=5,ob=80,os=10) held-out 10k bars, 352 trades. All forward metrics WITHIN_RANGE of historical. WR 63.92% (hist 66.71%), PF 2.54 (hist 3.24). Outputs: `forward_signals.csv`, `forward_trade_log.csv`, `forward_metrics.csv`, `forward_vs_historical.csv`, `degradation_report.csv`, `execution_assumptions.md`, `forward_test_dashboard.md`.
+- **Phase 18: Drawdown forensics completed** — 4,684 trades, 460 drawdown periods. Key finding: top 20% losers = 91% of drawdown. Longest losing streak 9 trades (−8.71%). VOL_EXPANSION regime = largest loss share. Outputs: `drawdown_periods.csv`, `loss_contribution_analysis.csv`, `losing_streak_analysis.csv`, `time_drawdown_attribution.csv`, `regime_drawdown_attribution.csv`, `volatility_drawdown_attribution.csv`, `tail_risk_analysis.csv`, `equity_curve_forensics.csv`, `drawdown_forensic_report.md`.
+- **Phase 19: Edge vs drawdown attribution completed** — Corrected drawdown calculation bug (317.29%→13.4%). Found: profits distributed (top 20%=67%), losses highly concentrated (top 20%=91%). Feature differences between best/worst 20% trades minimal (max=Volume Percentile at 6.9%). Both populations dominated by VOL_EXPANSION regime. Outputs: `phase19_edge_vs_drawdown.ps1`, `drawdown_validation.md`, `profit_contribution.csv`, `loss_contribution.csv`, `edge_contributors.csv`, `trade_cluster_analysis.md`, `edge_vs_drawdown_report.md`.
